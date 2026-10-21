@@ -1,0 +1,15 @@
+{% extends "console.html" %}
+{% block title %}My account{% endblock %}
+{% block main %}
+<h1>My account</h1>
+{% if first %}<div class="notice notice-warn" role="status">Choose your own password before continuing.</div>{% endif %}
+{% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
+{% if saved %}<div class="notice notice-ok" role="status">Password changed.</div>{% endif %}
+<form method="post" action="/console/account/password" class="panel">
+  <h2>Change password</h2>
+  <input type="text" name="username" autocomplete="username" value="{{ shell.user }}" hidden>
+  <div class="field"><label for="current">Current password</label><input id="current" name="current" type="password" required autocomplete="current-password"></div>
+  <div class="field"><label for="new">New password</label><input id="new" name="new" type="password" required minlength="12" autocomplete="new-password" aria-describedby="new-hint"><p class="hint" id="new-hint">At least 12 characters. Common passwords are refused.</p></div>
+  <button class="btn btn-primary" type="submit">Change password</button>
+</form>
+{% endblock %}

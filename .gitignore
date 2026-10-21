@@ -2,3 +2,7 @@
 /.forge/
 *.mp4
 !tests/fixtures/**/*.mp4
+node_modules/
+tests/e2e/test-results/
+tests/e2e/results.json
+tests/e2e/playwright-report/

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Set up this venue{% endblock %}
+{% block body %}
+<main class="narrow">
+  <header class="sign-head"><p class="court">Set up</p><p class="muted">First start of this court box. Nothing is recorded until setup is done.</p></header>
+  <img class="illustration" src="/static/setup-camera-position.svg" width="640" height="400" data-illustration="camera-position"
+       alt="Line drawing of a pickleball court with the camera mounted high at the centre and the court sign on the net post">
+  {% if let Some(e) = error %}<div class="notice notice-error" role="alert" tabindex="-1" id="form-errors">{{ e }}</div>{% endif %}
+  <form method="post" action="/setup" enctype="multipart/form-data" class="panel">
+    <h1>1 of 3 · Owner and venue</h1>
+    <div class="field">
+      <label for="venue">Venue name</label>
+      <input id="venue" name="venue" type="text" required maxlength="80" autocomplete="organization" value="{{ venue }}">
+    </div>
+    <div class="field">
+      <label for="logo">Venue logo (PNG or JPEG, up to 2 MB)</label>
+      <input id="logo" name="logo" type="file" accept="image/png,image/jpeg">
+      <p class="hint">Shown on the court page, in emails, on signs and burned into every clip. You can add it later in Settings.</p>
+    </div>
+    <div class="row">
+      <div class="field"><label for="open">Opens</label><input id="open" name="open" type="time" required value="{{ open }}"></div>
+      <div class="field"><label for="close">Closes</label><input id="close" name="close" type="time" required value="{{ close }}"></div>
+    </div>
+    <p class="hint">Courts are recorded only during these hours.</p>
+    <div class="field">
+      <label for="display_name">Your name</label>
+      <input id="display_name" name="display_name" type="text" required maxlength="60" autocomplete="name" value="{{ display_name }}">
+    </div>
+    <div class="field">
+      <label for="username">Owner username</label>
+      <input id="username" name="username" type="text" required maxlength="40" autocomplete="username" value="{{ username }}">
+    </div>
+    <div class="field">
+      <label for="password">Owner password</label>
+      <input id="password" name="password" type="password" required minlength="12" autocomplete="new-password" aria-describedby="password-hint">
+      <p class="hint" id="password-hint">At least 12 characters. Common passwords are refused.</p>
+    </div>
+    <button class="btn btn-primary" type="submit">Continue</button>
+  </form>
+</main>
+{% endblock %}

@@ -1,0 +1,91 @@
+/* Court Highlights — laminated sign. Every value comes from DESIGN.md tokens. */
+:root {
+  --background: #f6f4ee; --surface: #fffdf7; --surface-container: #ece8dd;
+  --on-surface: #1b1b1b; --on-surface-variant: #4a4a46;
+  --primary: #1b1b1b; --on-primary: #fffdf7; --primary-container: #ffe14d; --on-primary-container: #1b1b1b;
+  --outline: #1b1b1b; --outline-variant: #8b877c; --selection: #ffe14d;
+  --error: #a4161a; --on-error: #fffdf7; --error-container: #fbe2df; --on-error-container: #6d0e11;
+  --success: #1f6b3a; --success-container: #dcefe1; --on-success-container: #123f22;
+  --warning: #7a4f00; --warning-container: #fbefc9; --on-warning-container: #4d3200;
+  --font: Arial, Helvetica, sans-serif;
+  --xs: 4px; --sm: 8px; --md: 16px; --lg: 24px; --xl: 40px; --gutter: 16px;
+  --radius: 4px; --pill: 9999px;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--background); color: var(--on-surface); font: 400 16px/1.5 var(--font); }
+::selection { background: var(--selection); color: var(--on-primary-container); }
+a { color: var(--primary); text-underline-offset: 2px; }
+h1, h2, h3 { margin: 0 0 var(--sm); line-height: 1.2; }
+h1 { font-size: 22px; font-weight: 800; }
+h2 { font-size: 17px; font-weight: 700; }
+p { margin: 0 0 var(--sm); }
+:focus-visible { outline: 3px solid var(--outline); outline-offset: 2px; }
+
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: var(--md); top: var(--md); background: var(--surface); padding: var(--sm); z-index: 2; }
+
+/* Panels, forms, buttons */
+.panel { background: var(--surface); border: 2px solid var(--outline); border-radius: var(--radius); padding: var(--md); margin-bottom: var(--md); }
+.muted { color: var(--on-surface-variant); }
+.fine { font-size: 14px; color: var(--on-surface-variant); }
+label { display: block; font: 700 14px/1.25 var(--font); margin: 0 0 var(--xs); }
+.field { margin-bottom: var(--md); }
+.hint { font-size: 14px; color: var(--on-surface-variant); margin-top: var(--xs); }
+input[type=text], input[type=password], input[type=email], input[type=time], input[type=number], input[type=tel], input[type=url], select, textarea {
+  width: 100%; min-height: 44px; padding: var(--sm) 10px; font: 16px var(--font); color: var(--on-surface);
+  background: var(--surface); border: 2px solid var(--outline); border-radius: var(--radius);
+}
+input[type=file] { font: 16px var(--font); }
+.field-error { color: var(--on-error-container); background: var(--error-container); border-radius: var(--radius); padding: var(--xs) var(--sm); margin-top: var(--xs); font-size: 14px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--sm); min-height: 44px; padding: 10px var(--md);
+  font: 700 15px var(--font); color: var(--on-surface); background: var(--surface); border: 2px solid var(--outline);
+  border-radius: var(--radius); text-decoration: none; cursor: pointer; transition: background-color 150ms ease-out; }
+.btn:hover { background: var(--surface-container); }
+.btn-primary { min-height: 48px; padding: 12px 20px; background: var(--primary-container); color: var(--on-primary-container); border-width: 3px; }
+.btn-primary:hover { background: var(--primary-container); text-decoration: underline; text-underline-offset: 3px; }
+.btn-danger { color: var(--error); border-color: var(--error); }
+.btn[disabled] { color: var(--on-surface-variant); border-color: var(--outline-variant); cursor: not-allowed; }
+.row { display: flex; gap: var(--sm); flex-wrap: wrap; align-items: center; }
+.notice { border-radius: var(--radius); padding: var(--sm) var(--md); margin-bottom: var(--md); border: 2px solid; }
+.notice-error { background: var(--error-container); color: var(--on-error-container); border-color: var(--error); }
+.notice-ok { background: var(--success-container); color: var(--on-success-container); border-color: var(--success); }
+.notice-warn { background: var(--warning-container); color: var(--on-warning-container); border-color: var(--warning); }
+.status::before { content: ""; display: inline-block; width: .7em; height: .7em; border-radius: var(--pill); margin-right: .4em; vertical-align: baseline; }
+.status-ok { color: var(--success); } .status-ok::before { background: var(--success); }
+.status-bad { color: var(--error); } .status-bad::before { background: var(--error); border-radius: 0; }
+
+/* Tables */
+.table-wrap { overflow-x: auto; border: 2px solid var(--outline); border-radius: var(--radius); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+caption { text-align: left; font-weight: 700; padding: var(--sm) var(--md); }
+th, td { text-align: left; padding: 10px var(--md); border-top: 1px solid var(--outline-variant); vertical-align: middle; }
+thead th { border-top: 0; border-bottom: 2px solid var(--outline); }
+td.num { font-variant-numeric: tabular-nums; }
+
+/* Staff console shell */
+.console { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.console-nav { background: var(--surface); border-right: 2px solid var(--outline); padding: var(--md) var(--sm); }
+.console-nav .venue { font-weight: 800; padding: 0 var(--sm) var(--md); }
+.console-nav a { display: block; padding: 10px var(--sm); border-radius: var(--radius); color: var(--on-surface); text-decoration: none; font-weight: 700; }
+.console-nav a[aria-current=page] { background: var(--selection); }
+.console-nav form { margin-top: var(--lg); padding: 0 var(--sm); }
+.console-main { padding: var(--lg); max-width: 1100px; }
+.console-top { display: flex; gap: var(--md); flex-wrap: wrap; align-items: baseline; margin-bottom: var(--md); }
+@media (max-width: 767px) {
+  .console { grid-template-columns: 1fr; }
+  .console-nav { border-right: 0; border-bottom: 2px solid var(--outline); display: flex; flex-wrap: wrap; gap: var(--xs); }
+  .console-nav .venue { width: 100%; padding-bottom: var(--sm); }
+  .console-nav form { margin: 0; }
+  .console-main { padding: var(--md); }
+}
+
+/* Single-column pages (setup, sign-in, court page) */
+.narrow { max-width: 480px; margin: 0 auto; padding: var(--md) var(--gutter); }
+.sign-head { border-bottom: 3px solid var(--outline); padding: var(--md) 0; margin-bottom: var(--md); }
+.sign-head .court { font-size: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; margin: 0; }
+.illustration { display: block; width: 100%; height: auto; margin: var(--sm) 0 var(--md); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

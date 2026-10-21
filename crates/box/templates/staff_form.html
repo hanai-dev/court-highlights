@@ -1,0 +1,30 @@
+{% extends "console.html" %}
+{% block title %}{% if id.is_some() %}Edit staff{% else %}Add staff{% endif %}{% endblock %}
+{% block main %}
+<p><a href="/console/staff">← Staff</a></p>
+<h1>{% if id.is_some() %}Edit {{ display_name }}{% else %}Add staff{% endif %}</h1>
+{% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
+<form method="post" action="{% if let Some(i) = id %}/console/staff/{{ i }}{% else %}/console/staff{% endif %}" class="panel">
+  <div class="field"><label for="display_name">Name</label><input id="display_name" name="display_name" type="text" required maxlength="60" value="{{ display_name }}"></div>
+  {% if id.is_none() %}<div class="field"><label for="username">Username</label><input id="username" name="username" type="text" required maxlength="40" autocomplete="off" value="{{ username }}"></div>{% endif %}
+  <div class="field">
+    <label for="role">Role</label>
+    <select id="role" name="role">
+      <option value="staff" {% if role == "staff" %}selected{% endif %}>Staff — camera status, clips, footage requests, signs</option>
+      <option value="owner" {% if role == "owner" %}selected{% endif %}>Owner — everything, including staff and settings</option>
+    </select>
+  </div>
+  <button class="btn btn-primary" type="submit">{% if id.is_some() %}Save{% else %}Add staff and show temporary password{% endif %}</button>
+</form>
+{% if let Some(i) = id %}
+<section class="panel">
+  <h2>Access</h2>
+  {% if active %}
+  <form method="post" action="/console/staff/{{ i }}/reset" class="row"><button class="btn" type="submit">Reset password</button><span class="fine">Shows a new temporary password; the old one stops working.</span></form>
+  <form method="post" action="/console/staff/{{ i }}/deactivate" class="row" style="margin-top: 8px"><button class="btn btn-danger" type="submit">Deactivate {{ display_name }}</button><span class="fine">Ends their access on every box at once.</span></form>
+  {% else %}
+  <form method="post" action="/console/staff/{{ i }}/reactivate"><button class="btn" type="submit">Reactivate {{ display_name }}</button></form>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

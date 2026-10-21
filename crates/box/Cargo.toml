@@ -6,17 +6,28 @@ license.workspace = true
 publish.workspace = true
 description = "Court box: records courts, cuts branded clips, judges highlights, serves the court page and staff console."
 
+[features]
+# Test-only hooks (e.g. moving the clock for expiry tests). Never enabled in release images.
+test-hooks = []
+
 [dependencies]
 ch-core = { path = "../core" }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "fs", "process", "signal", "time", "sync"] }
-axum = "0.8"
-tower-http = { version = "0.7", features = ["fs", "trace", "set-header"] }
+axum = { version = "0.8", features = ["multipart"] }
+axum-server = { version = "0.8", features = ["tls-rustls-no-provider"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+rcgen = { version = "0.14", default-features = false, features = ["crypto", "ring", "pem"] }
+tower-http = { version = "0.7", features = ["set-header"] }
 retina = "0.4.21"
 gstreamer = "0.25"
 ort = { version = "=2.0.0-rc.15", default-features = false, features = ["std", "ndarray", "tracing", "download-binaries", "tls-rustls", "copy-dylibs", "api-31"] }
 rusqlite = { version = "0.40", features = ["bundled"] }
 askama = "0.16"
 argon2 = "0.6"
+sha2 = "0.11"
+getrandom = "0.4"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
 chrono.workspace = true
 serde.workspace = true
 serde_json.workspace = true

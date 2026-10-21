@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block body %}
+<main class="narrow">
+  <header class="sign-head"><p class="court">{{ venue }}</p><p class="muted">Staff console</p></header>
+  {% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
+  {% if signed_out %}<div class="notice notice-ok" role="status">You are signed out.</div>{% endif %}
+  <form method="post" action="/console/signin" class="panel">
+    <h1>Sign in</h1>
+    <div class="field"><label for="username">Username</label><input id="username" name="username" type="text" required autocomplete="username"></div>
+    <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password"></div>
+    <button class="btn btn-primary" type="submit">Sign in</button>
+    <p class="fine">Forgot your password? Ask the venue owner to reset it. Owners use the reset file described in Help.</p>
+  </form>
+</main>
+{% endblock %}

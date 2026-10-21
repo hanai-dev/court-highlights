@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+<a class="skip" href="#main">Skip to content</a>
+<div class="console">
+  <nav class="console-nav" aria-label="Staff console">
+    <div class="venue">{{ shell.venue }}</div>
+    <a href="/console" {% if shell.section == "home" %}aria-current="page"{% endif %}>Courts today</a>
+    {% if shell.is_owner %}<a href="/console/courts" {% if shell.section == "courts" %}aria-current="page"{% endif %}>Courts</a>{% endif %}
+    <a href="/console/clips" {% if shell.section == "clips" %}aria-current="page"{% endif %}>Clips</a>
+    <a href="/console/footage" {% if shell.section == "footage" %}aria-current="page"{% endif %}>Footage</a>
+    {% if shell.is_owner %}<a href="/console/staff" {% if shell.section == "staff" %}aria-current="page"{% endif %}>Staff</a>
+    <a href="/console/settings" {% if shell.section == "settings" %}aria-current="page"{% endif %}>Settings</a>
+    <a href="/console/log" {% if shell.section == "log" %}aria-current="page"{% endif %}>Activity log</a>{% endif %}
+    <a href="/console/help" {% if shell.section == "help" %}aria-current="page"{% endif %}>Help</a>
+    <a href="/console/account" {% if shell.section == "account" %}aria-current="page"{% endif %}>My account</a>
+    <form method="post" action="/console/signout"><button class="btn" type="submit">Sign out {{ shell.user }}</button></form>
+  </nav>
+  <main id="main" class="console-main">
+    {% block main %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

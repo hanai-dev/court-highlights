@@ -1,0 +1,21 @@
+{% extends "console.html" %}
+{% block title %}Staff{% endblock %}
+{% block main %}
+<div class="console-top"><h1>Staff</h1><a class="btn btn-primary" href="/console/staff/new">Add staff</a></div>
+{% if let Some(m) = notice %}<div class="notice notice-ok" role="status">{{ m }}</div>{% endif %}
+<div class="table-wrap" role="region" aria-labelledby="staff-caption" tabindex="0">
+<table>
+  <caption id="staff-caption">{{ staff.len() }} accounts</caption>
+  <thead><tr><th scope="col">Name</th><th scope="col">Username</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col"><span class="skip">Actions</span></th></tr></thead>
+  <tbody>
+  {% for s in staff %}
+  <tr>
+    <td>{{ s.display_name }}</td><td>{{ s.username }}</td><td>{{ s.role }}</td>
+    <td>{% if s.active %}<span class="status status-ok">Active</span>{% else %}<span class="status status-bad">Deactivated</span>{% endif %}{% if s.locked %} · Locked{% endif %}</td>
+    <td><a class="btn" href="/console/staff/{{ s.id }}" aria-label="Edit {{ s.display_name }}">Edit</a></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

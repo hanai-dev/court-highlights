@@ -1,0 +1,42 @@
+# Test stack for e2e runs on a developer machine or CI. Uses the binary built into the shared `ch-target` volume:
+#   docker compose -f docker/compose.test.yaml run --rm builder     # cargo build --features test-hooks
+#   docker compose -f docker/compose.test.yaml up -d box-a
+name: ch-test
+
+x-box: &box
+  image: ch-dev:0
+  working_dir: /work
+  command: ["./target/debug/ch-box"]
+  volumes:
+    - ../:/work
+    - ch-target:/work/target
+  healthcheck:
+    test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:80/healthz || exit 1"]
+    interval: 2s
+    timeout: 2s
+    retries: 30
+
+services:
+  builder:
+    image: ch-dev:0
+    working_dir: /work
+    profiles: ["build"]
+    command: ["cargo", "build", "-p", "ch-box", "--features", "test-hooks"]
+    volumes:
+      - ../:/work
+      - ch-target:/work/target
+      - ch-cargo-registry:/usr/local/cargo/registry
+
+  box-a:
+    <<: *box
+    environment: { CH_DATA_DIR: /data, CH_HTTP_ADDR: "0.0.0.0:80", CH_HTTPS_ADDR: "0.0.0.0:443", CH_BOX_NAME: box-a }
+    volumes:
+      - ../:/work
+      - ch-target:/work/target
+      - box-a-data:/data
+    ports: ["18080:80", "18443:443"]
+
+volumes:
+  ch-target: { external: true }
+  ch-cargo-registry: { external: true }
+  box-a-data: {}

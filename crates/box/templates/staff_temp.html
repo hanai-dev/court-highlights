@@ -1,0 +1,12 @@
+{% extends "console.html" %}
+{% block title %}Temporary password{% endblock %}
+{% block main %}
+<p><a href="/console/staff">← Staff</a></p>
+<h1>Temporary password for {{ display_name }}</h1>
+<section class="panel">
+  <p>Give this to {{ display_name }} in person. It works once, for 72 hours, and they must choose their own password when they sign in.</p>
+  <p><strong>Username:</strong> {{ username }}</p>
+  <p><strong>Temporary password:</strong> <code data-temp-password>{{ password }}</code></p>
+  <p class="fine">It is not shown again. If it is lost, reset the password.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "console.html" %}
+{% block title %}Courts today{% endblock %}
+{% block main %}
+<div class="console-top"><h1>Courts today</h1></div>
+{% if courts.is_empty() %}
+<section class="panel">
+  <h2>No courts yet</h2>
+  <p>Courts appear here with their camera status once they are added.</p>
+  {% if shell.is_owner %}<a class="btn btn-primary" href="/console/courts/new">Add a court</a>{% else %}<p class="muted">Ask the venue owner to add the courts.</p>{% endif %}
+</section>
+{% else %}
+<div class="table-wrap" role="region" aria-labelledby="courts-caption" tabindex="0">
+<table>
+  <caption id="courts-caption">{{ courts.len() }} courts</caption>
+  <thead><tr><th scope="col">Court</th><th scope="col">Camera</th><th scope="col">Court code</th></tr></thead>
+  <tbody>
+  {% for c in courts %}
+    <tr><td>{{ c.name }}</td><td>{% if c.camera_set %}<span class="status status-ok">Camera set</span>{% else %}<span class="status status-bad">No camera</span>{% endif %}</td><td class="num">{{ c.code }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}
