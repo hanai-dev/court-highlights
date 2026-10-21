@@ -331,3 +331,19 @@ test('an Admin deactivates a fleet user who left: their open session ends and th
   await page.goto(`${CLOUD}/fleet/log`);
   await expect(page.locator('tbody tr').filter({ hasText: 'deactivated fleet user' }).first()).toContainText('leaver');
 });
+
+// Last in this file: it moves the service's clock 91 days on.
+test('health records older than 90 days are removed (FR-49)', async ({ page }) => {
+  test.setTimeout(180_000);
+  const key = compose('exec', '-T', 'cloud', './target/debug/ch-cloud', 'add-box', OWNER.venue, 'box-r').trim();
+  const checkin = await page.request.post(`${CLOUD}/api/v1/checkin`, {
+    headers: { Authorization: `Bearer ${key}` },
+    data: { version: '0.1.0', disk_pct: 3, courts_recording: 0, courts_total: 0 },
+  });
+  expect(checkin.ok()).toBe(true);
+  const newest = cloudSql('SELECT max(at) FROM checkin');
+  expect(Number(cloudSql(`SELECT count(*) FROM checkin WHERE at <= '${newest}'`))).toBeGreaterThan(0);
+  await advanceCloud(page, 91 * 86_400_000);
+  // The clean-up runs every minute.
+  await expect.poll(() => cloudSql(`SELECT count(*) FROM checkin WHERE at <= '${newest}'`), { timeout: 100_000, intervals: [5000] }).toBe('0');
+});

@@ -1,0 +1,9 @@
+# Gitleaks with its default rules plus one reviewed exception.
+[extend]
+useDefault = true
+
+[allowlist]
+# CH_RELEASE_KEY in docker/compose.test.yaml is a public key: the public half of tests/fixtures/release-test.pk8,
+# the test-only update signing key. Public keys are meant to be shared; nothing else is allowed.
+description = "Public half of the test-only release signing key"
+regexes = ['''c802698987acc0a5003330bba30226936d12bbe609c99874ed5ed75a630da6bd''']

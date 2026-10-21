@@ -133,10 +133,11 @@ test('axe finds nothing serious or critical on any route: player, setup, staff c
   const visitor = await (await browser.newContext()).newPage();
   await axeRoutes(visitor, CLOUD, ['/fleet/signin', new URL(videosLink).pathname, new URL(neverLink).pathname]);
 
-  // The take-home email itself, as a mail client shows it.
+  // The take-home email itself, as a mail client shows it: a fresh page, so no site's CSP blocks its inline styles.
   const [mail] = await sentMail();
-  await visitor.setContent(mail.html);
-  expect(await seriousViolations(visitor), 'email').toEqual([]);
+  const client = await (await browser.newContext()).newPage();
+  await client.setContent(mail.html);
+  expect(await seriousViolations(client), 'email').toEqual([]);
 });
 
 test('body text and the Clip that label reach 7:1; every court page action is at least 48 px (UX-A11Y)', async ({ browser }) => {
