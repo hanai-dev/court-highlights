@@ -3,8 +3,24 @@
 {% block main %}
 <div class="console-top"><h1>Courts today</h1></div>
 <section class="panel" aria-labelledby="box-health">
-  <h2 id="box-health">This box</h2>
-  <p>Disk: <span data-disk {% if disk_warning %}class="status status-bad"{% endif %}>{{ disk }}</span>{% if disk_warning %} — the box will clear the oldest unkept game videos at 90 %.{% endif %} · Temperature: <span data-temperature>{{ temperature }}</span> · Version {{ version }}</p>
+  <h2 id="box-health">{% if venue_wide %}Boxes{% else %}This box{% endif %}</h2>
+  <div class="table-wrap" role="region" aria-labelledby="box-health" tabindex="0">
+  <table>
+    <thead><tr><th scope="col">Box</th><th scope="col">Reachable</th><th scope="col">Disk</th><th scope="col">Temperature</th><th scope="col">Version</th></tr></thead>
+    <tbody>
+    {% for b in boxes %}
+    <tr data-box="{{ b.name }}">
+      <td>{{ b.name }}{% if b.this_box %} <span class="fine">(this box)</span>{% endif %}</td>
+      <td>{% if b.reachable %}<span class="status status-ok">Yes</span>{% else %}<span class="status status-bad" data-unreachable>Box unreachable{% if !b.since.is_empty() %} since {{ b.since }}{% endif %}</span>{% endif %}</td>
+      <td class="num">{% if b.this_box %}<span data-disk {% if b.health.disk_warning %}class="status status-bad"{% endif %}>{{ b.health.disk }}</span>{% else %}<span {% if b.health.disk_warning %}class="status status-bad"{% endif %}>{{ b.health.disk }}</span>{% endif %}
+        {% if b.health.disk_warning %}<br><span class="fine">the box will clear the oldest unkept game videos at 90 %</span>{% endif %}</td>
+      <td class="num">{% if b.this_box %}<span data-temperature>{{ b.health.temperature }}</span>{% else %}{{ b.health.temperature }}{% endif %}</td>
+      <td>{{ b.health.version }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
 </section>
 {% if courts.is_empty() %}
 <section class="panel">
@@ -16,12 +32,12 @@
 <div class="table-wrap" role="region" aria-labelledby="courts-caption" tabindex="0">
 <table>
   <caption id="courts-caption">{{ courts.len() }} courts</caption>
-  <thead><tr><th scope="col">Court</th><th scope="col">Recording</th><th scope="col">Last clip</th><th scope="col">Court code</th></tr></thead>
+  <thead><tr><th scope="col">Court</th><th scope="col">Recording</th><th scope="col">Last clip</th><th scope="col">Court code</th>{% if venue_wide %}<th scope="col">Box</th>{% endif %}</tr></thead>
   <tbody>
   {% for c in courts %}
     <tr data-court="{{ c.name }}"><td>{{ c.name }}</td>
       <td><span class="status {% if c.ok %}status-ok{% else %}status-bad{% endif %}" data-court-status>{{ c.status }}</span></td>
-      <td class="num" data-last-clip>{{ c.last_clip }}</td><td class="num" data-court-code>{{ c.code }}</td></tr>
+      <td class="num" data-last-clip>{{ c.last_clip }}</td><td class="num" data-court-code>{{ c.code }}</td>{% if venue_wide %}<td>{{ c.hosted_by }}</td>{% endif %}</tr>
   {% endfor %}
   </tbody>
 </table>

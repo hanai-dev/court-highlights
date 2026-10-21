@@ -3,9 +3,10 @@
 {% block main %}
 <div class="console-top"><h1>Clips</h1></div>
 {% if let Some(m) = notice %}<div class="notice notice-ok" role="status">{{ m }}</div>{% endif %}
+{% if !missing.is_empty() %}<div class="notice notice-warn" role="status">Not shown: clips on {% for m in missing %}{{ m }}{% if !loop.last %}, {% endif %}{% endfor %} — that box can't be reached right now.</div>{% endif %}
 <form method="get" action="/console/clips" class="panel filters" aria-label="Filter clips">
   <div class="field"><label for="f-court">Court</label>
-    <select id="f-court" name="court"><option value="">All courts</option>{% for c in courts %}<option value="{{ c.id }}"{% if c.selected %} selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></div>
+    <select id="f-court" name="court"><option value="">All courts</option>{% for c in courts %}<option value="{{ c.code }}"{% if c.selected %} selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></div>
   <div class="field"><label for="f-date">Date</label><input id="f-date" name="date" type="date" value="{{ date }}"></div>
   <div class="field"><label for="f-kind">Type</label>
     <select id="f-kind" name="kind">
@@ -37,19 +38,19 @@
   <thead><tr><th scope="col"><span class="skip">Preview</span></th><th scope="col">Court</th><th scope="col">Made</th><th scope="col">Type</th><th scope="col">Length</th><th scope="col">Kept</th><th scope="col">May post</th><th scope="col"><span class="skip">Actions</span></th></tr></thead>
   <tbody>
   {% for r in rows %}
-  <tr data-clip="{{ r.id }}">
-    <td><img src="/console/clips/{{ r.id }}/thumb.jpg" width="96" height="54" alt="" loading="lazy" class="thumb"></td>
-    <td>{{ r.court }}</td>
+  <tr data-clip="{{ r.id }}" data-box="{{ r.box_name }}">
+    <td><img src="{{ r.base }}/thumb.jpg" width="96" height="54" alt="" loading="lazy" class="thumb"></td>
+    <td>{{ r.court }}{% if venue_wide %}<br><span class="fine">{{ r.box_name }}</span>{% endif %}</td>
     <td class="num">{{ r.when }}{% if r.hidden %}<br><span class="fine">Hidden by players</span>{% endif %}</td>
     <td>{{ r.kind }}</td>
     <td class="num">{{ r.length }}</td>
-    <td>{% if let Some(k) = r.kept %}Kept until {{ k }}{% else %}<form method="post" action="/console/clips/{{ r.id }}/keep"><button class="btn" type="submit" aria-label="Keep {{ r.court }} {{ r.when }}">Keep</button></form>{% endif %}</td>
+    <td>{% if let Some(k) = r.kept %}Kept until {{ k }}{% else %}<form method="post" action="{{ r.base }}/keep"><button class="btn" type="submit" aria-label="Keep {{ r.court }} {{ r.when }}">Keep</button></form>{% endif %}</td>
     <td>{% if r.may_post %}Yes{% else %}No{% endif %}</td>
     <td><div class="row">
-      <a class="btn" href="/console/clips/{{ r.id }}/wide.mp4" download aria-label="Download {{ r.court }} {{ r.when }}">Download</a>
-      <a class="btn" href="/console/clips/{{ r.id }}/vertical.mp4" download aria-label="Download vertical {{ r.court }} {{ r.when }}">Vertical</a>
-      <a class="btn" href="/console/clips/{{ r.id }}/wide.mp4?posting=1" aria-label="Download for posting {{ r.court }} {{ r.when }}">For posting</a>
-      <a class="btn btn-danger" href="/console/clips/{{ r.id }}/delete" aria-label="Delete {{ r.court }} {{ r.when }}">Delete</a>
+      <a class="btn" href="{{ r.base }}/wide.mp4" download aria-label="Download {{ r.court }} {{ r.when }}">Download</a>
+      <a class="btn" href="{{ r.base }}/vertical.mp4" download aria-label="Download vertical {{ r.court }} {{ r.when }}">Vertical</a>
+      <a class="btn" href="{{ r.base }}/wide.mp4?posting=1" aria-label="Download for posting {{ r.court }} {{ r.when }}">For posting</a>
+      <a class="btn btn-danger" href="{{ r.base }}/delete" aria-label="Delete {{ r.court }} {{ r.when }}">Delete</a>
     </div></td>
   </tr>
   {% endfor %}

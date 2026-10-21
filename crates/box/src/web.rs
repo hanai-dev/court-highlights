@@ -21,6 +21,11 @@ pub struct AppState {
     pub data: std::path::PathBuf,
     /// SHA-256 of the staff certificate, shown in Help so staff can check they reached their own box (A-124).
     pub fingerprint: String,
+    /// Venue key and siblings (FR-42); None for a box on its own.
+    pub venue: Option<crate::sync::Venue>,
+    /// What the siblings last reported (FR-41).
+    pub peers: crate::sync::Peers,
+    pub box_name: String,
 }
 
 // ------------------------------------------------------------------ errors
@@ -163,6 +168,7 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/healthz", get(|| async { "ok" }))
         .route("/static/{file}", get(static_file))
         .route("/setup", get(setup_form).post(setup_submit).layer(DefaultBodyLimit::max(UPLOAD_LIMIT)))
+        .route("/setup/restore", post(crate::backup::restore).layer(DefaultBodyLimit::max(UPLOAD_LIMIT)))
         .route("/console/signin", get(signin_form).post(signin_submit))
         .route("/console/signout", post(signout))
         .route("/console", get(crate::courts::home))
@@ -181,11 +187,15 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/console/clips/{id}/keep", post(crate::library::keep))
         .route("/console/clips/{id}/delete", get(crate::library::delete_confirm).post(crate::library::delete))
         .route("/console/clips/{id}/{file}", get(crate::library::file))
+        .route("/console/clips/peer/{name}/{id}/keep", post(crate::library::peer_keep))
+        .route("/console/clips/peer/{name}/{id}/delete", get(crate::library::peer_delete_confirm).post(crate::library::peer_delete))
+        .route("/console/clips/peer/{name}/{id}/{file}", get(crate::library::peer_file))
         .route("/console/log", get(crate::library::log))
         .route("/console/log.csv", get(crate::library::log_csv))
         .route("/console/settings", get(crate::venue::settings).post(crate::venue::save).layer(DefaultBodyLimit::max(UPLOAD_LIMIT)))
         .route("/console/settings/time", post(crate::venue::correct_time))
         .route("/console/settings/online", post(crate::venue::save_online))
+        .route("/console/settings/backup", post(crate::backup::export))
         .route("/console/help", get(crate::venue::help))
         .route("/console/signs", get(crate::venue::signs))
         .route("/console/logo", get(crate::clips::venue_logo))
@@ -393,11 +403,13 @@ struct SignInPage {
     venue: String,
     error: Option<&'static str>,
     signed_out: bool,
+    restored: bool,
 }
 
 #[derive(Deserialize)]
 struct SignInQuery {
     out: Option<String>,
+    restored: Option<String>,
 }
 
 async fn signin_form(State(app): State<AppState>, Query(q): Query<SignInQuery>) -> Page {
@@ -405,7 +417,7 @@ async fn signin_form(State(app): State<AppState>, Query(q): Query<SignInQuery>) 
     if !db::has_staff(&conn)? {
         return Ok(Redirect::to("/setup").into_response());
     }
-    html(SignInPage { venue: db::venue_name(&conn)?.unwrap_or_default(), error: None, signed_out: q.out.is_some() })
+    html(SignInPage { venue: db::venue_name(&conn)?.unwrap_or_default(), error: None, signed_out: q.out.is_some(), restored: q.restored.is_some() })
 }
 
 #[derive(Deserialize)]
@@ -426,6 +438,7 @@ async fn signin_submit(State(app): State<AppState>, Form(f): Form<SignInForm>) -
                 venue,
                 error: Some("Wrong username or password, or the account is locked. After 5 wrong tries, wait 15 minutes."),
                 signed_out: false,
+                restored: false,
             })?;
             *res.status_mut() = StatusCode::UNAUTHORIZED;
             Ok(res)
@@ -612,8 +625,8 @@ async fn staff_reset(State(app): State<AppState>, staff: Staff, Path(id): Path<i
         let conn = app.db.conn();
         let expires = (crate::clock::now() + chrono::Duration::hours(72)).to_rfc3339();
         conn.execute(
-            "UPDATE staff SET password_hash = ?1, must_change = 1, temp_expires_at = ?2, failures = 0, locked_until = NULL WHERE id = ?3",
-            params![auth::hash_password(&temp), expires, id],
+            "UPDATE staff SET password_hash = ?1, must_change = 1, temp_expires_at = ?2, failures = 0, locked_until = NULL, sessions_after = ?4 WHERE id = ?3",
+            params![auth::hash_password(&temp), expires, id, crate::clock::now().to_rfc3339()],
         )?;
         conn.execute("DELETE FROM staff_session WHERE staff_id = ?1", [id])?;
         db::log(&conn, Some(staff.id), &staff.username, "reset password", &username, "")?;
@@ -686,11 +699,14 @@ async fn change_password(State(app): State<AppState>, staff: Staff, headers: Hea
     parts.headers = headers;
     let keep = auth::cookie_token(&parts).map(|t| auth::sha256_hex(&t)).unwrap_or_default();
     let conn = app.db.conn();
+    // Other places this account was signed in lose access, on every box (sessions_after is synced); this browser
+    // stays signed in.
+    let now = crate::clock::now().to_rfc3339();
     conn.execute(
-        "UPDATE staff SET password_hash = ?1, must_change = 0, temp_expires_at = NULL WHERE id = ?2",
-        params![auth::hash_password(&f.new), staff.id],
+        "UPDATE staff SET password_hash = ?1, must_change = 0, temp_expires_at = NULL, sessions_after = ?3 WHERE id = ?2",
+        params![auth::hash_password(&f.new), staff.id, now],
     )?;
-    // Other places this account was signed in lose access; this browser stays signed in.
+    conn.execute("UPDATE staff_session SET signed_in_at = ?2 WHERE token_hash = ?1", params![keep, now])?;
     conn.execute("DELETE FROM staff_session WHERE staff_id = ?1 AND token_hash != ?2", params![staff.id, keep])?;
     db::log(&conn, Some(staff.id), &staff.username, "changed password", "staff", "")?;
     Ok(Redirect::to("/console/account?saved=1").into_response())

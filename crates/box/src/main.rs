@@ -1,6 +1,7 @@
 //! Court box server. See docs/HLD.md §2.
 
 mod auth;
+mod backup;
 mod clips;
 mod clock;
 mod courts;
@@ -12,6 +13,8 @@ mod judge;
 mod library;
 mod media;
 mod recorder;
+mod remote;
+mod sync;
 mod tls;
 mod uplink;
 mod venue;
@@ -38,8 +41,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     gstreamer::init()?;
     let db = db::Db::open(&data_dir.join("box.db"))?;
-    let correction: Option<i64> = rusqlite::OptionalExtension::optional(db.conn().query_row("SELECT clock_correction_ms FROM venue WHERE id = 1", [], |r| r.get(0)))?;
-    clock::load_correction(correction.unwrap_or(0));
+    let box_name = env("CH_BOX_NAME", "court-box");
+    uplink::set_config(&db, "box_name", &box_name)?;
+    let correction = uplink::config(&db, "clock_correction_ms")?.and_then(|c| c.parse().ok()).unwrap_or(0);
+    clock::load_correction(correction);
+    let venue = sync::from_env(&box_name).map_err(|e| e.to_string())?;
     rustls::crypto::ring::default_provider().install_default().map_err(|_| "TLS crypto provider already installed")?;
     let (cert, key) = tls::load_or_create(&data_dir)?;
     let recorders = recorder::Recorders::new(db.clone(), data_dir.join("footage"));
@@ -48,12 +54,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tracing::warn!(dropped, "dropped footage fragments left open by an unclean stop");
     }
     recorders.spawn_supervisor();
-    let state = web::AppState { db, recorders, data: data_dir.clone(), fingerprint: tls::fingerprint(&cert)? };
+    let state = web::AppState { db, recorders, data: data_dir.clone(), fingerprint: tls::fingerprint(&cert)?, venue, peers: Default::default(), box_name };
     clips::resume_saving(&state)?;
     games::recover(&state)?;
     games::spawn_watch(state.clone());
     janitor::spawn(state.clone());
     uplink::spawn(state.clone());
+    sync::spawn(state.clone());
+    if state.venue.is_some() {
+        let addr: SocketAddr = env("CH_SYNC_ADDR", "0.0.0.0:8444").parse()?;
+        let listener = tokio::net::TcpListener::bind(addr).await?;
+        let router = sync::router(state.clone());
+        tokio::spawn(async move {
+            if let Err(e) = axum::serve(listener, router).await {
+                tracing::error!(error = %e, "sync listener stopped");
+            }
+        });
+        tracing::info!(%addr, "venue sync listening");
+    }
     let tls = axum_server::tls_rustls::RustlsConfig::from_pem(cert.into_bytes(), key.into_bytes()).await?;
 
     let (player_handle, staff_handle) = (axum_server::Handle::new(), axum_server::Handle::new());

@@ -51,6 +51,14 @@
   <button class="btn" type="submit">Save box key</button>
 </form>
 
+<form method="post" action="/console/settings/backup" enctype="multipart/form-data" class="panel">
+  <h2>Settings backup</h2>
+  <p class="muted">Courts and cameras, logo, hours, settings and staff accounts (passwords only as hashes), in one encrypted file. Keep it somewhere safe: a replacement box at a one-box venue starts from it.</p>
+  <div class="field"><label for="backup-passphrase">Backup passphrase</label><input id="backup-passphrase" name="passphrase" type="password" required minlength="12" autocomplete="new-password" aria-describedby="bp-hint">
+    <p class="hint" id="bp-hint">At least 12 characters. Without it the backup can't be restored.</p></div>
+  <button class="btn" type="submit">Export settings backup</button>
+</form>
+
 <form method="post" action="/console/settings/time" class="panel">
   <h2>Box time</h2>
   <p>The box says it is <strong class="num" data-box-time>{{ now }}</strong>.</p>

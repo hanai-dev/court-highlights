@@ -160,6 +160,45 @@ CREATE TABLE box_config (name TEXT PRIMARY KEY, value TEXT NOT NULL);
 ALTER TABLE clip ADD COLUMN cloud_id INTEGER;
 ALTER TABLE clip ADD COLUMN uploaded_at TEXT;
 CREATE TABLE withdraw (cloud_id INTEGER PRIMARY KEY);
+"#, r#"
+ALTER TABLE venue ADD COLUMN updated_at TEXT NOT NULL DEFAULT '';
+ALTER TABLE venue ADD COLUMN updated_box TEXT NOT NULL DEFAULT '';
+ALTER TABLE venue ADD COLUMN time_leader TEXT NOT NULL DEFAULT '';
+ALTER TABLE staff ADD COLUMN version INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE staff ADD COLUMN updated_at TEXT NOT NULL DEFAULT '';
+ALTER TABLE staff ADD COLUMN updated_box TEXT NOT NULL DEFAULT '';
+ALTER TABLE staff ADD COLUMN sessions_after TEXT;
+ALTER TABLE court ADD COLUMN box TEXT NOT NULL DEFAULT '';
+ALTER TABLE court ADD COLUMN version INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE court ADD COLUMN updated_at TEXT NOT NULL DEFAULT '';
+ALTER TABLE court ADD COLUMN updated_box TEXT NOT NULL DEFAULT '';
+ALTER TABLE court ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0;
+-- Venue sync (sync.rs): a local edit leaves version and updated_at as they were, so these triggers stamp it;
+-- a row applied from a sibling box arrives with its own stamp and is left alone.
+CREATE TRIGGER venue_stamp AFTER UPDATE ON venue WHEN NEW.version = OLD.version AND NEW.updated_at = OLD.updated_at BEGIN
+  UPDATE venue SET version = OLD.version + 1, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+    updated_box = COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), '') WHERE id = NEW.id;
+END;
+CREATE TRIGGER venue_stamp_new AFTER INSERT ON venue WHEN NEW.updated_at = '' BEGIN
+  UPDATE venue SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), updated_box = COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), '') WHERE id = NEW.id;
+END;
+CREATE TRIGGER staff_stamp AFTER UPDATE ON staff WHEN NEW.version = OLD.version AND NEW.updated_at = OLD.updated_at BEGIN
+  UPDATE staff SET version = OLD.version + 1, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+    updated_box = COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), '') WHERE id = NEW.id;
+END;
+CREATE TRIGGER staff_stamp_new AFTER INSERT ON staff WHEN NEW.updated_at = '' BEGIN
+  UPDATE staff SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), updated_box = COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), '') WHERE id = NEW.id;
+END;
+CREATE TRIGGER court_stamp AFTER UPDATE ON court WHEN NEW.version = OLD.version AND NEW.updated_at = OLD.updated_at BEGIN
+  UPDATE court SET version = OLD.version + 1, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+    updated_box = COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), '') WHERE id = NEW.id;
+END;
+-- A court added on this box is recorded by this box.
+CREATE TRIGGER court_stamp_new AFTER INSERT ON court WHEN NEW.updated_at = '' BEGIN
+  UPDATE court SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+    updated_box = COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), ''),
+    box = CASE WHEN NEW.box = '' THEN COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), '') ELSE NEW.box END WHERE id = NEW.id;
+END;
 "#];
 
 fn migrate(conn: &Connection) -> rusqlite::Result<()> {

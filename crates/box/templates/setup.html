@@ -37,5 +37,12 @@
     </div>
     <button class="btn btn-primary" type="submit">Continue</button>
   </form>
+  <form method="post" action="/setup/restore" enctype="multipart/form-data" class="panel" aria-labelledby="restore-h">
+    <h2 id="restore-h">Replacing a box?</h2>
+    <p class="muted">Start from the settings backup the Owner exported. At a venue with other boxes, skip this: the new box gets everything from them within a minute.</p>
+    <div class="field"><label for="backup">Settings backup file</label><input id="backup" name="backup" type="file" accept=".chbackup" required></div>
+    <div class="field"><label for="passphrase">Backup passphrase</label><input id="passphrase" name="passphrase" type="password" required autocomplete="off"></div>
+    <button class="btn" type="submit">Restore from backup</button>
+  </form>
 </main>
 {% endblock %}

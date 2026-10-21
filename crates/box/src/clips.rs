@@ -28,9 +28,12 @@ fn court_by_code(db: &Db, code: &str) -> Result<Court, AppError> {
         return Err(AppError::NotFound);
     }
     db.conn()
-        .query_row("SELECT id, name, code, camera_url IS NOT NULL FROM court WHERE code = ?1", [code.to_ascii_uppercase()], |r| {
-            Ok(Court { id: r.get(0)?, name: r.get(1)?, code: r.get(2)?, has_camera: r.get(3)? })
-        })
+        .query_row(
+            "SELECT id, name, code, camera_url IS NOT NULL FROM court
+             WHERE code = ?1 AND deleted = 0 AND box = (SELECT value FROM box_config WHERE name = 'box_name')",
+            [code.to_ascii_uppercase()],
+            |r| Ok(Court { id: r.get(0)?, name: r.get(1)?, code: r.get(2)?, has_camera: r.get(3)? }),
+        )
         .optional()?
         .ok_or(AppError::NotFound)
 }
@@ -170,6 +173,9 @@ pub struct PageQuery {
 }
 
 pub async fn court_page(State(app): State<AppState>, Path(code): Path<String>, Query(q): Query<PageQuery>) -> Page {
+    if let Some(elsewhere) = hosted_elsewhere(&app, &code)? {
+        return Ok(Redirect::to(&elsewhere).into_response());
+    }
     let court = court_by_code(&app.db, &code)?;
     let (venue, has_logo): (String, bool) =
         app.db.conn().query_row("SELECT name, logo IS NOT NULL FROM venue WHERE id = 1", [], |r| Ok((r.get(0)?, r.get(1)?)))?;
@@ -199,6 +205,17 @@ pub async fn court_game(State(app): State<AppState>, Path(code): Path<String>) -
     let (recording, _) = player_status(&court_recording(&app, &court));
     let judge_on: bool = app.db.conn().query_row("SELECT judge_on FROM venue WHERE id = 1", [], |r| r.get(0))?;
     html(GameFragment { panel: crate::games::panel(&app, court.id, clock::now())?, code: court.code, recording, judge_on })
+}
+
+/// The court page of a court another box records, on that box (signs printed anywhere still work).
+fn hosted_elsewhere(app: &AppState, code: &str) -> Result<Option<String>, AppError> {
+    let host: Option<String> = app
+        .db
+        .conn()
+        .query_row("SELECT box FROM court WHERE code = ?1 AND deleted = 0", [code.to_ascii_uppercase()], |r| r.get(0))
+        .optional()?;
+    let Some(host) = host.filter(|h| *h != app.box_name) else { return Ok(None) };
+    Ok(crate::sync::peers_snapshot(app).into_iter().find(|p| p.name == host && !p.player_url.is_empty()).map(|p| format!("{}/c/{}", p.player_url, code.to_ascii_uppercase())))
 }
 
 pub async fn court_clips(State(app): State<AppState>, Path(code): Path<String>) -> Page {

@@ -60,6 +60,10 @@ impl Store {
         Ok(req.presigned(PresigningConfig::expires_in(Duration::from_secs(60 * 60))?).await?.uri().to_string())
     }
 
+    pub async fn reachable(&self) -> bool {
+        self.internal.head_bucket().bucket(&self.bucket).send().await.is_ok()
+    }
+
     /// Size of a stored object, or None when it is not there.
     pub async fn size(&self, key: &str) -> Option<i64> {
         self.internal.head_object().bucket(&self.bucket).key(key).send().await.ok().and_then(|h| h.content_length())

@@ -53,8 +53,9 @@ pub struct Filters {
 }
 
 /// Validated filters. Every value is checked before it reaches SQL or a link (all are bound as parameters too).
-struct Active {
-    court: Option<i64>,
+/// The court is chosen by its code, which is the same on every box at the venue.
+pub struct Active {
+    court: Option<String>,
     date: Option<chrono::NaiveDate>,
     kind: Option<&'static str>,
     kept: bool,
@@ -65,7 +66,7 @@ struct Active {
 impl Active {
     fn from(f: &Filters) -> Self {
         Self {
-            court: f.court.as_deref().and_then(|c| c.parse().ok()),
+            court: f.court.as_deref().filter(|c| c.len() == 8 && c.bytes().all(|b| b.is_ascii_alphanumeric())).map(str::to_ascii_uppercase),
             date: f.date.as_deref().and_then(|d| chrono::NaiveDate::parse_from_str(d, "%Y-%m-%d").ok()),
             kind: match f.kind.as_deref() {
                 Some("tap") => Some("tap"),
@@ -84,8 +85,15 @@ impl Active {
     }
 
     fn query(&self, page: i64) -> String {
+        let mut q = self.filter_query();
+        q.push(format!("page={page}"));
+        q.join("&")
+    }
+
+    /// The filters alone, for links and for asking sibling boxes the same question.
+    fn filter_query(&self) -> Vec<String> {
         let mut q = Vec::new();
-        if let Some(c) = self.court {
+        if let Some(c) = &self.court {
             q.push(format!("court={c}"));
         }
         if let Some(d) = self.date {
@@ -100,8 +108,7 @@ impl Active {
         if self.may_post {
             q.push("may_post=1".into());
         }
-        q.push(format!("page={page}"));
-        q.join("&")
+        q
     }
 
     /// [start, end) of the chosen day in Manila time, as stored text.
@@ -114,14 +121,67 @@ impl Active {
 
 const WHERE: &str = "FROM clip c JOIN court ct ON ct.id = c.court_id LEFT JOIN game g ON g.id = c.game_id
      WHERE c.state = 'ready'
-       AND (?1 IS NULL OR c.court_id = ?1)
+       AND (?1 IS NULL OR ct.code = ?1)
        AND (?2 IS NULL OR (c.made_at >= ?2 AND c.made_at < ?3))
        AND (?4 IS NULL OR c.kind = ?4 OR (?4 = 'highlight' AND c.kind = 'reel'))
        AND (?5 = 0 OR c.kept_at IS NOT NULL)
        AND (?6 = 0 OR g.may_post = 1)";
 
+/// One library row as boxes exchange it.
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct Row {
+    pub id: i64,
+    pub box_name: String,
+    pub court: String,
+    pub made: String,
+    pub made_ms: i64,
+    pub kind: String,
+    pub length_ms: i64,
+    pub kept_at: Option<String>,
+    pub may_post: bool,
+    pub hidden: bool,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct Rows {
+    pub rows: Vec<Row>,
+    pub total: i64,
+}
+
+/// This box's matching items, newest first, at most `limit` of them (a bounded number of queries, no N+1).
+fn local_rows(app: &AppState, a: &Active, limit: i64, offset: i64) -> Result<Rows, AppError> {
+    let (from, to) = a.day();
+    let conn = app.db.conn();
+    let total: i64 = conn.query_row(&format!("SELECT COUNT(*) {WHERE}"), params![a.court, from, to, a.kind, a.kept, a.may_post], |r| r.get(0))?;
+    let mut st = conn.prepare(&format!(
+        "SELECT c.id, ct.name, c.kind, c.made_at, c.window_end_ms - c.window_start_ms, c.kept_at, COALESCE(g.may_post, 0), c.hidden
+         {WHERE} ORDER BY c.made_at DESC, c.id DESC LIMIT ?7 OFFSET ?8"
+    ))?;
+    let rows = st
+        .query_map(params![a.court, from, to, a.kind, a.kept, a.may_post, limit, offset], |r| {
+            let made: String = r.get(3)?;
+            Ok(Row {
+                id: r.get(0)?,
+                box_name: app.box_name.clone(),
+                court: r.get(1)?,
+                made_ms: clock::parse(&made).map_or(0, |t| t.timestamp_millis()),
+                made,
+                kind: r.get(2)?,
+                length_ms: r.get(4)?,
+                kept_at: r.get(5)?,
+                may_post: r.get(6)?,
+                hidden: r.get(7)?,
+            })
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(Rows { rows, total })
+}
+
 pub struct LibraryRow {
     pub id: i64,
+    /// Where actions go: "/console/clips/{id}" here, "/console/clips/peer/{box}/{id}" on a sibling.
+    pub base: String,
+    pub box_name: String,
     pub court: String,
     pub when: String,
     pub kind: &'static str,
@@ -132,7 +192,7 @@ pub struct LibraryRow {
 }
 
 pub struct CourtOption {
-    pub id: i64,
+    pub code: String,
     pub name: String,
     pub selected: bool,
 }
@@ -154,48 +214,60 @@ struct LibraryPage {
     prev: Option<String>,
     next: Option<String>,
     notice: Option<&'static str>,
+    venue_wide: bool,
+    missing: Vec<String>,
 }
 
 pub async fn library(State(app): State<AppState>, staff: Staff, Query(f): Query<Filters>) -> Page {
     let a = Active::from(&f);
-    let (from, to) = a.day();
-    let (rows, total, courts) = {
+    // Across the venue's boxes (FR-41): each answers the first `page × 50` of its matches; merged newest first.
+    let window = a.page * PAGE_SIZE;
+    let mut all = local_rows(&app, &a, window, 0)?;
+    let mut missing = Vec::new();
+    let ask = format!("/sync/clips?{}", a.filter_query().into_iter().chain([format!("limit={window}")]).collect::<Vec<_>>().join("&"));
+    for (url, name) in crate::remote::reachable(&app) {
+        match crate::remote::get_sealed::<Rows>(&app, &url, &ask).await {
+            Ok(r) => {
+                all.total += r.total;
+                all.rows.extend(r.rows);
+            }
+            Err(e) => {
+                tracing::warn!(peer = %name, error = ?e, "library: sibling box did not answer");
+                missing.push(name);
+            }
+        }
+    }
+    missing.extend(crate::sync::peers_snapshot(&app).into_iter().filter(|p| !crate::remote::reachable(&app).iter().any(|(_, n)| *n == p.name)).map(|p| p.name));
+    all.rows.sort_by(|x, y| y.made_ms.cmp(&x.made_ms).then_with(|| x.box_name.cmp(&y.box_name)).then(y.id.cmp(&x.id)));
+    let total = all.total;
+    let courts: Vec<CourtOption> = {
         let conn = app.db.conn();
-        let args = params![a.court, from, to, a.kind, a.kept, a.may_post];
-        let total: i64 = conn.query_row(&format!("SELECT COUNT(*) {WHERE}"), args, |r| r.get(0))?;
-        let mut st = conn.prepare(&format!(
-            "SELECT c.id, ct.name, c.kind, c.made_at, c.window_end_ms - c.window_start_ms, c.kept_at, COALESCE(g.may_post, 0), c.hidden
-             {WHERE} ORDER BY c.made_at DESC, c.id DESC LIMIT {PAGE_SIZE} OFFSET ?7"
-        ))?;
-        let rows = st
-            .query_map(params![a.court, from, to, a.kind, a.kept, a.may_post, (a.page - 1) * PAGE_SIZE], |r| {
-                Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?, r.get::<_, String>(3)?, r.get::<_, i64>(4)?, r.get::<_, Option<String>>(5)?, r.get::<_, bool>(6)?, r.get::<_, bool>(7)?))
-            })?
-            .collect::<Result<Vec<_>, _>>()?;
-        let mut cs = conn.prepare("SELECT id, name FROM court ORDER BY position, id")?;
-        let courts = cs
-            .query_map([], |r| Ok(CourtOption { id: r.get(0)?, name: r.get(1)?, selected: false }))?
-            .collect::<Result<Vec<_>, _>>()?;
-        (rows, total, courts)
+        let mut cs = conn.prepare("SELECT code, name FROM court WHERE deleted = 0 ORDER BY position, id")?;
+        cs.query_map([], |r| Ok(CourtOption { code: r.get(0)?, name: r.get(1)?, selected: false }))?.collect::<Result<Vec<_>, _>>()?
     };
-    let rows = rows
+    let rows = all
+        .rows
         .into_iter()
-        .map(|(id, court, kind, made, length, kept, may_post, hidden)| LibraryRow {
-            id,
-            court,
-            when: clock::parse(&made).map(when_label).unwrap_or(made),
-            kind: kind_label(&kind),
-            length: length_label(length),
-            kept: kept.and_then(|k| clock::parse(&k)).map(|k| date_label(ch_core::keep_expires_at(k))),
-            may_post,
-            hidden,
+        .skip(((a.page - 1) * PAGE_SIZE) as usize)
+        .take(PAGE_SIZE as usize)
+        .map(|r| LibraryRow {
+            base: if r.box_name == app.box_name { format!("/console/clips/{}", r.id) } else { format!("/console/clips/peer/{}/{}", r.box_name, r.id) },
+            id: r.id,
+            box_name: r.box_name,
+            court: r.court,
+            when: clock::parse(&r.made).map(when_label).unwrap_or(r.made),
+            kind: kind_label(&r.kind),
+            length: length_label(r.length_ms),
+            kept: r.kept_at.and_then(|k| clock::parse(&k)).map(|k| date_label(ch_core::keep_expires_at(k))),
+            may_post: r.may_post,
+            hidden: r.hidden,
         })
         .collect::<Vec<_>>();
     let first = if total == 0 { 0 } else { (a.page - 1) * PAGE_SIZE + 1 };
     let last = (first + rows.len() as i64 - 1).max(0);
     html(LibraryPage {
         shell: shell(&app.db, &staff, "clips")?,
-        courts: courts.into_iter().map(|c| CourtOption { selected: Some(c.id) == a.court, ..c }).collect(),
+        courts: courts.into_iter().map(|c| CourtOption { selected: Some(&c.code) == a.court.as_ref(), ..c }).collect(),
         date: a.date.map(|d| d.to_string()).unwrap_or_default(),
         kind: a.kind.unwrap_or(""),
         kept: a.kept,
@@ -210,6 +282,8 @@ pub async fn library(State(app): State<AppState>, staff: Staff, Query(f): Query<
             "deleted" => "Clip deleted.",
             _ => "Kept for 1 year.",
         }),
+        venue_wide: app.venue.is_some(),
+        missing,
         rows,
     })
 }
@@ -247,11 +321,16 @@ fn item(app: &AppState, id: i64) -> Result<Item, AppError> {
     Ok(Item { court: row.0, kind: row.1, made: clock::parse(&row.2).ok_or(AppError::NotFound)?, may_post: row.3, token: row.4, wide: row.5, vertical: row.6 })
 }
 
-pub async fn keep(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>) -> Page {
-    let it = item(&app, id)?;
+fn do_keep(app: &AppState, id: i64, actor_id: Option<i64>, actor: &str) -> Result<(), AppError> {
+    let it = item(app, id)?;
     let conn = app.db.conn();
     conn.execute("UPDATE clip SET kept_at = ?1 WHERE id = ?2 AND kept_at IS NULL", params![clock::now().to_rfc3339(), id])?;
-    db::log(&conn, Some(staff.id), &staff.username, "kept", &it.label(), "")?;
+    db::log(&conn, actor_id, actor, "kept", &it.label(), "")?;
+    Ok(())
+}
+
+pub async fn keep(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>) -> Page {
+    do_keep(&app, id, Some(staff.id), &staff.username)?;
     Ok(Redirect::to("/console/clips?notice=kept").into_response())
 }
 
@@ -279,12 +358,17 @@ pub async fn delete_confirm(State(app): State<AppState>, staff: Staff, Path(id):
 }
 
 pub async fn delete(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>) -> Page {
-    let it = item(&app, id)?;
+    do_delete(&app, id, Some(staff.id), &staff.username)?;
+    Ok(Redirect::to("/console/clips?notice=deleted").into_response())
+}
+
+fn do_delete(app: &AppState, id: i64, actor_id: Option<i64>, actor: &str) -> Result<(), AppError> {
+    let it = item(app, id)?;
     {
         let conn = app.db.conn();
         crate::uplink::queue_withdraw(&conn, id)?;
         conn.execute("DELETE FROM clip WHERE id = ?1", [id])?;
-        db::log(&conn, Some(staff.id), &staff.username, "deleted", &it.label(), "")?;
+        db::log(&conn, actor_id, actor, "deleted", &it.label(), "")?;
     }
     let dir = app.data.join("clips").join(&it.token);
     if let Err(e) = std::fs::remove_dir_all(&dir)
@@ -292,7 +376,7 @@ pub async fn delete(State(app): State<AppState>, staff: Staff, Path(id): Path<i6
     {
         tracing::error!(clip = id, error = %e, "deleted clip files could not be removed");
     }
-    Ok(Redirect::to("/console/clips?notice=deleted").into_response())
+    Ok(())
 }
 
 #[derive(Template)]
@@ -332,8 +416,7 @@ pub async fn file(
                 href: format!("/console/clips/{id}/{file}?posting=1&confirm=1"),
             });
         }
-        let detail = if it.may_post { "players allowed posting" } else { "players did NOT allow posting" };
-        db::log(&app.db.conn(), Some(staff.id), &staff.username, "downloaded for posting", &it.label(), detail)?;
+        log_posting(&app, &it, Some(staff.id), &staff.username)?;
     }
     let mut res = match tower_http::services::ServeFile::new(&path).try_call(req).await {
         Ok(r) => r.into_response(),
@@ -349,6 +432,167 @@ pub async fn file(
         res.headers_mut().insert(header::CONTENT_DISPOSITION, value);
     }
     Ok(res)
+}
+
+fn log_posting(app: &AppState, it: &Item, actor_id: Option<i64>, actor: &str) -> Result<(), AppError> {
+    let detail = if it.may_post { "players allowed posting" } else { "players did NOT allow posting" };
+    db::log(&app.db.conn(), actor_id, actor, "downloaded for posting", &it.label(), detail)?;
+    Ok(())
+}
+
+/// The file to serve for one of this box's clips.
+fn file_path(app: &AppState, it: &Item, file: &str) -> Result<String, AppError> {
+    match file {
+        "wide.mp4" => it.wide.clone().ok_or(AppError::NotFound),
+        "vertical.mp4" => it.vertical.clone().ok_or(AppError::NotFound),
+        "thumb.jpg" => Ok(app.data.join("clips").join(&it.token).join("thumb.jpg").to_string_lossy().into_owned()),
+        _ => Err(AppError::NotFound),
+    }
+}
+
+fn download_name(it: &Item, file: &str) -> String {
+    format!("{}-{}-{}.mp4", crate::clips::slug(&it.court), it.made.format("%Y%m%d-%H%M%S"), file.replace(".mp4", ""))
+}
+
+// ------------------------------------------------------------------ a sibling box's clips, through this console (FR-41)
+
+fn sibling(app: &AppState, name: &str) -> Result<String, AppError> {
+    crate::remote::peer_url(app, name).ok_or_else(|| AppError::BadRequest(format!("{name} can't be reached right now. Try again in a minute.")))
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct Meta {
+    label: String,
+    kind: String,
+    may_post: bool,
+}
+
+pub async fn peer_keep(State(app): State<AppState>, staff: Staff, Path((name, id)): Path<(String, i64)>) -> Page {
+    let url = sibling(&app, &name)?;
+    crate::remote::post(&app, &url, &format!("/sync/clips/{id}/keep?actor={}", crate::remote::enc(&staff.username))).await?;
+    Ok(Redirect::to("/console/clips?notice=kept").into_response())
+}
+
+pub async fn peer_delete_confirm(State(app): State<AppState>, staff: Staff, Path((name, id)): Path<(String, i64)>) -> Page {
+    let url = sibling(&app, &name)?;
+    let m: Meta = crate::remote::get_sealed(&app, &url, &format!("/sync/clips/{id}/meta")).await?;
+    html(ConfirmPage {
+        shell: shell(&app.db, &staff, "clips")?,
+        title: format!("Delete this {}?", kind_label(&m.kind).to_lowercase()),
+        consequence: format!("{} is removed from the court page and the library and is never sent. It can't be recovered.", m.label),
+        action: format!("/console/clips/peer/{name}/{id}/delete"),
+        button: "Delete".into(),
+        back: "/console/clips".into(),
+    })
+}
+
+pub async fn peer_delete(State(app): State<AppState>, staff: Staff, Path((name, id)): Path<(String, i64)>) -> Page {
+    let url = sibling(&app, &name)?;
+    crate::remote::post(&app, &url, &format!("/sync/clips/{id}/delete?actor={}", crate::remote::enc(&staff.username))).await?;
+    Ok(Redirect::to("/console/clips?notice=deleted").into_response())
+}
+
+pub async fn peer_file(State(app): State<AppState>, staff: Staff, Path((name, id, file)): Path<(String, i64, String)>, Query(q): Query<FileQuery>) -> Result<Response, AppError> {
+    let url = sibling(&app, &name)?;
+    let mut path = format!("/sync/clips/{id}/{}", crate::remote::enc(&file));
+    if q.posting.is_some() && file.ends_with(".mp4") {
+        let m: Meta = crate::remote::get_sealed(&app, &url, &format!("/sync/clips/{id}/meta")).await?;
+        if !m.may_post && q.confirm.is_none() {
+            return html(PostingWarning { shell: shell(&app.db, &staff, "clips")?, label: m.label, href: format!("/console/clips/peer/{name}/{id}/{file}?posting=1&confirm=1") });
+        }
+        path = format!("{path}?posting=1&actor={}", crate::remote::enc(&staff.username));
+    }
+    let res = crate::remote::get(&app, &url, &path).await?;
+    let mut out = Response::builder().status(StatusCode::OK);
+    for h in [header::CONTENT_TYPE, header::CONTENT_DISPOSITION, header::CONTENT_LENGTH] {
+        if let Some(v) = res.headers().get(&h) {
+            out = out.header(h, v);
+        }
+    }
+    out.body(axum::body::Body::from_stream(res.bytes_stream())).map_err(|e| AppError::Internal(e.to_string()))
+}
+
+// ------------------------------------------------------------------ what this box answers its siblings (sync listener)
+
+#[derive(Deserialize)]
+pub struct SyncList {
+    #[serde(flatten)]
+    filters: Filters,
+    limit: Option<i64>,
+}
+
+#[derive(Deserialize)]
+pub struct Actor {
+    actor: Option<String>,
+    posting: Option<String>,
+}
+
+fn actor_name(a: &Actor, peer: &str) -> String {
+    format!("{} (via {peer})", a.actor.as_deref().unwrap_or("staff").chars().take(40).collect::<String>())
+}
+
+pub async fn sync_clips(State(app): State<AppState>, req: Request) -> Response {
+    let Some(venue) = crate::sync::authorized(&app, &req) else { return StatusCode::UNAUTHORIZED.into_response() };
+    let Ok(Query(q)) = Query::<SyncList>::try_from_uri(req.uri()) else { return StatusCode::BAD_REQUEST.into_response() };
+    let a = Active::from(&q.filters);
+    match local_rows(&app, &a, q.limit.unwrap_or(PAGE_SIZE).clamp(1, 50 * PAGE_SIZE), 0).and_then(|r| serde_json::to_vec(&r).map_err(|e| AppError::Internal(e.to_string()))) {
+        Ok(body) => venue.seal(&body).into_response(),
+        Err(e) => e.into_response(),
+    }
+}
+
+pub async fn sync_meta(State(app): State<AppState>, Path(id): Path<i64>, req: Request) -> Response {
+    let Some(venue) = crate::sync::authorized(&app, &req) else { return StatusCode::UNAUTHORIZED.into_response() };
+    match item(&app, id).and_then(|it| serde_json::to_vec(&Meta { label: it.label(), kind: it.kind.clone(), may_post: it.may_post }).map_err(|e| AppError::Internal(e.to_string()))) {
+        Ok(body) => venue.seal(&body).into_response(),
+        Err(e) => e.into_response(),
+    }
+}
+
+pub async fn sync_keep(State(app): State<AppState>, Path(id): Path<i64>, req: Request) -> Response {
+    let Some(_) = crate::sync::authorized(&app, &req) else { return StatusCode::UNAUTHORIZED.into_response() };
+    let Ok(Query(a)) = Query::<Actor>::try_from_uri(req.uri()) else { return StatusCode::BAD_REQUEST.into_response() };
+    match do_keep(&app, id, None, &actor_name(&a, "another box")) {
+        Ok(()) => StatusCode::NO_CONTENT.into_response(),
+        Err(e) => e.into_response(),
+    }
+}
+
+pub async fn sync_delete(State(app): State<AppState>, Path(id): Path<i64>, req: Request) -> Response {
+    let Some(_) = crate::sync::authorized(&app, &req) else { return StatusCode::UNAUTHORIZED.into_response() };
+    let Ok(Query(a)) = Query::<Actor>::try_from_uri(req.uri()) else { return StatusCode::BAD_REQUEST.into_response() };
+    match do_delete(&app, id, None, &actor_name(&a, "another box")) {
+        Ok(()) => StatusCode::NO_CONTENT.into_response(),
+        Err(e) => e.into_response(),
+    }
+}
+
+pub async fn sync_file(State(app): State<AppState>, Path((id, file)): Path<(i64, String)>, req: Request) -> Response {
+    let Some(_) = crate::sync::authorized(&app, &req) else { return StatusCode::UNAUTHORIZED.into_response() };
+    let Ok(Query(a)) = Query::<Actor>::try_from_uri(req.uri()) else { return StatusCode::BAD_REQUEST.into_response() };
+    let it = match item(&app, id) {
+        Ok(it) => it,
+        Err(e) => return e.into_response(),
+    };
+    let path = match file_path(&app, &it, &file) {
+        Ok(p) => p,
+        Err(e) => return e.into_response(),
+    };
+    if a.posting.is_some()
+        && let Err(e) = log_posting(&app, &it, None, &actor_name(&a, "another box"))
+    {
+        return e.into_response();
+    }
+    let mut res = match tower_http::services::ServeFile::new(&path).try_call(req).await {
+        Ok(r) => r.into_response(),
+        Err(_) => return StatusCode::NOT_FOUND.into_response(),
+    };
+    if file.ends_with(".mp4")
+        && let Ok(v) = HeaderValue::from_str(&format!("attachment; filename=\"{}\"", download_name(&it, &file)))
+    {
+        res.headers_mut().insert(header::CONTENT_DISPOSITION, v);
+    }
+    res
 }
 
 // ------------------------------------------------------------------ activity log (FR-35)

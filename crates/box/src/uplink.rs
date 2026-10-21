@@ -78,7 +78,7 @@ async fn checkin(app: &AppState) -> Result<(), Error> {
     let Some(c) = Client::new(app)? else { return Ok(()) };
     let courts: Vec<(i64, bool)> = {
         let conn = app.db.conn();
-        let mut st = conn.prepare("SELECT id, camera_url IS NOT NULL FROM court")?;
+        let mut st = conn.prepare("SELECT id, camera_url IS NOT NULL FROM court WHERE deleted = 0 AND box = (SELECT value FROM box_config WHERE name = 'box_name')")?;
         st.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<Result<_, _>>()?
     };
     let recording = courts.iter().filter(|(id, cam)| matches!(app.recorders.status(*id, *cam), CourtStatus::Recording { .. })).count();
@@ -100,7 +100,7 @@ async fn checkin(app: &AppState) -> Result<(), Error> {
     let conn = app.db.conn();
     let was: bool = conn.query_row("SELECT online_on FROM venue WHERE id = 1", [], |r| r.get(0))?;
     if was != answer.online_on {
-        conn.execute("UPDATE venue SET online_on = ?1, version = version + 1 WHERE id = 1", [answer.online_on])?;
+        conn.execute("UPDATE venue SET online_on = ?1 WHERE id = 1", [answer.online_on])?;
         let action = if answer.online_on { "online features switched on" } else { "online features switched off" };
         db::log(&conn, None, "fleet", action, "", "")?;
     }

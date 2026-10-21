@@ -104,8 +104,9 @@ fn holds(app: &AppState) -> Result<Vec<HoldRow>, AppError> {
 pub async fn footage(State(app): State<AppState>, staff: Staff, Query(s): Query<Search>) -> Page {
     let courts: Vec<(i64, String)> = {
         let conn = app.db.conn();
-        let mut st = conn.prepare("SELECT id, name FROM court ORDER BY position, id")?;
-        st.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<Result<_, _>>()?
+        // Footage lives on the box that records the court.
+        let mut st = conn.prepare("SELECT id, name FROM court WHERE deleted = 0 AND box = ?1 ORDER BY position, id")?;
+        st.query_map([&app.box_name], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<Result<_, _>>()?
     };
     let searched = s.court.is_some() || s.date.is_some();
     let mut error = None;

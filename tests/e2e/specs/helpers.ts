@@ -254,7 +254,7 @@ export async function waitCourtStatus(page: Page, court: string, pattern: RegExp
   await expect
     .poll(async () => {
       await page.goto(`${STAFF}/console`);
-      return (await page.locator(`tr[data-court="${court}"] [data-court-status]`).textContent()) ?? '';
+      return (await page.locator(`tr[data-court="${court}"] [data-court-status]`).textContent({ timeout: 1000 }).catch(() => '')) ?? '';
     }, { timeout: timeoutMs, intervals: [500] })
     .toMatch(pattern);
   return Date.now() - started;

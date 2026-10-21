@@ -135,7 +135,10 @@ impl Recorders {
         let open = self.hours()?.is_some_and(|h| h.is_open(clock::now()));
         let wanted: HashMap<i64, CameraConfig> = {
             let conn = self.db.conn();
-            let mut st = conn.prepare("SELECT id, camera_url, camera_user, camera_password FROM court WHERE camera_url IS NOT NULL")?;
+            let mut st = conn.prepare(
+                "SELECT id, camera_url, camera_user, camera_password FROM court
+                 WHERE camera_url IS NOT NULL AND deleted = 0 AND box = (SELECT value FROM box_config WHERE name = 'box_name')",
+            )?;
             st.query_map([], |r| {
                 Ok((
                     r.get::<_, i64>(0)?,

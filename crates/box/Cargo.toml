@@ -31,6 +31,8 @@ rusqlite = { version = "0.40", features = ["bundled"] }
 askama = "0.16"
 argon2 = "0.6"
 sha2 = "0.11"
+hmac = "0.13"
+chacha20poly1305 = "0.10"
 getrandom = "0.4"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }

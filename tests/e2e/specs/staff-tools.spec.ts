@@ -186,7 +186,8 @@ test('footage: find, hold against the 4-hour overwrite, export, record missing f
   await advanceClock(page.request, 4 * 3600_000 + 5 * 60_000);
   await page.waitForTimeout(70_000); // the overwrite runs every minute
   const left = boxExec('ls /data/footage/court-1/').trim().split('\n');
-  const heldStart = now.getTime() - 3 * 60_000;
+  // The form takes whole minutes, so the hold starts at the minute boundary at or before now − 3 min.
+  const heldStart = Math.floor((now.getTime() - 3 * 60_000) / 60_000) * 60_000;
   const protectedFiles = held.filter((f) => Number(f.replace('.mp4', '')) >= heldStart - 10_000);
   expect(protectedFiles.length).toBeGreaterThan(0);
   for (const f of protectedFiles) expect(left, `${f} is held`).toContain(f);

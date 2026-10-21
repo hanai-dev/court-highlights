@@ -2,6 +2,7 @@
 
 use crate::auth::Staff;
 use crate::recorder::{CourtStatus, disk_use, temperature_c};
+use crate::sync::{BoxHealth, CourtLive};
 use crate::web::{AppError, AppState, Page, Shell, html, shell};
 use crate::{clock, db};
 use askama::Template;
@@ -29,55 +30,112 @@ pub struct CourtLine {
     pub id: i64,
     pub name: String,
     pub code: String,
+    pub hosted_by: String,
     pub ok: bool,
     pub status: String,
     pub last_clip: String,
 }
 
-fn court_lines(app: &AppState) -> Result<Vec<CourtLine>, AppError> {
-    let rows: Vec<(i64, String, String, bool, Option<String>)> = {
+/// A sibling not heard from for this long is shown as unreachable (3 sync rounds).
+const UNREACHABLE_AFTER_S: i64 = 45;
+
+fn this_box_health(app: &AppState) -> BoxHealth {
+    let disk = disk_use(&app.data);
+    BoxHealth {
+        disk_warning: disk.as_ref().is_some_and(|d| d.used_pct >= ch_core::DISK_WARN_PCT),
+        disk: disk.map_or("not available".into(), |d| format!("{} % used, {:.0} GB free", d.used_pct, d.free_gb)),
+        temperature: temperature_c().map_or("not available".into(), |c| format!("{c:.0} °C")),
+        version: env!("CARGO_PKG_VERSION").into(),
+    }
+}
+
+/// The courts this box records, live, and its own health — what it tells its siblings (FR-41).
+pub fn local_live(app: &AppState) -> rusqlite::Result<(Vec<CourtLive>, BoxHealth)> {
+    let rows: Vec<(i64, String, bool, Option<String>)> = {
         let conn = app.db.conn();
         let mut st = conn.prepare(
-            "SELECT c.id, c.name, c.code, c.camera_url IS NOT NULL,
-                    (SELECT MAX(made_at) FROM clip WHERE court_id = c.id AND kind = 'tap')
-             FROM court c ORDER BY c.position, c.id",
+            "SELECT c.id, c.code, c.camera_url IS NOT NULL, (SELECT MAX(made_at) FROM clip WHERE court_id = c.id AND kind = 'tap')
+             FROM court c WHERE c.deleted = 0 AND c.box = ?1",
         )?;
-        st.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get::<_, Option<String>>(4)?)))?.collect::<Result<_, _>>()?
+        st.query_map([&app.box_name], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?.collect::<Result<_, _>>()?
     };
+    let live = rows
+        .into_iter()
+        .map(|(id, code, cam, last)| {
+            let (ok, status) = status_label(&app.recorders.status(id, cam));
+            CourtLive { code, ok, status, last_clip: last.and_then(|l| clock::parse(&l)).map_or_else(|| "None yet".into(), crate::library::when_label) }
+        })
+        .collect();
+    Ok((live, this_box_health(app)))
+}
+
+pub struct BoxLine {
+    pub name: String,
+    pub this_box: bool,
+    pub reachable: bool,
+    pub since: String,
+    pub health: BoxHealth,
+}
+
+fn reachable(p: &crate::sync::Peer) -> bool {
+    p.last_ok.is_some_and(|t| (clock::now() - t).num_seconds() <= UNREACHABLE_AFTER_S)
+}
+
+/// Every box at the venue, this one first; siblings show their last report or "unreachable since …".
+fn box_lines(app: &AppState) -> Vec<BoxLine> {
+    let mut out = vec![BoxLine { name: app.box_name.clone(), this_box: true, reachable: true, since: String::new(), health: this_box_health(app) }];
+    for p in crate::sync::peers_snapshot(app) {
+        let up = reachable(&p);
+        out.push(BoxLine { since: p.last_ok.map_or_else(String::new, time_label), name: p.name, this_box: false, reachable: up, health: p.health });
+    }
+    for addr in crate::sync::silent_peers(app) {
+        out.push(BoxLine { name: addr, this_box: false, reachable: false, since: String::new(), health: BoxHealth::default() });
+    }
+    out
+}
+
+/// All the venue's courts: this box's live, the siblings' as last reported (FR-41).
+fn court_lines(app: &AppState) -> Result<Vec<CourtLine>, AppError> {
+    let rows: Vec<(i64, String, String, String)> = {
+        let conn = app.db.conn();
+        let mut st = conn.prepare("SELECT id, name, code, box FROM court WHERE deleted = 0 ORDER BY position, id")?;
+        st.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?.collect::<Result<_, _>>()?
+    };
+    let (mine, _) = local_live(app)?;
+    let peers = crate::sync::peers_snapshot(app);
     Ok(rows
         .into_iter()
-        .map(|(id, name, code, has_camera, last)| {
-            let (ok, status) = status_label(&app.recorders.status(id, has_camera));
-            let last_clip = last.and_then(|l| crate::clock::parse(&l)).map_or_else(|| "None yet".into(), crate::library::when_label);
-            CourtLine { id, name, code, ok, status, last_clip }
+        .map(|(id, name, code, hosted_by)| {
+            let local = hosted_by == app.box_name;
+            let (ok, status, last_clip) = if local {
+                mine.iter().find(|l| l.code == code).map_or((false, "No camera".into(), String::new()), |l| (l.ok, l.status.clone(), l.last_clip.clone()))
+            } else {
+                match peers.iter().find(|p| p.name == hosted_by) {
+                    Some(p) if reachable(p) => {
+                        p.live.iter().find(|l| l.code == code).map_or((false, "No camera".into(), String::new()), |l| (l.ok, l.status.clone(), l.last_clip.clone()))
+                    }
+                    Some(p) => (false, format!("Box unreachable since {}", p.last_ok.map_or_else(String::new, time_label)), String::new()),
+                    None => (false, "Box unreachable".into(), String::new()),
+                }
+            };
+            CourtLine { id, name, code, hosted_by, ok, status, last_clip }
         })
         .collect())
 }
 
-// ------------------------------------------------------------------ console home with health (FR-36)
+// ------------------------------------------------------------------ console home with health (FR-36, FR-41)
 
 #[derive(Template)]
 #[template(path = "home.html")]
 struct HomePage {
     shell: Shell,
     courts: Vec<CourtLine>,
-    disk: String,
-    disk_warning: bool,
-    temperature: String,
-    version: &'static str,
+    boxes: Vec<BoxLine>,
+    venue_wide: bool,
 }
 
 pub async fn home(State(app): State<AppState>, staff: Staff) -> Page {
-    let courts = court_lines(&app)?;
-    let disk = disk_use(&app.data);
-    html(HomePage {
-        shell: shell(&app.db, &staff, "home")?,
-        courts,
-        disk_warning: disk.as_ref().is_some_and(|d| d.used_pct >= ch_core::DISK_WARN_PCT),
-        disk: disk.map_or("not available".into(), |d| format!("{} % used, {:.0} GB free", d.used_pct, d.free_gb)),
-        temperature: temperature_c().map_or("not available".into(), |c| format!("{c:.0} °C")),
-        version: env!("CARGO_PKG_VERSION"),
-    })
+    html(HomePage { shell: shell(&app.db, &staff, "home")?, courts: court_lines(&app)?, boxes: box_lines(&app), venue_wide: app.venue.is_some() })
 }
 
 // ------------------------------------------------------------------ courts list and form (FR-30)
@@ -186,15 +244,16 @@ pub async fn create(State(app): State<AppState>, staff: Staff, Form(input): Form
 
 pub async fn edit(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>) -> Page {
     staff.require_owner()?;
-    let row: (String, String, Option<String>, Option<String>, Option<String>) = app
+    let row: (String, String, Option<String>, Option<String>, Option<String>, String) = app
         .db
         .conn()
-        .query_row("SELECT name, code, camera_url, camera_user, camera_password FROM court WHERE id = ?1", [id], |r| {
-            Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?))
+        .query_row("SELECT name, code, camera_url, camera_user, camera_password, box FROM court WHERE id = ?1 AND deleted = 0", [id], |r| {
+            Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?))
         })
         .optional()?
         .ok_or(AppError::NotFound)?;
-    let has_camera = row.2.is_some();
+    // Only the box that records the court can show its camera.
+    let has_camera = row.2.is_some() && row.5 == app.box_name;
     let (_, status) = crate::courts::status_label(&app.recorders.status(id, has_camera));
     html(CourtForm {
         shell: shell(&app.db, &staff, "courts")?,
@@ -258,10 +317,12 @@ pub async fn delete(State(app): State<AppState>, staff: Staff, Path(id): Path<i6
     staff.require_owner()?;
     let (name, paths): (String, Vec<String>) = {
         let conn = app.db.conn();
-        let name: String = conn.query_row("SELECT name FROM court WHERE id = ?1", [id], |r| r.get(0)).optional()?.ok_or(AppError::NotFound)?;
+        let name: String = conn.query_row("SELECT name FROM court WHERE id = ?1 AND deleted = 0", [id], |r| r.get(0)).optional()?.ok_or(AppError::NotFound)?;
         let mut st = conn.prepare("SELECT path FROM segment WHERE court_id = ?1")?;
         let paths = st.query_map([id], |r| r.get(0))?.collect::<Result<_, _>>()?;
-        conn.execute("DELETE FROM court WHERE id = ?1", [id])?;
+        // A tombstone, so the deletion reaches the venue's other boxes (FR-42).
+        conn.execute("DELETE FROM segment WHERE court_id = ?1", [id])?;
+        conn.execute("UPDATE court SET deleted = 1, camera_url = NULL, camera_user = NULL, camera_password = NULL WHERE id = ?1", [id])?;
         db::log(&conn, Some(staff.id), &staff.username, "deleted court", &name, "")?;
         (name, paths)
     };

@@ -100,10 +100,12 @@ pub fn verify(db: &Db, username: &str, password: &str) -> rusqlite::Result<Optio
     let temp_expired = must_change && temp_expires.as_deref().and_then(clock::parse).is_some_and(|t| now >= t);
     let ok = active && !temp_expired && verify_password(password, &hash);
     let outcome = lock.attempt(now, ok);
-    conn.execute(
-        "UPDATE staff SET failures = ?1, locked_until = ?2 WHERE id = ?3",
-        params![lock.consecutive_failures, lock.locked_until.map(|t| t.to_rfc3339()), id],
-    )?;
+    let (new_failures, new_lock) = (lock.consecutive_failures as i64, lock.locked_until.map(|t| t.to_rfc3339()));
+    // Write only real changes: a no-op write would stamp the row as newer than a lock still on its way from a
+    // sibling box, and the venue sync would then drop that lock (FR-28 "on every box").
+    if new_failures != failures || new_lock != locked_until {
+        conn.execute("UPDATE staff SET failures = ?1, locked_until = ?2 WHERE id = ?3", params![new_failures, new_lock, id])?;
+    }
     if outcome != SignIn::Accepted {
         let why = match outcome {
             SignIn::Locked => "locked",
@@ -168,7 +170,7 @@ where
             .query_row(
                 "SELECT s.id, s.username, s.display_name, s.role, s.must_change, ss.signed_in_at
                  FROM staff_session ss JOIN staff s ON s.id = ss.staff_id
-                 WHERE ss.token_hash = ?1 AND s.active = 1",
+                 WHERE ss.token_hash = ?1 AND s.active = 1 AND (s.sessions_after IS NULL OR ss.signed_in_at >= s.sessions_after)",
                 [sha256_hex(&token)],
                 |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?)),
             )

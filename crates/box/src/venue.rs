@@ -207,7 +207,7 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
     let tx = conn.unchecked_transaction()?;
     tx.execute(
         "UPDATE venue SET name = ?1, logo_corner = ?2, open_time = ?3, close_time = ?4, clip_before_s = ?5, clip_after_s = ?6,
-           upload_cap_kbps = ?7, judge_on = ?8, privacy_notice = ?9, contact = ?10, version = version + 1 WHERE id = 1",
+           upload_cap_kbps = ?7, judge_on = ?8, privacy_notice = ?9, contact = ?10 WHERE id = 1",
         params![v.name, v.corner, v.open, v.close, v.before, v.after, v.cap_mbps * 1000, v.judge_on, v.notice, v.contact],
     )?;
     if let Some(l) = logo {
@@ -273,8 +273,11 @@ pub async fn correct_time(State(app): State<AppState>, staff: Staff, Form(f): Fo
     let before = clock::now();
     let correction = clock::correct_to(wanted);
     app.recorders.split_all();
+    // The correction is this box's own; the venue learns which box leads the time (FR-38, sync.rs).
+    // (Config helpers take the database lock themselves: call them before holding it here.)
+    crate::uplink::set_config(&app.db, "clock_correction_ms", &correction.to_string())?;
     let conn = app.db.conn();
-    conn.execute("UPDATE venue SET clock_correction_ms = ?1, version = version + 1 WHERE id = 1", [correction])?;
+    conn.execute("UPDATE venue SET time_leader = ?1 WHERE id = 1", [&app.box_name])?;
     let detail = format!("from {} to {}", before.format("%-d %b %Y, %-I:%M %P"), wanted.format("%-d %b %Y, %-I:%M %P"));
     db::log(&conn, Some(staff.id), &staff.username, "corrected box time", "", &detail)?;
     Ok(Redirect::to("/console/settings?saved=time").into_response())
@@ -323,10 +326,14 @@ struct SignsPage {
     signs: Vec<Sign>,
 }
 
+pub fn player_base_env() -> Option<String> {
+    std::env::var("CH_PLAYER_URL").ok().filter(|u| !u.is_empty()).map(|u| u.trim_end_matches('/').to_string())
+}
+
 /// The address players open: CH_PLAYER_URL when set (installer's choice), else this box's host on plain HTTP.
 fn player_base(headers: &HeaderMap) -> String {
-    if let Ok(url) = std::env::var("CH_PLAYER_URL") {
-        return url.trim_end_matches('/').to_string();
+    if let Some(url) = player_base_env() {
+        return url;
     }
     let host = headers.get(header::HOST).and_then(|h| h.to_str().ok()).unwrap_or("court.local");
     let bare = host.rsplit_once(':').filter(|(_, port)| port.bytes().all(|b| b.is_ascii_digit())).map_or(host, |(h, _)| h);
@@ -346,15 +353,17 @@ pub fn qr_svg(text: &str) -> Result<String, AppError> {
 pub async fn signs(State(app): State<AppState>, staff: Staff, headers: HeaderMap) -> Page {
     let v = load(&app)?;
     let base = player_base(&headers);
-    let courts: Vec<(String, String)> = {
+    let courts: Vec<(String, String, String)> = {
         let conn = app.db.conn();
-        let mut st = conn.prepare("SELECT name, code FROM court ORDER BY position, id")?;
-        st.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<Result<_, _>>()?
+        let mut st = conn.prepare("SELECT name, code, box FROM court WHERE deleted = 0 ORDER BY position, id")?;
+        st.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<Result<_, _>>()?
     };
+    let peers = crate::sync::peers_snapshot(&app);
     let signs = courts
         .into_iter()
-        .map(|(court, code)| {
-            let url = format!("{base}/c/{code}");
+        .map(|(court, code, hosted_by)| {
+            let host = peers.iter().find(|p| p.name == hosted_by && !p.player_url.is_empty()).map_or(base.as_str(), |p| p.player_url.as_str());
+            let url = format!("{host}/c/{code}");
             Ok(Sign { qr: qr_svg(&url)?, court, code, url })
         })
         .collect::<Result<Vec<_>, AppError>>()?;

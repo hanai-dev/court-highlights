@@ -107,7 +107,66 @@ services:
       - box-a-data:/data
     ports: ["18080:80", "18443:443"]
 
+  # One venue with three boxes (test-only venue key): venue sync, the venue console, replacing a box (FR-41…FR-43).
+  venue-a:
+    <<: *box
+    profiles: ["venue"]
+    environment:
+      CH_DATA_DIR: /data
+      CH_HTTP_ADDR: "0.0.0.0:80"
+      CH_HTTPS_ADDR: "0.0.0.0:443"
+      CH_BOX_NAME: box-a
+      CH_PLAYER_URL: "http://localhost:18180"
+      CH_SUPPORT_PHONE: "0917 555 0100"
+      CH_VENUE_KEY: "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+      CH_PEERS: "http://venue-b:8444,http://venue-c:8444"
+      CH_SYNC_SECS: "3"
+    volumes:
+      - ../:/work
+      - ch-target:/work/target
+      - venue-a-data:/data
+    ports: ["18180:80", "18543:443", "18446:8444"]
+  venue-b:
+    <<: *box
+    profiles: ["venue"]
+    environment:
+      CH_DATA_DIR: /data
+      CH_HTTP_ADDR: "0.0.0.0:80"
+      CH_HTTPS_ADDR: "0.0.0.0:443"
+      CH_BOX_NAME: box-b
+      CH_PLAYER_URL: "http://localhost:18181"
+      CH_SUPPORT_PHONE: "0917 555 0100"
+      CH_VENUE_KEY: "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+      CH_PEERS: "http://venue-a:8444,http://venue-c:8444"
+      CH_SYNC_SECS: "3"
+    volumes:
+      - ../:/work
+      - ch-target:/work/target
+      - venue-b-data:/data
+    ports: ["18181:80", "18544:443"]
+  venue-c:
+    <<: *box
+    profiles: ["venue"]
+    environment:
+      CH_DATA_DIR: /data
+      CH_HTTP_ADDR: "0.0.0.0:80"
+      CH_HTTPS_ADDR: "0.0.0.0:443"
+      CH_BOX_NAME: box-c
+      CH_PLAYER_URL: "http://localhost:18182"
+      CH_SUPPORT_PHONE: "0917 555 0100"
+      CH_VENUE_KEY: "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+      CH_PEERS: "http://venue-a:8444,http://venue-b:8444"
+      CH_SYNC_SECS: "3"
+    volumes:
+      - ../:/work
+      - ch-target:/work/target
+      - venue-c-data:/data
+    ports: ["18182:80", "18545:443"]
+
 volumes:
+  venue-a-data: {}
+  venue-b-data: {}
+  venue-c-data: {}
   ch-target: { external: true }
   ch-cargo-registry: { external: true }
   box-a-data: {}

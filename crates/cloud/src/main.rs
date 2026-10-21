@@ -30,6 +30,8 @@ pub struct App {
     pub secret_key: [u8; 32],
     /// scheme://host[:port] of CH_PUBLIC_URL: fleet writes must come from here.
     pub origin: String,
+    /// When set, /readyz answers only with this bearer token (CH_READY_TOKEN).
+    pub ready_token: Option<String>,
 }
 
 #[derive(Debug)]
@@ -133,6 +135,38 @@ async fn security_headers(req: Request, next: Next) -> Response {
     res
 }
 
+/// Readiness for the platform (HOST-health): database and object store reachable. The answer never says which
+/// part failed; the log does.
+async fn readyz(axum::extract::State(app): axum::extract::State<App>, headers: axum::http::HeaderMap) -> Response {
+    if let Some(token) = &app.ready_token {
+        let given = headers.get(header::AUTHORIZATION).and_then(|v| v.to_str().ok()).and_then(|v| v.strip_prefix("Bearer "));
+        if given != Some(token.as_str()) {
+            return (StatusCode::UNAUTHORIZED, "unauthorized").into_response();
+        }
+    }
+    let db = sqlx::query_scalar::<_, i32>("SELECT 1").fetch_one(&app.db).await.is_ok();
+    let store = app.store.reachable().await;
+    if db && store {
+        (StatusCode::OK, "ready").into_response()
+    } else {
+        tracing::error!(database = db, object_store = store, "not ready");
+        (StatusCode::SERVICE_UNAVAILABLE, "not ready").into_response()
+    }
+}
+
+/// `ch-cloud healthcheck`: exit 0 when this container's service answers /healthz (for HEALTHCHECK in an image
+/// with no shell or curl).
+fn healthcheck() -> Result<(), Box<dyn std::error::Error>> {
+    use std::io::{Read, Write};
+    let addr = opt("CH_LISTEN", "0.0.0.0:8080").replace("0.0.0.0", "127.0.0.1");
+    let mut s = std::net::TcpStream::connect_timeout(&addr.parse()?, Duration::from_secs(2))?;
+    s.set_read_timeout(Some(Duration::from_secs(2)))?;
+    s.write_all(b"GET /healthz HTTP/1.0\r\nHost: localhost\r\n\r\n")?;
+    let mut answer = String::new();
+    s.read_to_string(&mut answer)?;
+    if answer.starts_with("HTTP/1.0 200") || answer.starts_with("HTTP/1.1 200") { Ok(()) } else { Err("unhealthy".into()) }
+}
+
 async fn stylesheet() -> impl IntoResponse {
     ([(header::CONTENT_TYPE, "text/css; charset=utf-8"), (header::CACHE_CONTROL, "public, max-age=3600")], include_str!("../../box/static/app.css"))
 }
@@ -140,6 +174,7 @@ async fn stylesheet() -> impl IntoResponse {
 fn router(app: App) -> Router {
     test_hooks(Router::new())
         .route("/healthz", get(|| async { "ok" }))
+        .route("/readyz", get(readyz))
         .route("/static/app.css", get(stylesheet))
         .route("/api/v1/checkin", post(api::checkin))
         .route("/api/v1/items", post(api::create_item))
@@ -250,6 +285,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
     rustls::crypto::ring::default_provider().install_default().map_err(|_| "TLS crypto provider already installed")?;
     let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(String::as_str) == Some("healthcheck") {
+        return healthcheck();
+    }
     if args.get(1).map(String::as_str) == Some("create-admin") {
         let Some(username) = args.get(2) else { return Err("usage: ch-cloud create-admin <username>".into()) };
         return create_admin(username).await;
@@ -270,7 +308,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mail = mail::Mailer::new(ses_endpoint.as_deref(), &opt("CH_SES_REGION", "ap-southeast-1"), &need("CH_SES_KEY")?, &need("CH_SES_SECRET")?, &need("CH_MAIL_FROM")?);
     let public_url = need("CH_PUBLIC_URL")?.trim_end_matches('/').to_string();
     let origin = public_url.splitn(4, '/').take(3).collect::<Vec<_>>().join("/");
-    let app = App { db: connect().await?, store, mail, public_url, pepper, secret_key: secret_key()?, origin };
+    let ready_token = std::env::var("CH_READY_TOKEN").ok().filter(|t| !t.is_empty());
+    let app = App { db: connect().await?, store, mail, public_url, pepper, secret_key: secret_key()?, origin, ready_token };
     spawn_cleanup(app.clone());
 
     let listener = tokio::net::TcpListener::bind(opt("CH_LISTEN", "0.0.0.0:8080")).await?;
