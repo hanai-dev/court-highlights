@@ -1,0 +1,26 @@
+{
+  "versionKey": {
+    "system": "PYPI",
+    "name": "onnxruntime",
+    "version": "1.31.0"
+  },
+  "publishedAt": "2026-10-09T04:19:01Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://pypi.org/simple"
+  ],
+  "relatedProjects": [],
+  "projectStatus": {
+    "status": "active",
+    "reason": ""
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "versionKey": {
+    "system": "CARGO",
+    "name": "ort",
+    "version": "2.0.0-rc.15"
+  },
+  "publishedAt": "2026-10-19T07:23:38Z",
+  "isDefault": false,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "Apache-2.0 OR MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/pykeio/ort"
+    },
+    {
+      "label": "HOMEPAGE",
+      "url": "https://ort.pyke.io/"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://crates.io/"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/pykeio/ort"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ]
+}

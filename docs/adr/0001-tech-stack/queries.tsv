@@ -1,0 +1,20 @@
+date	method	query_or_locator	result_or_limit
+2026-10-20	read	stack/drivers-draft.md	drivers and weights locked by the owner (A-120)
+2026-10-20	api	crates.io /api/v1/crates/{tokio,axum,retina,gstreamer,gstreamer-video,ort,rusqlite,askama,argon2,totp-rs,aws-sdk-s3,aws-sdk-sesv2,sqlx,tower-http}	14 records; ort latest 2.0.0-rc.15
+2026-10-20	api	deps.dev v3 cargo + pypi version records for all pinned packages	licences permissive; advisoryKeys 0
+2026-10-20	api	OSV /v1/querybatch (14 crates + 5 PyPI packages at pinned versions)	0 vulnerabilities each
+2026-10-20	api	PyPI JSON fastapi uvicorn openvino onnxruntime peewee	versions + licences recorded
+2026-10-20	api	endoflife.date python ubuntu postgresql rust ffmpeg debian (nvidia-jetson, jetpack, openvino → 404)	dates recorded; no Jetson/OpenVINO product on endoflife.date
+2026-10-20	api	GitHub REST repos + languages: frigate retina ort openvino onnxruntime FFmpeg gstreamer rust axum ultralytics	none archived; ultralytics AGPL-3.0; frigate Python+TypeScript
+2026-10-20	capture	21 documentation/pricing pages via Playwright (stack/capture-docs.cjs)	all HTTP 200; text in evidence/docs/
+2026-10-20	capture	jetson-modules intel-media-driver frigate install_deps.sh jetson-store seeed reComputer J4012 beelink EQ14 reolink RLC-510A BSP rates ubuntu-pro	all HTTP 200
+2026-10-20	web	Jetson Orin Nano developer kit "Video encode" "1080p30 supported by 1-2 CPU cores"	reseller copies + JetsonHacks: no hardware encoder (T4, context)
+2026-10-20	api	gh: repo list hanai-dev, Jss-on; repos/Jss-on/watchman Cargo.toml + README	watchman = Forge-built Rust 2024 + ort rc.12 camera monitor
+2026-10-20	disconfirm	gh search issues repo:scottlamb/retina is:open camera	11 open incl. #84 V380 DESCRIBE EOF, #119 Eufy lost RTP, #151 0.5.x breaking changes
+2026-10-20	disconfirm	gh repos/pykeio/ort/releases	rc.3 (2024-07-06) … rc.15 (2026-10-19): release candidates for two years
+2026-10-20	disconfirm	gh repos/blakeblackshear/frigate/releases	0.16.3 (2025-12) → 0.17.0 (2026-02) → 0.18.0 (2026-09): three minor series in ten months
+2026-10-20	disconfirm	gh repos/blakeblackshear/frigate Dockerfile BASE_IMAGE	debian:12
+2026-10-20	disconfirm	web: ffmpeg vaapi h264 encode Alder Lake-N N100 problems HuC low power encoder Linux	one Emby ADL-N report (app detection, manual ffmpeg worked); nothing HuC-specific
+2026-10-20	disconfirm	web: Jetson Orin NX JetPack upgrade problems production fleet JetPack 6 to 7 migration	forum reports of failed JetPack upgrades needing reflash
+2026-10-20	disconfirm	web: GStreamer vah264enc vacompositor Intel N100 issues pipeline	no N100 report; artifact bugs at unusual resolution (Comet Lake), Mesa regression thread
+2026-10-20	stop	second query round on RQ-3 (shot-judge throughput on N150 iGPU)	no T1–T3 throughput figure for a ball-tracking model on a 24-EU iGPU; scarcity note → settled by the pre-registered spike

@@ -1,0 +1,213 @@
+https://developer.nvidia.com/embedded/jetpack
+accessed 2026-10-20T15:34:41.087Z
+HTTP 200
+
+HomeBlogForumsDocsDownloadsTraining
+Join
+JetsonDeveloper KitsProduction ModulesSoftwarePartnersCommunityBuy
+Home
+Embedded Computing
+JetPack
+
+On this page
+
+How it Works
+Components
+Components
+Get Started
+NVIDIA JetPack
+
+NVIDIA JetPack™ is the official software stack for the NVIDIA Jetson™ platform, giving you a comprehensive suite of tools and libraries for building AI-powered edge applications. JetPack 7, the latest evolution in the series, is the most advanced software stack yet, purpose-built to enable cutting-edge robotics and generative AI at the edge. It’s agentic-ready with NVIDIA® NemoClaw™ and purpose-built Jetson agent skills, so you can set up edge AI workflows with a single command. With full support for NVIDIA Jetson platforms, JetPack 7 provides ultra-low latency, deterministic performance, and scalable deployment for machines that interact with the physical world.
+
+JetPack Downloads and NotesJetson Linux Developer GuideDeveloper Forum
+
+JetPack 7 Overview
+
+JetPack 7 gives you full support for the NVIDIA Jetson Orin™ and  Thor™ platform, preemptable real-time kernel, Multi-Instance GPU (MIG), and integrated  Holoscan Sensor Bridge. Built on Linux Kernel 6.8 and Ubuntu 24.04 LTS, and designed with a modular, cloud-native architecture, it integrates the latest NVIDIA AI compute stack and seamlessly integrates with NVIDIA AI workflows. Whether you’re developing humanoid robots or building an application with the most demanding generative AI workload, JetPack 7 delivers the software foundation to bring them to life.
+
+JetPack 7 is also agent-friendly and optimized for popular AI agents with purpose-built Jetson agent skills. This lets developers quickly set up agentic workflows and accelerate development time. JetPack 7.2 also officially supports the Yocto Project on Jetson, enabling custom, reproducible Linux distributions for optimized performance and deterministic edge AI deployments.
+
+Jetson agent skills help developers build, configure, optimize, and measure Jetson applications through reusable workflows. Key skills include Jetson Linux customization for faster time to market through automated BSP bring-up for custom carrier boards, memory optimization to run more capable workloads on smaller memory footprints and lower TCO, and model benchmarking to find the optimal model configuration for each Jetson device.
+
+With JetPack 7, Jetson software aligns with the Server Base System Architecture (SBSA), positioning Jetson Thor alongside industry-standard Arm server design. SBSA standardizes critical hardware and firmware interfaces, delivering stronger OS support, simpler software portability, and smoother enterprise integration. Building on this foundation, Jetson Thor now supports a unified NVIDIA® CUDA® 13.0 installation across all Arm targets, streamlining development, reducing fragmentation, and ensuring consistency from server-class systems to Jetson Thor.
+
+Click Image to Enlarge
+
+Agentic Frameworks on JetPack SDK
+
+Note: Jetson Thor is based on the SBSA stack. Please use the SBSA installer when installing from the links below.
+
+NemoClaw
+
+
+JetPack 7 is built for agentic AI. Starting with JetPack 7.2, NVIDIA NemoClaw can be installed with a single command, enabling developers to easily run and orchestrate both local and cloud AI models on Jetson devices. This simplifies building intelligent, autonomous, and multimodal edge AI applications.
+
+Explore NVIDIA NemoClaw
+Jetson Agent Skills
+
+
+Agent skills package NVIDIA expertise into reusable, agent-deployable workflows that help developers build, configure, optimize, and validate systems with clear guidance and developer-in-the-loop controls, turning manual tasks like BSP customization, memory optimization, and model benchmarking into structured workflows that reduce risk, time to market, and TCO.
+
+Explore NVIDIA Jetson Agent Skills:
+Device-Side-SkillsBSP-Skills
+Components of the JetPack SDK
+AI Compute Stack
+
+Note: Jetson Thor is based on the SBSA stack. Please use the SBSA installer when installing from the links below.
+
+CUDA
+
+
+The NVIDIA® CUDA® Toolkit provides a powerful development environment for creating GPU-accelerated applications, including a compiler, math libraries, and debugging tools.
+
+
+Explore CUDA
+cuDNN
+
+
+The NVIDIA cuDNN (CUDA Deep Neural Network) library offers high-performance primitives for deep learning, with optimized implementations for convolution, pooling, normalization, and activation layers.
+
+
+Explore cuDNN
+TensorRT
+
+
+NVIDIA TensorRT™ is a high-performance inference runtime that optimizes and accelerates deep learning models, delivering low latency and high throughput across major frameworks.
+
+
+Explore TensorRT
+AI Frameworks
+PyTorch
+
+
+PyTorch is a fast, flexible deep learning framework with NGC containers for easy deployment across AI tasks like NLP, computer vision, and recommendation systems.
+
+Explore PyTorch
+vLLM
+
+
+vLLM is a fast and easy-to-use library for LLM inference and serving.
+
+Explore vLLM
+SGLang
+
+SGLang is a fast serving framework for large language models and vision language models.
+
+Explore SGLang
+Triton Inference Server
+
+NVIDIA Triton Inference Server™ enables seamless AI deployment across cloud and edge environments, ensuring consistency and performance optimization.
+
+See Triton Inference Server 
+Jetson Linux Components and Libraries
+Flashing
+
+Jetson devices can be flashed with Jetson Linux through multiple methods, from command-line tools to automated scripts, with NVIDIA SDK Manager offering the most user-friendly option.
+
+
+
+Explore Flashing
+Security
+
+Jetson Linux delivers a comprehensive suite of security features spanning edge to cloud, including secure boot, disk encryption, runtime integrity, fTPM, and secure OTA updates.
+
+Explore Security
+OTA
+
+OTA (Over-the-Air) updates on Jetson enable seamless, remote delivery of software and security upgrades, keeping devices up-to-date without manual intervention.
+
+Explore JetPack Flashing
+Graphics Libraries
+
+Jetson supports various graphics APIs, including OpenGL, Vulkan, and EGL, enabling GPU-accelerated rendering and compute for advanced 3D graphics and UI rendering.
+
+Explore Graphics APIs 
+Multimedia APIs
+
+Jetson Linux Multimedia APIs provide low-level access to camera and video processing hardware. This lets you create high-performance applications with fine-grained control over multimedia pipelines.
+
+Explore Multimedia APIs
+Computer Vision Libraries
+
+JetPack includes optimized computer vision libraries like OpenCV and VisionWorks that accelerate image processing and vision tasks on Jetson platforms using GPUs and dedicated hardware.
+
+See Computer Vision Libraries
+The Yocto Project Support
+
+NVIDIA now officially supports Yocto Project , making it easier for developers to build custom embedded Linux distributions for Jetson platforms. Full-stack, NVIDIA-validated recipes and reference images are available through OE4T, providing a streamlined foundation for creating production-ready, secure, and optimized embedded AI systems.
+
+Explore Yocto Project on Jetson
+Other JetPack Components
+Cloud-Native Design
+
+Cloud-native design on Jetson helps you create scalable AI applications at the edge with containerized development, Kubernetes, and microservices, bridging cloud and edge development.
+
+
+Explore Cloud-Native
+Explore NGC Containers
+Nsight Developer Tools
+
+NVIDIA Nsight™ developer tools provide powerful profiling, debugging, and performance analysis for optimizing GPU-accelerated applications across AI, graphics, and compute workloads.
+
+
+Explore Nsight Developer Tool
+Supported SDKs
+NVIDIA DeepStream SDK
+
+
+This SDK gives you a powerful toolkit for building AI-powered vision applications, enabling real-time video analytics with accelerated inference and object tracking.
+
+
+
+Explore DeepStream SDK
+NVIDIA Isaac ROS
+
+NVIDIA Isaac ROS is a collection of hardware-accelerated ROS 2 packages for NVIDIA Jetson. It’s ideal for high-performance perception, localization, and AI in robotics applications.
+
+Explore Isaac ROS
+NVIDIA Holoscan SDK
+
+NVIDIA Holoscan SDK is a streaming AI framework for building real-time sensor-processing applications at the edge. It enables high-performance pipelines for healthcare, robotics, and industrial use cases.
+
+Explore Holoscan SDK
+Community Support
+Jetson AI Lab
+
+Jetson AI Lab is an interactive platform for learning and experimenting with AI on NVIDIA Jetson, offering hands-on projects, tutorials, and tools tailored for edge AI development.
+
+
+Explore Jetson AI Lab 
+Developer Forums
+
+NVIDIA Developer Forums are a community hub for developers to ask questions, share knowledge, and get support on NVIDIA technologies, platforms, and SDKs..
+
+
+Explorer Developer Forums
+Ethical AI
+
+NVIDIA believes Trustworthy AI is a shared responsibility and we have established policies and practices to enable development for a wide array of AI applications. When downloaded or used in accordance with our terms of service, developers should work with their supporting model team to ensure this model meets requirements for the relevant industry and use case and addresses unforeseen product misuse. 
+
+For more detailed information on ethical considerations for this model, please see the Model Card++ Explainability, Bias, Safety & Security, and Privacy Subcards. Please report security vulnerabilities or NVIDIA AI Concerns here.
+
+Get started with JetPack today.
+
+Download JetPack
+
+Sign up for NVIDIA News
+Subscribe
+Follow NVIDIA Developer
+
+Find more news and tutorials on NVIDIA Technical Blog
+
+Privacy Policy 
+Your Privacy Choices 
+Terms of Use 
+Accessibility 
+Corporate Policies 
+Contact
+Copyright © 2026 NVIDIA Corporation
+
+NVIDIA and our third-party partners use cookies and other tools to collect and record information you provide as well as information about your interactions with our websites for performance improvement, analytics, and to assist in our marketing efforts. By clicking "Accept All", you consent to our use of cookies and other tools as described in our Cookie Policy. You can manage your cookie settings by clicking on "Manage Settings". Please see our Privacy Policy for more information on our privacy practices.
+
+Manage Settings
+Reject Optional Accept All

@@ -1,0 +1,412 @@
+https://www.ultralytics.com/license
+accessed 2026-10-20T15:35:16.970Z
+HTTP 200
+
+Ultralytics YOLO27: Coming soon. Join the waitlist.
+Products
+Solutions
+Resources
+Company
+Pricing
+Licensing
+Select language
+Switch apps
+License YOLO
+Licensing
+License Ultralytics YOLO for commercial deployment.
+
+Get the Enterprise License you need to ship YOLO in SaaS, embedded, and customer-facing products.
+
+Check if you need a license
+Our pricing structure
+Request an Ultralytics Enterprise License
+First name*
+Last name*
+Business email*
+Company size*
+Select company size
+Company website*
+Industry*
+Select industry
+Use case*
+Submit
+
+Trusted by industry leaders
+
+Choosing your license
+Do you need an Ultralytics Enterprise license?
+
+AGPL-3.0 covers a lot of use cases - but there are specific triggers that require an Ultralytics Enterprise license.
+
+Free
+AGPL-3.0
+This license is the right one for you if you are comfortable open-sourcing your entire project under AGPL-3.0.
+Academic research and university coursework
+Personal projects, learning, and experimentation
+Open-source applications where you can publicly release the full source code
+Non-profit or government research if the project is completely disclosed
+Evaluating Ultralytics YOLO in a fully open-source environment
+Teams that want to build in public and benefit from open collaboration
+Read terms
+Paid
+Ultralytics Enterprise License
+An Enterprise License is required if you want to use Ultralytics YOLO without open-sourcing your entire project.
+Internal business tools or private company applications
+Any commercial product or service
+Proprietary / closed-source software
+SaaS platforms, APIs, or cloud systems that use YOLO behind the scenes
+Embedded deployments in hardware, edge devices, robotics, cameras, or appliances
+Using custom-trained or fine-tuned YOLO models in a proprietary or commercial setting
+R&D projects that are not fully open-sourced
+Customer-facing solutions where you do not want to publish code, configs, training scripts, and related components
+Get a quote
+Not sure which license you need?
+
+Answer a few quick questions and get a recommendation based on your project's use case.
+
+Quick check: answer 3 questions to get a recommendation.
+Step 1 of 4
+25%
+x
+
+How are you using Ultralytics?
+
+Personal project or open-sourcing your work
+Production or for-profit use
+Compare license features
+
+A detailed breakdown of what each license includes across Ultralytics platform.
+
+Features	
+For community
+AGPL-3.0
+	
+Recommended
+Ultralytics Enterprise
+
+
+Access to source code
+Full access to inspect, modify, and enhance the software's source code.
+	
+	
+
+
+Commercial use
+Use in business or for-profit applications without open-sourcing the project under AGPL-3.0.
+	
+	
+
+
+Private deployment
+Deploy in private environments without AGPL-3.0 open-source obligations.
+	
+	
+
+
+Access to enterprise models
+Full access to pretrained, large-scale models trained on 1M-image Ultralytics Enterprise Dataset.
+	
+	Coming soon
+
+Adaptive model training for commercialization
+Adjust, train, and modify models for for-profit products.
+	
+	
+
+
+Proprietary internal use
+Exclusive use inside an organization without publishing source externally.
+	
+	
+
+
+Custom terms and support
+Custom contractual terms and dedicated support channels.
+	
+	
+
+
+Support level
+Expected support path for each license option.
+	Community	Advanced SLA
+
+Annual fee required
+Whether paid annual licensing is required.
+	
+	
+
+
+Ownership of modifications
+Who owns private modifications and derivative work.
+	Must be open-sourced	Licensee
+Our solution to your industry
+Computer vision in sports
+Discover how Ultralytics YOLO powers sports vision with player and ball tracking, performance analytics, coaching insights, and athlete rehabilitation.
+Learn more
+Computer vision for aerial imagery
+Transform drone and aerial imagery into real-time insights for agriculture, aquaculture, environmental monitoring, conservation, and geospatial analysis with Ultralytics YOLO.
+Learn more
+Computer vision in aerospace
+Bring vision AI to aerial monitoring with Ultralytics YOLO models. Power drones, aerospace workflows, environmental conservation & geospatial industries with computer vision solutions.
+Learn more
+Computer vision in security
+Protect every site with Ultralytics YOLO models. Vision AI powers perimeter monitoring, threat detection, license-plate recognition, and workplace safety.
+Learn more
+Computer vision in robotics
+Power smarter machines with Ultralytics YOLO models. Vision AI in robotics drives autonomous navigation, perception, object tracking, and real-time control.
+Learn more
+Computer vision in logistics
+Streamline logistics with Ultralytics YOLO models. Vision AI enables package inspection, sorting, vehicle tracking, and real-time warehouse safety monitoring.
+Learn more
+Computer vision in retail
+Reimagine retail with Ultralytics YOLO models. Vision AI powers inventory tracking, shelf monitoring, queue management, and smarter customer insights.
+Learn more
+Computer vision in healthcare
+Build healthcare solutions with Ultralytics YOLO models. Vision AI in healthcare powers faster medical imaging, smarter diagnostics, and patient monitoring.
+Learn more
+Computer vision in manufacturing
+Optimize manufacturing with Ultralytics YOLO models. Vision AI drives quality control, defect detection, PPE compliance, and assembly line automation.
+Learn more
+Computer vision in automotive
+Apply computer vision in automotive with Ultralytics YOLO models. Vision AI elevates road safety, driver assistance, and vehicle automation for smarter roads.
+Learn more
+Computer vision in agriculture
+Bring vision AI to smart agriculture with Ultralytics YOLO models. Power crop monitoring, livestock tracking, and precision farming for higher, smarter yields.
+Learn more
+Computer vision in sports
+Discover how Ultralytics YOLO powers sports vision with player and ball tracking, performance analytics, coaching insights, and athlete rehabilitation.
+Learn more
+Computer vision for aerial imagery
+Transform drone and aerial imagery into real-time insights for agriculture, aquaculture, environmental monitoring, conservation, and geospatial analysis with Ultralytics YOLO.
+Learn more
+Computer vision in aerospace
+Bring vision AI to aerial monitoring with Ultralytics YOLO models. Power drones, aerospace workflows, environmental conservation & geospatial industries with computer vision solutions.
+Learn more
+Computer vision in security
+Protect every site with Ultralytics YOLO models. Vision AI powers perimeter monitoring, threat detection, license-plate recognition, and workplace safety.
+Learn more
+Computer vision in robotics
+Power smarter machines with Ultralytics YOLO models. Vision AI in robotics drives autonomous navigation, perception, object tracking, and real-time control.
+Learn more
+Computer vision in logistics
+Streamline logistics with Ultralytics YOLO models. Vision AI enables package inspection, sorting, vehicle tracking, and real-time warehouse safety monitoring.
+Learn more
+Computer vision in retail
+Reimagine retail with Ultralytics YOLO models. Vision AI powers inventory tracking, shelf monitoring, queue management, and smarter customer insights.
+Learn more
+Computer vision in healthcare
+Build healthcare solutions with Ultralytics YOLO models. Vision AI in healthcare powers faster medical imaging, smarter diagnostics, and patient monitoring.
+Learn more
+Computer vision in manufacturing
+Optimize manufacturing with Ultralytics YOLO models. Vision AI drives quality control, defect detection, PPE compliance, and assembly line automation.
+Learn more
+Computer vision in automotive
+Apply computer vision in automotive with Ultralytics YOLO models. Vision AI elevates road safety, driver assistance, and vehicle automation for smarter roads.
+Learn more
+Computer vision in agriculture
+Bring vision AI to smart agriculture with Ultralytics YOLO models. Power crop monitoring, livestock tracking, and precision farming for higher, smarter yields.
+Learn more
+Computer vision in sports
+Discover how Ultralytics YOLO powers sports vision with player and ball tracking, performance analytics, coaching insights, and athlete rehabilitation.
+Learn more
+Computer vision for aerial imagery
+Transform drone and aerial imagery into real-time insights for agriculture, aquaculture, environmental monitoring, conservation, and geospatial analysis with Ultralytics YOLO.
+Learn more
+Computer vision in aerospace
+Bring vision AI to aerial monitoring with Ultralytics YOLO models. Power drones, aerospace workflows, environmental conservation & geospatial industries with computer vision solutions.
+Learn more
+Computer vision in security
+Protect every site with Ultralytics YOLO models. Vision AI powers perimeter monitoring, threat detection, license-plate recognition, and workplace safety.
+Learn more
+Computer vision in robotics
+Power smarter machines with Ultralytics YOLO models. Vision AI in robotics drives autonomous navigation, perception, object tracking, and real-time control.
+Learn more
+Computer vision in logistics
+Streamline logistics with Ultralytics YOLO models. Vision AI enables package inspection, sorting, vehicle tracking, and real-time warehouse safety monitoring.
+Learn more
+Computer vision in retail
+Reimagine retail with Ultralytics YOLO models. Vision AI powers inventory tracking, shelf monitoring, queue management, and smarter customer insights.
+Learn more
+Computer vision in healthcare
+Build healthcare solutions with Ultralytics YOLO models. Vision AI in healthcare powers faster medical imaging, smarter diagnostics, and patient monitoring.
+Learn more
+Computer vision in manufacturing
+Optimize manufacturing with Ultralytics YOLO models. Vision AI drives quality control, defect detection, PPE compliance, and assembly line automation.
+Learn more
+Computer vision in automotive
+Apply computer vision in automotive with Ultralytics YOLO models. Vision AI elevates road safety, driver assistance, and vehicle automation for smarter roads.
+Learn more
+Computer vision in agriculture
+Bring vision AI to smart agriculture with Ultralytics YOLO models. Power crop monitoring, livestock tracking, and precision farming for higher, smarter yields.
+Learn more
+Frequently asked questions
+What license do I need to use Ultralytics YOLO?
+
+If you use Ultralytics YOLO code, models, architectures, training pipelines, or trained/fine-tuned models, you must either:
+
+Open-source your entire project under AGPL-3.0, or
+Obtain an Ultralytics Enterprise License.
+
+This applies even if you:
+
+Train your own model from scratch
+Do not use pretrained weights
+Use YOLO only internally or for R&D
+Deploy through a SaaS platform, API, or other private system
+Embed it in hardware, edge devices, or commercial products
+
+Under Ultralytics AGPL-3.0 guidance, compliance means publicly releasing the complete corresponding source code for the entire derivative work, including the larger application, modifications, scripts, configuration files, and, where applicable, model weights. If you do not want to open-source the full project, you need an Enterprise License. Ultralytics' customer licensing explainer also states that proprietary commercial embedding is covered by Enterprise, as shown in the Chef Robotics example.
+
+Who can I speak to if I still have licensing questions?
+
+If your query isn't addressed in the sections above, we’d love to help. Please complete the request form, and we'll get back to you within 24 hours.
+
+How can I purchase an Enterprise License?
+
+To purchase an Enterprise License, simply fill out the request form above, and we'll be in touch within 24 hours.
+
+How many seats does the Enterprise License cover?
+
+The Enterprise License offers flexible options depending on your needs. Licenses can be scoped for a specific project, covering all team members working on that project, or for your entire organization, covering all members. Reach out to discuss which scope best fits your use case.
+
+How much does an Enterprise License cost?
+
+Our licensing is tailored to each organization's size and specific use case, ensuring a fair and customized solution. Please fill out our license request form to receive a tailored quote based on your needs.
+
+Are Ultralytics YOLO trained models licensed under the AGPL-3.0 license?
+
+Yes. All Ultralytics YOLO trained models fall under the AGPL-3.0 License by default. The AGPL-3.0 License covers the training code and the models produced by that training code.
+
+What are the Enterprise License terms?
+
+Please see our Ultralytics Enterprise Software License Terms page for complete details.
+
+Do I need a separate Enterprise License for each Ultralytics YOLO product?
+
+No, a separate Enterprise License is not required for each Ultralytics product. With this license, you will have access to the complete Ultralytics YOLO source code portfolio, including YOLO26, earlier YOLO versions, and any future YOLO models that Ultralytics may release during the license term. This includes:
+
+Pretrained models
+Supporting documentation
+Subsequent modifications, including enhancements, upgrades, new features, bug fixes, and repairs
+
+If you have any other questions, please reach out to us via the request form above.
+
+What are the benefits of the Enterprise License versus the AGPL-3.0 License?
+
+An Enterprise License provides organizations with the ability to modify Ultralytics YOLO source code and embed Ultralytics YOLO code and models in commercial products without needing to follow the constraints of the AGPL-3.0 License, namely the requirement to open-source modified works or larger works containing Ultralytics YOLO code and models.
+
+This gives organizations full flexibility to develop proprietary products and services containing Ultralytics YOLO code and models.
+
+Request an Ultralytics license
+
+Enterprise-grade AI for your industry. Request a license to accelerate innovation in your industry.
+
+Get a quote
+Stay ahead of the game
+
+Get the latest news and insights on AI and machine learning — our monthly newsletter has it all!
+
+Subscribe
+Products
+Ultralytics Platform
+Annotate
+Train
+Deploy
+Agents
+New
+Ultralytics YOLO
+Ultralytics YOLO27
+New
+Ultralytics YOLO26
+Ultralytics YOLO11
+Ultralytics YOLOv8
+Ultralytics YOLOv5
+Tools
+Lite
+New
+Actions
+Solutions
+Ultralytics solutions
+Aerial imagery
+Aerospace
+Agriculture
+Automotive
+Healthcare
+Logistics
+Manufacturing
+Retail
+Robotics
+Security
+Sports
+Use Cases
+Ultralytics use cases
+Queue management
+Defect detection
+Inventory management
+Document processing
+Driver monitoring
+Visual inspection
+Retail loss prevention
+Resources
+Learn
+Docs
+Blogs
+Benchmarks
+Glossary
+Academy
+Changelog
+Community
+GitHub
+Forum
+Discord
+Reddit
+Events
+Ultralytics YOLO Vision
+Ultralytics Live Sessions
+Conferences
+Webinars
+Podcasts
+Insights
+Customers
+Survey
+News
+Pricing and licensing
+Pricing
+Licensing
+Company
+About us
+About Ultralytics
+Handbook
+Brand guidelines
+Careers
+We're hiring!
+Shop
+Programs
+Startups
+New
+Ambassadors
+New
+Partners
+Integrations
+Contribute to OSS
+Locations
+5001 Judicial Way, Frederick, MD 21703, US
+50 York Way, London, N1 9AB, GB
+Calle de las Huertas, 11, Centro, Madrid, 28012, ES
+Industrious, 386 Park Ave S, Units 1818 + 1819, New York, NY 10016, US
+6F, CR Land Tower D, 91 Kefa Rd, Shenzhen, Guangdong 518057, CN
+Contact
+Contact us
+hello@ultralytics.com
+
+Follow Ultralytics on WeChat.
+
+Follow Ultralytics on Rednote.
+
+© 2026 Ultralytics Inc. All rights reserved.
+Terms of Service
+Privacy Policy
+Ultralytics Enterprise Software License Terms
+Security
+Cookie Settings
+Ask AI

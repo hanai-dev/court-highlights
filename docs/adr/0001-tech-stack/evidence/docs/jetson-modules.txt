@@ -1,0 +1,123 @@
+https://developer.nvidia.com/embedded/jetson-modules
+accessed 2026-10-20T15:36:53.234Z
+HTTP 200
+
+HomeBlogForumsDocsDownloadsTraining
+Join
+JetsonDeveloper KitsProduction ModulesSoftwarePartnersCommunityBuy
+NVIDIA Jetson Modules
+
+NVIDIA Jetson™ modules deliver accelerated AI performance at the edge in a compact, power-efficient form. With the NVIDIA JetPack™ SDK, you can develop and deploy innovative products across industries. The Jetson family uses unified NVIDIA® CUDA-X™ software and supports cloud-native technologies for streamlined AI development and deployment. This enables customers to accelerate modern AI networks, roll out new features, and reuse software across products and applications.
+
+BenchmarksRoadmapBuy
+
+Jetson Module Lineup
+Jetson AGX Thor Series
+
+NVIDIA® Jetson Thor™ series modules give you the ultimate platform for physical AI and robotics, delivering up to 2070 FP4 TFLOPS of AI compute and 128 GB of memory with power configurable between 40 W and 130 W. They deliver over 7.5x higher AI compute than NVIDIA AGX Orin™, with 3.5x better energy efficiency.
+
+Jetson T5000 | Jetson T4000
+
+Jetson AGX Orin Series
+
+
+Bring your next-gen products to life with the world’s most powerful AI computer for energy-efficient autonomous machines, with up to 275 TOPS. 8x the performance of the last generation for multiple concurrent AI inference pipelines and high-speed interface support for multiple sensors make this the ideal solution for applications from manufacturing and logistics to retail and healthcare.
+
+Jetson AGX Orin 64GB | Jetson AGX Orin 32GB | Jetson AGX Orin Industrial
+
+Jetson Orin NX Series
+
+
+Experience the world’s most powerful AI computer for autonomous, power-efficient machines in the smallest Jetson form factor. It delivers up to 5x the performance and twice the NVIDIA® CUDA® cores of NVIDIA Jetson Xavier™ NX, plus high-speed interface support for multiple sensors. With up to 157 TOPS for multiple concurrent AI inference pipelines, Jetson Orin NX gives you big performance in an amazingly compact package.
+
+Jetson Orin NX 16GB | Jetson Orin NX 8GB
+
+Jetson Orin Nano Series
+
+
+NVIDIA® Jetson Orin™ Nano series modules deliver up to 67 TOPS of AI performance in the smallest Jetson form-factor, with power options between 7 W and 25 W. This gives you up to 140x the performance of NVIDIA Jetson Nano™ and sets the new baseline for entry-level edge AI.
+
+Jetson Orin Nano 8GB | Jetson Orin Nano 4GB
+
+Jetson AGX Xavier Series
+
+Jetson AGX Xavier series modules enable new levels of compute density, power efficiency, and AI inferencing capabilities at the edge. They ship with configurable power profiles preset for 10 W, 15 W, and 30 W, and Jetson AGX Xavier Industrial ships with profiles preset for 20 W and 40 W. These power profiles are switchable at runtime, and can be customized to your specific application needs. The modules also give you 10x the energy efficiency and 20x the performance of Jetson TX2.
+
+Jetson AGX Xavier 64GB | Jetson AGX Xavier | Jetson AGX Xavier Industrial
+
+Jetson Xavier NX Series
+
+Jetson Xavier NX brings up to 21 TOPs of accelerated AI computing to the edge in a small form-factor module. It can run multiple modern neural networks in parallel and process data from multiple high-resolution sensors—a requirement for full AI systems. Jetson Xavier NX is production-ready and supports all popular AI frameworks.
+
+
+Jetson Xavier NX 16GB | Jetson Xavier NX
+
+Jetson TX2 Series
+
+The Jetson TX2 series of modules provide up to 2.5x the performance of Jetson Nano. These bring power-efficient embedded AI computing to a range of use cases, from mass-market products with the reduced form-factor Jetson TX2 NX to specialized industrial environments with the rugged Jetson TX2i.
+
+Jetson TX2 NX | Jetson TX2 4GB | Jetson TX2 | Jetson TX2i
+
+Jetson Nano
+
+
+Jetson Nano is a small, powerful computer for embedded AI systems and IoT that delivers the power of modern AI in a low-power platform. Get started fast with the NVIDIA Jetpack SDK and a full desktop Linux environment and start exploring a new world of embedded products.
+
+Jetson Nano
+
+
+Explore NVIDIA Jetson Software and Resources
+Jetson Software
+
+
+Jetson Software is the leading platform for real-time AI and robotics applications, delivering unmatched edge intelligence across industries.
+
+Explore Jetson Software
+JetPack SDK
+
+JetPack SDK is the complete software suite for developing and deploying AI-powered edge applications on NVIDIA Jetson platforms.
+
+Explore JetPack SDK
+Jetson Developer Kits
+
+NVIDIA Jetson developer kits help professionals, students, and enthusiasts develop and test software for Jetson-based products.
+
+Discover Jetson Developer Kits
+Jetson Download Center
+
+The NVIDIA Jetson Download Center provides documentation, software, and resources for the Jetson embedded platform, including tools, drivers, and support files.
+
+Learn More
+Jetson Partners
+
+Get to know Jetson Partners and find the latest products and services made to work with the Jetson platform.
+
+Connect with Partners 
+Jetson Community
+
+Jetson developers actively contribute videos, how-tos, and open-source projects in addition to the free and comprehensive tutorials offered by NVIDIA.
+
+See Jetson Projects
+
+Discover Jetson software for real-time AI and robotics
+
+Get the JetPack SDK
+
+Sign up for NVIDIA News
+Subscribe
+Follow NVIDIA Developer
+
+Find more news and tutorials on NVIDIA Technical Blog
+
+Privacy Policy 
+Your Privacy Choices 
+Terms of Use 
+Accessibility 
+Corporate Policies 
+Contact
+Copyright © 2026 NVIDIA Corporation
+
+NVIDIA and our third-party partners use cookies and other tools to collect and record information you provide as well as information about your interactions with our websites for performance improvement, analytics, and to assist in our marketing efforts. By clicking "Accept All", you consent to our use of cookies and other tools as described in our Cookie Policy. You can manage your cookie settings by clicking on "Manage Settings". Please see our Privacy Policy for more information on our privacy practices.
+
+Manage Settings
+Reject Optional Accept All

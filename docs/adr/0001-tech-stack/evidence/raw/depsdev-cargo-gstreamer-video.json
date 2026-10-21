@@ -1,0 +1,35 @@
+{
+  "versionKey": {
+    "system": "CARGO",
+    "name": "gstreamer-video",
+    "version": "0.25.4"
+  },
+  "publishedAt": "2026-09-21T12:58:07Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "Apache-2.0 OR MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://gitlab.freedesktop.org/gstreamer/gstreamer-rs"
+    },
+    {
+      "label": "HOMEPAGE",
+      "url": "https://gstreamer.freedesktop.org"
+    },
+    {
+      "label": "DOCUMENTATION",
+      "url": "https://gstreamer.freedesktop.org/documentation/rust/stable/latest/docs/gstreamer_video/"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://crates.io/"
+  ],
+  "relatedProjects": []
+}

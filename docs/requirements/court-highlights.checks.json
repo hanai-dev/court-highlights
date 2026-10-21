@@ -1,0 +1,1574 @@
+{
+  "version": 1,
+  "owner_approval": "client-review revision 19 — owner answers \"All 20 correct\" and \"Approve as final\" (2026-10-21)",
+  "hosting": {
+    "kind": "container",
+    "stateful": true,
+    "decision": "evals/fullstack/court-highlights.stack/stack-decision.md",
+    "target": "digitalocean/court-highlights/sgp1/isolated-acceptance"
+  },
+  "execution_state": "definitions only — build pins execution argv/inputs per check before running (acceptance-evidence.md, handoff 3.3.0)",
+  "checks": [
+    {
+      "spec": "court-highlights",
+      "id": "GV-1",
+      "dimension": "logic",
+      "assert": "FR-4 default clip window: given {\"tap\":\"19:40:30\"}, the system produces exactly {\"clip\":[\"19:40:05\",\"19:40:35\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-4",
+        "A-15",
+        "golden:GV-1"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-2",
+      "dimension": "logic",
+      "assert": "FR-4 shortest setting: given {\"before_s\":10,\"after_s\":0,\"tap\":\"19:40:30\"}, the system produces exactly {\"clip\":[\"19:40:20\",\"19:40:30\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-4",
+        "A-15",
+        "golden:GV-2"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-3",
+      "dimension": "logic",
+      "assert": "FR-4 longest setting and bounds: given {\"before_s\":60,\"after_s\":15,\"tap\":\"19:40:30\",\"invalid_settings\":[{\"before_s\":9},{\"before_s\":61},{\"after_s\":16}]}, the system produces exactly {\"clip\":[\"19:39:30\",\"19:40:45\"],\"invalid_settings\":\"refused: before 10–60 s, after 0–15 s\"} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-4",
+        "A-15",
+        "golden:GV-3"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-4",
+      "dimension": "logic",
+      "assert": "FR-5 merge at exactly 5.0 s: given {\"taps\":[\"19:40:30.0\",\"19:40:35.0\"]}, the system produces exactly {\"clips\":[[\"19:40:05\",\"19:40:40\"]]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-5",
+        "A-22",
+        "golden:GV-4"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-5",
+      "dimension": "logic",
+      "assert": "FR-5 no merge above 5 s: given {\"taps\":[\"19:40:30\",\"19:40:36\"]}, the system produces exactly {\"clips\":[[\"19:40:05\",\"19:40:35\"],[\"19:40:11\",\"19:40:41\"]]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-5",
+        "A-22",
+        "golden:GV-5"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-6",
+      "dimension": "logic",
+      "assert": "FR-5 chained merge: given {\"taps\":[\"19:40:30\",\"19:40:34\",\"19:40:38\"]}, the system produces exactly {\"clips\":[[\"19:40:05\",\"19:40:43\"]]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-5",
+        "A-22",
+        "golden:GV-6"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-7",
+      "dimension": "logic",
+      "assert": "FR-3/FR-4 no footage: given {\"camera_offline\":[\"19:39:00\",\"19:42:00\"],\"tap\":\"19:40:30\"}, the system produces exactly {\"clips\":[],\"message\":\"Court 2 camera is offline — clips aren't available\"} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-3",
+        "FR-4",
+        "A-61",
+        "golden:GV-7"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-8",
+      "dimension": "logic",
+      "assert": "FR-4 partial footage: given {\"recording_started\":\"06:00:00\",\"tap\":\"06:00:10\"}, the system produces exactly {\"clip\":[\"06:00:00\",\"06:00:15\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-4",
+        "A-126",
+        "golden:GV-8"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-9",
+      "dimension": "logic",
+      "assert": "FR-10 auto-stop: given {\"start\":\"18:02:00\",\"stop\":null}, the system produces exactly {\"stopped_at\":\"20:02:00\",\"game_video\":[\"18:02:00\",\"20:02:00\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-10",
+        "A-16",
+        "golden:GV-9"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-10",
+      "dimension": "logic",
+      "assert": "FR-45 expiry: given {\"made\":\"2026-10-19T19:40:00+08:00\"}, the system produces exactly {\"deleted_at_cleanup\":\"2026-10-23T03:00:00+08:00\",\"email_text\":\"available until Fri 23 Oct 2026, 3:00 am\"} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-45",
+        "A-18",
+        "golden:GV-10"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-11",
+      "dimension": "logic",
+      "assert": "FR-45 expiry boundary inclusive: given {\"made\":[\"2026-10-19T03:00:00+08:00\",\"2026-10-19T03:00:01+08:00\"]}, the system produces exactly {\"deleted_at_cleanup\":[\"2026-10-22T03:00:00+08:00\",\"2026-10-23T03:00:00+08:00\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-45",
+        "A-18",
+        "golden:GV-11"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-12",
+      "dimension": "logic",
+      "assert": "FR-45 keep limit from Keep: given {\"kept_at\":\"2026-10-20T10:00:00+08:00\"}, the system produces exactly {\"deleted_at_cleanup\":\"2027-10-21T03:00:00+08:00\"} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-45",
+        "A-18",
+        "A-126",
+        "golden:GV-12"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-13",
+      "dimension": "logic",
+      "assert": "FR-1 rolling footage: given {\"now\":\"21:00:00\",\"clips\":[],\"games\":[],\"holds\":[]}, the system produces exactly {\"retained\":[\"17:00:00\",\"21:00:00\"],\"deleted_before\":\"17:00:00\"} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-1",
+        "A-17",
+        "golden:GV-13"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-14",
+      "dimension": "logic",
+      "assert": "FR-18 court page window inclusive: given {\"page_opened\":\"21:00:00\",\"clips_made\":[\"19:00:00\",\"18:59:59\"]}, the system produces exactly {\"listed\":[\"19:00:00\"],\"not_listed\":[\"18:59:59\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-18",
+        "A-10",
+        "golden:GV-14"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-15",
+      "dimension": "logic",
+      "assert": "FR-20 email limit: given {\"existing_addresses\":8,\"add\":1}, the system produces exactly {\"refused\":true,\"message\":\"Up to 8 addresses per game\",\"addresses\":8} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-20",
+        "A-86",
+        "golden:GV-15"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-16",
+      "dimension": "logic",
+      "assert": "FR-28 lockout: given {\"consecutive_failures\":5,\"fifth_failure_at\":\"10:00:00\",\"correct_password_at\":[\"10:10:00\",\"10:15:00\"]}, the system produces exactly {\"results\":[\"refused\",\"accepted\"],\"success_resets_count\":true} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-28",
+        "A-49",
+        "A-126",
+        "golden:GV-16"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-17",
+      "dimension": "logic",
+      "assert": "FR-28 session limit: given {\"signed_in\":\"06:00:00\"}, the system produces exactly {\"refused_from\":\"18:00:00\"} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-28",
+        "A-12",
+        "golden:GV-17"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-18",
+      "dimension": "logic",
+      "assert": "FR-32 hold limit: given {\"hold_placed\":\"2026-10-20T10:00:00+08:00\",\"span\":[\"16:45\",\"17:15\"],\"court\":\"Court 4\"}, the system produces exactly {\"protected_while_held\":true,\"auto_release\":\"2026-12-19T10:00:00+08:00\"} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-32",
+        "A-57",
+        "golden:GV-18"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-19",
+      "dimension": "logic",
+      "assert": "FR-22 send order: given {\"games\":[{\"id\":\"A\",\"stopped\":\"17:00\",\"clips\":2,\"reel\":true,\"video\":true},{\"id\":\"B\",\"stopped\":\"18:00\",\"clips\":1,\"reel\":true,\"video\":true}],\"online_from\":\"20:00\"}, the system produces exactly {\"order\":[\"A clip 1\",\"A clip 2\",\"A reel\",\"B clip 1\",\"B reel\",\"A video 720p\",\"B video 720p\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-22",
+        "A-105",
+        "golden:GV-19"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-20",
+      "dimension": "logic",
+      "assert": "FR-46 disk pressure: given {\"disk_percent\":91,\"unkept_game_videos\":[\"Mon\",\"Tue\"]}, the system produces exactly {\"delete_order\":[\"Mon\",\"Tue\"],\"stop_below_percent\":85,\"rolling_footage_hours_kept\":4,\"warning_from_percent\":80} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-46",
+        "A-33",
+        "A-126",
+        "golden:GV-20"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-21",
+      "dimension": "logic",
+      "assert": "FR-1/FR-10 opening hours and closing: given {\"hours\":[\"06:00\",\"23:00\"],\"game_started\":\"22:30\",\"tap\":\"23:00:10\"}, the system produces exactly {\"recording\":[\"06:00:00\",\"23:00:00\"],\"not_recording_at\":\"05:59:59\",\"game_stopped_at\":\"23:00:00\",\"tap\":\"refused: Courts are closed\"} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-1",
+        "FR-10",
+        "A-56",
+        "A-126",
+        "golden:GV-21"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-22",
+      "dimension": "logic",
+      "assert": "FR-14 highlight trimming: given {\"points\":[[\"19:10:00\",\"19:10:31\"],[\"19:20:00\",\"19:20:12\"]]}, the system produces exactly {\"highlights\":[[\"19:10:13\",\"19:10:33\"],[\"19:20:00\",\"19:20:14\"]]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-14",
+        "A-88",
+        "A-126",
+        "golden:GV-22"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-23",
+      "dimension": "logic",
+      "assert": "FR-14 highlight count: given {\"found\":[3,0]}, the system produces exactly {\"results\":[\"reel + 3 single points\",\"No highlights found; game video still available\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-14",
+        "A-88",
+        "golden:GV-23"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-24",
+      "dimension": "logic",
+      "assert": "FR-24 link expiry: given {\"clip_made\":\"2026-10-19T19:40:00+08:00\",\"opened\":[\"2026-10-23T02:59:59+08:00\",\"2026-10-23T03:00:00+08:00\"]}, the system produces exactly {\"results\":[\"plays\",\"These videos have expired\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-24",
+        "A-80",
+        "golden:GV-24"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "GV-26",
+      "dimension": "logic",
+      "assert": "FR-27 switch-off and expiry: given {\"game_stopped\":\"2026-10-19T18:00:00+08:00\",\"switched_on\":[\"2026-10-21T12:00:00+08:00\",\"2026-10-23T12:00:00+08:00\"]}, the system produces exactly {\"results\":[\"sent after reconnect\",\"not sent (expired 2026-10-23T03:00:00+08:00)\"]} (fixed expected value from golden-vectors.json; clock and camera feeds controlled by the test)",
+      "weight": 2,
+      "traces": [
+        "FR-27",
+        "A-82",
+        "golden:GV-26"
+      ],
+      "required": true,
+      "applicable": true,
+      "gate": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-RECORD",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): during opening hours each court records by stream copy (segment codec parameters equal the source, no audio track) and keeps the last 4 h; outside hours nothing is recorded",
+      "weight": 2,
+      "traces": [
+        "FR-1",
+        "A-17",
+        "A-56",
+        "SC-5"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-CLIP",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): scan a court code, tap Clip that, see the ring, then a clip whose window is 25 s before to 5 s after the tap appears and downloads as MP4 (wide and vertical) on Android and iPhone browser profiles",
+      "weight": 2,
+      "traces": [
+        "FR-4",
+        "FR-7",
+        "FR-19",
+        "FR-8",
+        "SC-1",
+        "US-1",
+        "US-4"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-MERGE",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): three taps within 5 s on the court page produce exactly one clip in the court page and library",
+      "weight": 2,
+      "traces": [
+        "FR-5",
+        "SC-1"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-BRAND",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): the venue logo set to a chosen corner appears in that corner in sampled frames of a clip, a highlight and a game video, in both shapes",
+      "weight": 2,
+      "traces": [
+        "FR-6",
+        "FR-33",
+        "US-5",
+        "A-19"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-HIDE-DELETE",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): a player hides a clip from the court page (gone from the page, never sent); staff delete a clip (gone from the library) and the activity log names who and when",
+      "weight": 2,
+      "traces": [
+        "FR-9",
+        "FR-26",
+        "SC-7"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-GAME",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): Start shows \"Recording since …\" on every phone on that court; a second phone sees the running game and the Stop offer; Stop yields a downloadable full-quality game video and a queued 720p copy",
+      "weight": 2,
+      "traces": [
+        "FR-10",
+        "FR-12",
+        "SC-2",
+        "US-2"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-POSTING",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): the Start screen shows \"The venue may post our highlights on its pages\" unticked; the choice is stored and shown as \"may post\" in the clip library",
+      "weight": 2,
+      "traces": [
+        "FR-11",
+        "A-101",
+        "SC-6"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-PERSIST",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): persist-across-restart: after clips, a game, a hold, settings and a staff account are created through the UI, the box is power-cycled; all are present afterwards, recording resumes within 60 s of start-up, and a game cut by the power loss keeps its footage before the cut",
+      "weight": 2,
+      "traces": [
+        "FR-13",
+        "FR-56",
+        "A-34",
+        "A-60",
+        "SC-2"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-HIGHLIGHTS",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): Stop on a pickleball game shows \"Highlights coming — about N min\", then a reel and single points labelled \"Highlights\" (no captions), wide and vertical, on the court page and in the game email; with the judge switched off no highlight message appears and the game video is still produced",
+      "weight": 2,
+      "traces": [
+        "FR-14",
+        "FR-15",
+        "FR-16",
+        "SC-10",
+        "US-10"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-JUDGE-EVAL",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): scripted evaluation on the hand-marked partner-court test games (never used in training) meets NFR-17: ≥ 8 of 10 games with ≥ 3 of the top 5 matching marker picks and no dead time; each common shot kind meets the bar separately; rare kinds scored only with ≥ 10 examples",
+      "weight": 2,
+      "traces": [
+        "NFR-17",
+        "A-91",
+        "A-94",
+        "A-96"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-COURT-PAGE",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): opening a court code without sign-in shows venue logo, court name, recording status, Clip that, game panel, email panel and this court's clips from the last 2 h, in that order",
+      "weight": 2,
+      "traces": [
+        "FR-17",
+        "A-112",
+        "A-9"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-EMAIL",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): up to 8 addresses can be added to a running game and removed before sending; a clip outside a game offers Email me this; with the online service and a stub email provider reachable, each address receives one email per game with links and the expiry time, after which neither box nor service stores the address",
+      "weight": 2,
+      "traces": [
+        "FR-20",
+        "FR-21",
+        "FR-23",
+        "FR-57",
+        "SC-3",
+        "US-3"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-STORE-FORWARD",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): with the network down, clipping and on-court download keep working; when it returns, items are sent clips/highlights first then 720p game videos, oldest game first, within the upload cap; a clip deleted after sending is withdrawn online",
+      "weight": 2,
+      "traces": [
+        "FR-22",
+        "FR-26",
+        "SC-12"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-EXPIRY-LINK",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): with the test clock moved past the expiry moment, an email link shows \"These videos have expired\" and the box copy is gone after the 3:00 am clean-up",
+      "weight": 2,
+      "traces": [
+        "FR-24",
+        "FR-45",
+        "SC-3"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-ONLINE-SWITCH",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): an Admin switches a venue off with a reason in the fleet console: court pages hide the email box with the agreed message, nothing is sent; switched back on, waiting items within expiry are sent",
+      "weight": 2,
+      "traces": [
+        "FR-27",
+        "FR-50",
+        "SC-13"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-STAFF-CRUD",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): the Owner creates a Staff account with a temporary password (forced change at first sign-in), resets it, deactivates it (sessions end on every box within 1 min); every staff member can change their own password",
+      "weight": 2,
+      "traces": [
+        "FR-29",
+        "FR-34",
+        "SC-8",
+        "US-12"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-COURT-CRUD",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): the Owner adds a court, assigns a camera found on the network and one entered by address, sees live previews, renames and deletes a court",
+      "weight": 2,
+      "traces": [
+        "FR-30",
+        "SC-4",
+        "US-6"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-LIBRARY",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): the clip library lists items from all three boxes, filters by court, date, type, kept and may-post, pages at 50, keeps (expiry shows the 1-year date), downloads both shapes, deletes with confirmation, and warns and logs when a not-permitted clip is downloaded for posting",
+      "weight": 2,
+      "traces": [
+        "FR-31",
+        "SC-6",
+        "US-8"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-FOOTAGE",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): staff find Court 4 footage by time window, place a Hold (protected from overwrite), the Owner exports MP4, and a request for overwritten footage is recorded as \"footage no longer exists\"; each step is logged",
+      "weight": 2,
+      "traces": [
+        "FR-32",
+        "SC-7",
+        "US-11"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-SETTINGS",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): venue settings (name, logo, logo corner, sponsor logo, opening hours, clip lengths, upload cap, judge on/off, privacy notice, time correction) save, survive restart, propagate to all boxes within 1 min and take effect on the next clip",
+      "weight": 2,
+      "traces": [
+        "FR-33",
+        "FR-38",
+        "FR-42",
+        "A-78"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-LOG",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): the activity log shows sign-ins, keep, delete, export, download-for-posting, holds, settings, staff and online-switch changes and exports to CSV without any email address",
+      "weight": 2,
+      "traces": [
+        "FR-35",
+        "A-51"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-SIGNS",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): printing signs yields one page per court with that court's code and the agreed notice text, including \"no sound\", retention periods, contact and \"Under 18? Ask a parent first.\"",
+      "weight": 2,
+      "traces": [
+        "FR-37",
+        "A-53",
+        "A-58"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-ONBOARD",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): fresh-empty: a newly installed box opens the first-run wizard with no default account, no demo clips and no courts; completing it (owner password, venue, logo, hours, cameras, court names) leads to an empty library that explains how to make the first clip",
+      "weight": 2,
+      "traces": [
+        "FR-40",
+        "A-75",
+        "SC-4"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-VENUE-CONSOLE",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): with three boxes, the console opened on any box shows all 12 courts; with one box powered off its courts show \"box unreachable since …\" and the others work",
+      "weight": 2,
+      "traces": [
+        "FR-41",
+        "SC-14"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "F-HELP",
+      "dimension": "functional",
+      "assert": "E2E (Playwright, replayed court footage as RTSP cameras): the Help page shows the support number and hours",
+      "weight": 2,
+      "traces": [
+        "FR-39",
+        "A-67"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-DESIGN-CONFORMANCE",
+      "dimension": "ux",
+      "assert": "Live UI matches the DESIGN.md tokens adopted from design-direction.md (D3 laminated sign: off-white ground, ink rules, one highlighter action colour, one radius) on every primary route",
+      "weight": 2,
+      "traces": [
+        "design:tokens",
+        "A-28",
+        "A-110"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-DESIGN-FLOOR",
+      "dimension": "ux",
+      "assert": "scripts/score-design.sh scan → SLOP_GATE: PASS on every primary route (court page, setup, staff console pages, fleet console pages, email)",
+      "weight": 2,
+      "traces": [
+        "design:floor"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-A11Y",
+      "dimension": "ux",
+      "assert": "axe: 0 serious/critical on every route; body text and the Clip that label ≥ 7:1 contrast; court page actions ≥ 48 px",
+      "weight": 2,
+      "traces": [
+        "NFR-6",
+        "A-27",
+        "A-126"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-MOTION-KEYBOARD",
+      "dimension": "ux",
+      "assert": "with prefers-reduced-motion the saving ring is static and the countdown is text; SC-6, SC-7 and SC-8 complete by keyboard alone on the consoles",
+      "weight": 2,
+      "traces": [
+        "NFR-7",
+        "FR-8",
+        "A-108",
+        "design:motion"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-PAGE-SPEED",
+      "dimension": "ux",
+      "assert": "court page loads ≤ 2 s at p95 on a throttled Wi-Fi profile with 100 simulated phones across 3 boxes",
+      "weight": 2,
+      "traces": [
+        "NFR-4",
+        "A-125"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-LIST-ARCHETYPE",
+      "dimension": "ux",
+      "assert": "clip library meets the list+CRUD archetype: real table with caption and scoped headers, visible active filters with Clear, pagination, first-use vs no-results empty states, delete confirmation naming the item",
+      "weight": 2,
+      "traces": [
+        "FR-31",
+        "design:states"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-FORM-ARCHETYPE",
+      "dimension": "ux",
+      "assert": "setup wizard, settings and sign-in meet the form/wizard/settings/auth archetypes: persistent labels, errors under fields, focused error summary, step indicator with back, password managers and paste allowed, no zoom lock",
+      "weight": 2,
+      "traces": [
+        "FR-40",
+        "FR-33",
+        "FR-28",
+        "design:states"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-ASSETS",
+      "dimension": "ux",
+      "assert": "asset-check.cjs check <target> passes; both required line drawings render at their routes, decode, and carry the agreed alt text",
+      "weight": 2,
+      "traces": [
+        "A-107",
+        "design:floor"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-MOTION-SCAN",
+      "dimension": "ux",
+      "assert": "design-scan.cjs --assets passes for normal and reduced motion profiles of the saving ring",
+      "weight": 2,
+      "traces": [
+        "A-108",
+        "design:motion"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-TERMS",
+      "dimension": "ux",
+      "assert": "navigation labels and UI copy use the SRS §2 preferred terms; avoided terms (session, archive, NVR, admin panel…) absent (design-term-drift clean)",
+      "weight": 2,
+      "traces": [
+        "design:terms"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "UX-FIRST-USE",
+      "dimension": "ux",
+      "assert": "a first-time player saves a clip within 60 s of scanning without help (observed on the trial court)",
+      "weight": 2,
+      "traces": [
+        "NFR-5",
+        "A-125"
+      ],
+      "required": false,
+      "applicable": false,
+      "reason": "human-gated: observed with ≥ 5 first-time players on the Paddle Point trial court and entered in qa/usability/sessions.tsv after install; not executable in the build environment — the report says \"not tested with users\" until then"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-delivery",
+      "dimension": "devops",
+      "assert": "Deliver the reviewed commit's online-service container digest to the explicitly authorized isolated DigitalOcean sgp1 target; verify health and rollback; record artifact and target identities. A local pass is not deployment proof.",
+      "weight": 2,
+      "traces": [
+        "A-119",
+        "A-123",
+        "NFR-18"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "delivery"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-configuration",
+      "dimension": "devops",
+      "assert": "Validate required configuration and minimal secret scopes (database, R2, SES, TOTP) at the bound target; fail closed when missing or wrong; no secret value enters artifacts",
+      "weight": 2,
+      "traces": [
+        "A-119",
+        "NFR-9"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "configuration"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-health",
+      "dimension": "monitoring",
+      "assert": "Non-sensitive liveness and protected readiness on the online service; simulated database/storage outage shows unhealthy without leaking details",
+      "weight": 2,
+      "traces": [
+        "A-81",
+        "NFR-14"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "health"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-observability",
+      "dimension": "monitoring",
+      "assert": "Structured logs and metrics for uploads, emails, check-ins and fleet actions reach the approved sink without player emails or keys",
+      "weight": 2,
+      "traces": [
+        "NFR-15",
+        "FR-52"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "observability"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-persistence",
+      "dimension": "devops",
+      "assert": "Fleet records, registrations, sent items and blocked-address hashes survive a service restart and redeploy",
+      "weight": 2,
+      "traces": [
+        "FR-48",
+        "FR-49",
+        "FR-25"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "persistence"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-compatibility",
+      "dimension": "devops",
+      "assert": "Schema migrations apply forward on a copy of the previous release's data and the previous release keeps working until cut-over (or a documented rollback path exists)",
+      "weight": 2,
+      "traces": [
+        "NFR-12",
+        "A-47"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "compatibility"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-backup",
+      "dimension": "devops",
+      "assert": "PostgreSQL 18 backups are enabled at the target and an off-provider dump to R2 is produced",
+      "weight": 2,
+      "traces": [
+        "A-119",
+        "NFR-16"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "backup"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-restore",
+      "dimension": "devops",
+      "assert": "A synthetic backup restores into an isolated environment and the fleet console works against it",
+      "weight": 2,
+      "traces": [
+        "A-119"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "restore"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-container-nonroot",
+      "dimension": "hardening",
+      "assert": "The online-service container runs as a non-root user with a read-only root filesystem where possible",
+      "weight": 2,
+      "traces": [
+        "NFR-9"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "container_nonroot"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-container-health",
+      "dimension": "monitoring",
+      "assert": "The container declares a health check that the platform uses to restart it",
+      "weight": 2,
+      "traces": [
+        "A-81"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "container_health"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "HOST-container-image",
+      "dimension": "devops",
+      "assert": "The container image is pinned by digest, built from the reviewed commit, and scanned with no unpatched Critical/High finding",
+      "weight": 2,
+      "traces": [
+        "NFR-9",
+        "NFR-11"
+      ],
+      "required": true,
+      "applicable": true,
+      "outcome": "container_image"
+    },
+    {
+      "spec": "court-highlights",
+      "id": "DEV-SPIKE",
+      "dimension": "devops",
+      "assert": "The pre-registered feasibility spike (stack-decision.md Confirmation H1–H5: 24 h gap-free recording, clip p95 ≤ 10 s, 4 × 1 h judged ≤ 60 min, camera resume ≤ 5 s, injected failing update rolls back) runs on the N150 box with ≥ 5 runs; confirmation-results.md shows every threshold met before product scaffolding beyond the spike; a miss supersedes the decision and returns to the owner",
+      "weight": 2,
+      "traces": [
+        "A-123",
+        "NFR-1",
+        "NFR-2",
+        "NFR-3",
+        "NFR-12"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "DEV-INSTALL-IMAGE",
+      "dimension": "devops",
+      "assert": "A box installs from the USB image to the first-run wizard in ≤ 30 min (timed)",
+      "weight": 2,
+      "traces": [
+        "NFR-13",
+        "FR-40",
+        "A-46",
+        "A-126"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "DEV-UPDATE-ROLLBACK",
+      "dimension": "devops",
+      "assert": "An injected failing update (from the fleet and from USB) returns the box to its previous version within 10 min of first boot, shows \"Update rolled back\", and the venue's other boxes are not updated",
+      "weight": 2,
+      "traces": [
+        "FR-51",
+        "FR-54",
+        "NFR-12",
+        "SC-9"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "DEV-REPLACE-BOX",
+      "dimension": "devops",
+      "assert": "A replaced box joins the venue and receives courts, logo, settings and staff from its siblings within 1 min; a single-box venue restores the settings backup file",
+      "weight": 2,
+      "traces": [
+        "FR-43",
+        "FR-44",
+        "SC-9"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "DEV-ENVIRONMENTS",
+      "dimension": "devops",
+      "assert": "CI runs the suites on the owner-laptop profile with replayed RTSP cameras and on the test box; no test targets a live venue",
+      "weight": 2,
+      "traces": [
+        "NFR-18",
+        "A-48"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "DEV-PAYLOAD",
+      "dimension": "devops",
+      "assert": "Shipped UI assets stay within the planning budget in assets/manifest.json (each file ≤ 60 KB, total ≤ 150 KB)",
+      "weight": 2,
+      "traces": [
+        "A-107"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "DEV-COST-MODEL",
+      "dimension": "devops",
+      "assert": "The cost model with pinned R2/SES/DigitalOcean prices under the year-1 upper-bound usage stays ≤ US$100/month",
+      "weight": 2,
+      "traces": [
+        "NFR-16",
+        "A-117",
+        "A-118"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "DEV-HORIZON",
+      "dimension": "devops",
+      "assert": "Every pinned OS, runtime and AI-runtime component is supported through 2030-06-30 (release checklist against endoflife data)",
+      "weight": 2,
+      "traces": [
+        "NFR-11",
+        "A-116"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "MON-CLIP-SPEED",
+      "dimension": "monitoring",
+      "assert": "With a box recording 4 courts and encoding one 720p game video, a clip is ready ≤ 10 s after its window ends for ≥ 95 of 100 taps (≥ 5 runs, p95 reported)",
+      "weight": 2,
+      "traces": [
+        "NFR-1",
+        "A-44",
+        "golden:GV-25"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "MON-RECORDING-GAPS",
+      "dimension": "monitoring",
+      "assert": "A 24 h soak with 4 replayed streams per box shows no gap > 2 s per court, including while sending online",
+      "weight": 2,
+      "traces": [
+        "NFR-2",
+        "A-44"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "MON-JUDGE-THROUGHPUT",
+      "dimension": "monitoring",
+      "assert": "With all 4 courts stopping 1-hour games at once, every reel is ready ≤ 60 min after Stop while clip speed and continuity hold",
+      "weight": 2,
+      "traces": [
+        "NFR-3",
+        "A-93",
+        "A-99"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "MON-CAMERA",
+      "dimension": "monitoring",
+      "assert": "An unplugged camera turns its court red within 10 s and recording resumes ≤ 5 s after the stream returns",
+      "weight": 2,
+      "traces": [
+        "FR-3",
+        "A-61",
+        "A-126"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "MON-HEALTH-PAGE",
+      "dimension": "monitoring",
+      "assert": "The health page shows per court recording/camera/last clip and per box disk/temperature/version/reachability; a disk at 80 % shows the warning",
+      "weight": 2,
+      "traces": [
+        "FR-36",
+        "FR-46",
+        "A-65"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "MON-FLEET-CHECKINS",
+      "dimension": "monitoring",
+      "assert": "Online boxes check in every 60 s; a box silent for 5 min is flagged in the fleet console; health records older than 90 days are removed",
+      "weight": 2,
+      "traces": [
+        "FR-49",
+        "NFR-14",
+        "A-125",
+        "A-126"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-SN1-IDOR",
+      "dimension": "hardening",
+      "assert": "Changing court or clip IDs in court-page and API requests (anonymous, other court, older than 2 h) returns nothing private and changes nothing (v5.0.0-8.2.2, 8.3.1)",
+      "weight": 2,
+      "traces": [
+        "FR-18",
+        "SN-1",
+        "A-10"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-SN2-BRUTE-FORCE",
+      "dimension": "hardening",
+      "assert": "5 consecutive wrong passwords lock the account for 15 min on every box; attempts are logged (v5.0.0-6.3.1, 16.3.1)",
+      "weight": 2,
+      "traces": [
+        "FR-28",
+        "SN-2",
+        "A-49"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-SN3-REVOCATION",
+      "dimension": "hardening",
+      "assert": "A deactivated staff member's existing session is refused on every box within 1 min; logout invalidates the session (v5.0.0-7.4.1, 7.4.2)",
+      "weight": 2,
+      "traces": [
+        "FR-29",
+        "SN-3",
+        "A-13"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-SN4-UPLOAD",
+      "dimension": "hardening",
+      "assert": "Logo upload refuses > 2 MB, renamed executables, SVG and non-PNG/JPEG content; nothing is stored (v5.0.0-5.2.1, 5.2.2)",
+      "weight": 2,
+      "traces": [
+        "FR-33",
+        "SN-4",
+        "A-52"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-SN5-STOLEN-BOX",
+      "dimension": "hardening",
+      "assert": "The box disk image mounted on another machine is unreadable; a revoked box key gets uploads and reports refused",
+      "weight": 2,
+      "traces": [
+        "NFR-8",
+        "FR-48",
+        "SN-5",
+        "A-50"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-SN6-EMAIL-ABUSE",
+      "dimension": "hardening",
+      "assert": "A 9th address is refused; guessed email-link tokens return nothing; blocked and hard-bounced addresses receive nothing (v5.0.0-2.4.1)",
+      "weight": 2,
+      "traces": [
+        "FR-20",
+        "FR-25",
+        "SN-6",
+        "A-86"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-CROSS-VENUE",
+      "dimension": "hardening",
+      "assert": "At the online service, venue A's box key cannot upload to, list or read venue B's items and venue A's email link cannot reach venue B's items (v5.0.0-8.2.2)",
+      "weight": 2,
+      "traces": [
+        "FR-48",
+        "NFR-9"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-CSRF-CORS",
+      "dimension": "hardening",
+      "assert": "Cross-site state changes against staff and fleet actions are refused without side effects; cookies are Secure with appropriate SameSite (v5.0.0-3.5.1, 3.3.1, 3.3.2)",
+      "weight": 2,
+      "traces": [
+        "NFR-9"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-ROLES",
+      "dimension": "hardening",
+      "assert": "Staff cannot reach Owner functions; a fleet Installer cannot switch venues, revoke keys or publish updates (v5.0.0-8.2.1)",
+      "weight": 2,
+      "traces": [
+        "FR-28",
+        "FR-47"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-CREDENTIALS",
+      "dimension": "hardening",
+      "assert": "Staff passwords ≥ 12 characters and checked against common passwords; argon2 hashing; no default accounts; temporary passwords forced to change and expired after 72 h unused (v5.0.0-6.2.1, 6.2.4, 11.4.2, 6.3.2, 6.4.1)",
+      "weight": 2,
+      "traces": [
+        "FR-29",
+        "FR-40",
+        "A-126"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-FLEET-MFA",
+      "dimension": "hardening",
+      "assert": "Fleet sign-in without the authenticator code is refused; fleet sessions have an inactivity timeout and an absolute lifetime (v5.0.0-6.3.3, 7.3.1, 7.3.2)",
+      "weight": 2,
+      "traces": [
+        "FR-47",
+        "A-104"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-NO-FOOTAGE-IN-FLEET",
+      "dimension": "hardening",
+      "assert": "An Admin session cannot list, view or download any clip, game video or footage through any fleet route or API",
+      "weight": 2,
+      "traces": [
+        "FR-53",
+        "A-81"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-NO-AUDIO",
+      "dimension": "hardening",
+      "assert": "Every produced clip, highlight, game video and export has no audio track even when the camera offers one",
+      "weight": 2,
+      "traces": [
+        "FR-2",
+        "A-37"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-STAFF-TLS",
+      "dimension": "hardening",
+      "assert": "Staff and Owner routes answer only over the box's own TLS certificate; plain-HTTP requests to them are refused or redirected; player pages carry no credentials (A-124 deviation recorded for HSTS)",
+      "weight": 2,
+      "traces": [
+        "A-124",
+        "FR-28"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-ONLINE-TRANSPORT",
+      "dimension": "hardening",
+      "assert": "The online service and fleet console use TLS 1.2/1.3 with publicly trusted certificates, HSTS ≥ 1 year and a CSP (v5.0.0-12.1.1, 12.2.1, 12.2.2, 3.4.1, 3.4.3)",
+      "weight": 2,
+      "traces": [
+        "NFR-9"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-INJECTION",
+      "dimension": "hardening",
+      "assert": "SQL and script payloads in email, staff, court-name and settings fields cause no execution and render inert (v5.0.0-1.2.4, 1.2.1)",
+      "weight": 2,
+      "traces": [
+        "NFR-9"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-LOGS-NO-PII",
+      "dimension": "hardening",
+      "assert": "Box and service logs contain no player emails, passwords, session tokens or keys during the full e2e run (v5.0.0-16.2.5)",
+      "weight": 2,
+      "traces": [
+        "NFR-15",
+        "A-66"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-SECRETS",
+      "dimension": "hardening",
+      "assert": "No secrets in source, images, artifacts or logs; box keys sealed on the box; online secrets in a managed store (v5.0.0-13.3.1); secret scan clean",
+      "weight": 2,
+      "traces": [
+        "NFR-9",
+        "A-125"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-VENUE-SYNC",
+      "dimension": "hardening",
+      "assert": "A device without the venue key cannot call box sync interfaces; box-to-box traffic is encrypted (v5.0.0-12.3.3)",
+      "weight": 2,
+      "traces": [
+        "FR-42",
+        "A-125"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-WIPE",
+      "dimension": "hardening",
+      "assert": "After Wipe box no clip, footage, account or log data remains on the disk and the fleet no longer lists the box",
+      "weight": 2,
+      "traces": [
+        "FR-55",
+        "A-70"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-LICENCE",
+      "dimension": "hardening",
+      "assert": "The SBOM licence check finds no GPL/AGPL component in the shipped box software and no GPL GStreamer plugin; LGPL parts are dynamically linked",
+      "weight": 2,
+      "traces": [
+        "NFR-10",
+        "A-114"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "SEC-DEPENDENCIES",
+      "dimension": "hardening",
+      "assert": "Zero unpatched reviewed advisories for shipped crates and system packages at release (OSV/cargo audit); no unresolved Critical/High finding",
+      "weight": 2,
+      "traces": [
+        "NFR-9",
+        "NFR-11"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "PERF-LIBRARY-QUERIES",
+      "dimension": "hardening",
+      "assert": "The clip library issues a bounded number of database queries independent of page size (no N+1) and never returns more than 50 rows per page",
+      "weight": 2,
+      "traces": [
+        "FR-31",
+        "A-73"
+      ],
+      "required": true,
+      "applicable": true
+    },
+    {
+      "spec": "court-highlights",
+      "id": "PERF-UPLOAD-CAP",
+      "dimension": "hardening",
+      "assert": "Online sending respects the installer's upload cap and does not cause recording gaps or clip-speed misses",
+      "weight": 2,
+      "traces": [
+        "FR-22",
+        "NFR-1",
+        "NFR-2"
+      ],
+      "required": true,
+      "applicable": true
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "versionKey": {
+    "system": "PYPI",
+    "name": "fastapi",
+    "version": "0.153.0"
+  },
+  "publishedAt": "2026-10-20T13:47:38Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "HOMEPAGE",
+      "url": "https://github.com/fastapi/fastapi"
+    },
+    {
+      "label": "DOCUMENTATION",
+      "url": "https://fastapi.tiangolo.com/"
+    },
+    {
+      "label": "ISSUE_TRACKER",
+      "url": "https://github.com/fastapi/fastapi/issues"
+    },
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/fastapi/fastapi"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://pypi.org/simple"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/fastapi/fastapi"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "ISSUE_TRACKER"
+    },
+    {
+      "projectKey": {
+        "id": "github.com/fastapi/fastapi"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ],
+  "projectStatus": {
+    "status": "active",
+    "reason": ""
+  }
+}

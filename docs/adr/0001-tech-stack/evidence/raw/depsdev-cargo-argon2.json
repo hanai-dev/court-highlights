@@ -1,0 +1,43 @@
+{
+  "versionKey": {
+    "system": "CARGO",
+    "name": "argon2",
+    "version": "0.6.0"
+  },
+  "publishedAt": "2026-08-27T16:54:18Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "Apache-2.0 OR MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/RustCrypto/password-hashes"
+    },
+    {
+      "label": "HOMEPAGE",
+      "url": "https://github.com/RustCrypto/password-hashes/tree/master/argon2"
+    },
+    {
+      "label": "DOCUMENTATION",
+      "url": "https://docs.rs/argon2"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://crates.io/"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/rustcrypto/password-hashes"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ]
+}

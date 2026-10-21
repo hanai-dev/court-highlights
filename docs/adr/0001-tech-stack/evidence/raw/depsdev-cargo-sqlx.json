@@ -1,0 +1,39 @@
+{
+  "versionKey": {
+    "system": "CARGO",
+    "name": "sqlx",
+    "version": "0.9.0"
+  },
+  "publishedAt": "2026-05-21T17:35:53Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "Apache-2.0 OR MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/launchbadge/sqlx"
+    },
+    {
+      "label": "DOCUMENTATION",
+      "url": "https://docs.rs/sqlx"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://crates.io/"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/launchbadge/sqlx"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ]
+}

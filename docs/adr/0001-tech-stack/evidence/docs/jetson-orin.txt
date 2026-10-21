@@ -1,0 +1,251 @@
+https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/
+accessed 2026-10-20T15:34:35.915Z
+HTTP 200
+
+Skip to main content
+Robotics and Edge AI
+ 
+Solutions
+ 
+Software
+ 
+Hardware
+ …
+US
+Sign In
+NVIDIA Jetson Orin
+
+Next-level AI performance for next-gen robotics and edge solutions.
+
+Buy Now
+Introduction
+Features
+Software
+Specifications
+Videos
+Resources
+Partners
+Platforms
+Shop All
+Introduction
+
+Bring your next-gen products to life with the world’s most powerful embedded AI computers for generative AI, agentic AI, computer vision, and advanced robotics. The Jetson Orin™ family includes seven modules with identical architecture, offering up to 275 trillion operations per second (TOPS) and 8x the performance of the last generation for multimodal AI inference, plus high-speed interface support. The powerful software stack features pretrained AI models, reference AI workflows, and a vertical application framework, accelerating end-to-end development for generative AI, as well as any edge AI, robotics, or space computing applications.
+
+NVIDIA Jetson Orin Nano 2 Redefines Entry-Level Edge AI
+
+The new NVIDIA Jetson Orin Nano™ 2 robotics computer brings entry-level edge AI to delivery and inspection drones, robots, and vision AI systems for physical AI applications, delivering nearly twice the inference performance of its predecessor in the same form factor and 40W power envelope, consuming 40% less power.
+
+
+
+Read the Press Release 
+Notify Me 
+NVIDIA Introduces New Jetson Thor Computers to Advance Mainstream Robotics and Edge AI
+
+New NVIDIA Blackwell-Powered T3000 and T2000 modules, paired with new NVIDIA Jetson software memory optimization and agent skills, help partners and customers move advanced robotics, visual AI, and edge workloads onto compact, power-efficient systems.
+
+
+
+Learn More 
+Brilliant Performance—From Development to Production
+Get to Market Faster With Production Jetson Orin Modules
+
+Jetson Orin modules are powered by the same AI software and cloud-native workflows used across other NVIDIA platforms. They deliver the performance and power efficiency you need to build autonomous machines at the edge, while the powerful Jetson Software stack lets you bring your product to market faster.
+
+
+
+See Module Data Sheets 
+Explore Support Resources 
+Accelerate Application Development and Prototyping With Jetson Orin Developer Kits
+
+Two developer kits are available to get you started developing and prototyping your next product. The compact Jetson AGX Orin Developer Kit offers maximum performance, but can also emulate any of the Jetson Orin modules. The Jetson Orin Nano Super Developer Kit is even smaller, and includes a reference carrier board compatible with all Orin NX and Orin Nano™ modules.
+
+
+
+Read the User Guides 
+Explore Support Resources 
+Compare Jetson Orin Production Modules with the Developer Kit
+Jetson Orin Developer Kits
+
+NVIDIA Jetson Orin developer kits let you develop full-featured AI applications for products based on Jetson Orin modules.
+
+Buy Jetson Orin Developer Kits
+Jetson Orin Nano Super Developer Kit
+
+The NVIDIA Jetson Orin Nano Super Developer Kit is a compact, powerful computer that redefines generative AI for small edge devices. It provides an affordable and accessible platform for developers, students, and makers, backed by NVIDIA AI software and a broad AI ecosystem. Purchase it from our partners, or upgrade your existing Jetson Orin Nano Developer Kit with the latest software.
+
+Purchase Now
+Download the latest Jetpack SDK
+Jetson AGX Orin Developer Kit
+
+The NVIDIA Jetson AGX Orin Developer Kit and all Jetson Orin modules share one System-on-Chip (SoC) architecture. This lets it emulate any of the modules and makes it easy for you to start developing your next AI-powered product. It is a powerful supercomputer for generative AI, robotics and computer vision applications.
+
+Purchase Now
+Jetson Orin Modules
+
+NVIDIA Jetson Orin modules deliver accelerated computing capabilities at different performance levels and prices to suit a variety of autonomous applications.
+
+Buy Jetson Orin Modules
+Jetson AGX Orin Series
+
+Jetson AGX Orin modules deliver up to 275 TOPS of AI performance with power configurable between 15W and 60W. This gives you up to 8X the performance of Jetson AGX Xavier™ in the same compact form factor. Jetson AGX Orin is available in 64GB ,32GB, and Industrial versions.
+
+Jetson Orin NX Series
+
+Jetson Orin NX modules deliver up to 100 TOPS of AI performance in the smallest Jetson form factor, with power configurable between 10W and 25W. This gives you up to 3X the performance of Jetson AGX Xavier and up to 5X the performance of Jetson Xavier NX. Jetson Orin NX is available in 16GB and 8GB versions.
+
+Jetson Orin Nano Series
+
+Jetson Orin Nano series modules deliver up to 40 TOPS of AI performance in the smallest NVIDIA Jetson™ form-factor, with power options between 7W and 15W. This gives you up to 80X the performance of NVIDIA Jetson Nano. Jetson Orin Nano is available in 8GB and 4GB versions.
+
+Comprehensive AI Software Stack
+NVIDIA Software
+
+NVIDIA JetPack SDK, Jetson Platform Services, and Isaac ROS form a complete AI software stack for edge AI and robotics development on Jetson Orin, powered by generative AI at the edge and the NVIDIA Metropolis and Isaac™ platforms. NVIDIA JetPack™, Jetson Platform Services, Isaac ROS, and reference AI workflows enable seamless integration of cutting-edge technologies into your products, eliminating the need for costly internal AI resources. Experience end-to-end acceleration for AI applications and speed your time to market using the same powerful technologies that drive data center and cloud deployments.
+
+
+
+Learn More 
+Bring the Power of Generative AI to the Physical World
+
+NVIDIA Jetson Orin offers unparalleled AI compute, large unified memory, and comprehensive software stacks, delivering superior energy efficiency to drive the latest generative AI applications. It’s capable of fast inference for any generative AI models powered by the transformer architecture, providing superior edge performance on MLPerf. The Jetson AI Lab is your gateway to explore tutorials on text generation, text + vision models, image generation, and distillation techniques. Access resources to run these models on NVIDIA Jetson Orin. Join the generative AI revolution and start today.
+
+
+
+Learn More 
+View Jetson Orin Technical Specifications
+ 	Jetson AGX Orin series	Jetson Orin NX series	Jetson Orin Nano series
+Jetson AGX Orin Developer Kit	Jetson AGX Orin 64GB	Jetson AGX Orin Industrial	Jetson AGX Orin 32GB	Jetson Orin NX 16GB	Jetson Orin NX 8GB	Jetson Orin Nano Super Developer Kit	Jetson Orin Nano 8GB	Jetson Orin Nano 4GB
+AI Performance	275 TOPS	248 TOPs	241 TOPS	157 TOPS	117 TOPS	67 TOPS	67 TOPS	34 TOPS
+GPU	2048-core NVIDIA Ampere architecture GPU with 64 Tensor Cores	1792-core NVIDIA Ampere c GPU with 56 Tensor Cores	1024-core NVIDIA Ampere architecture GPU with 32 Tensor Cores	1024-core NVIDIA Ampere architecture GPU with 32 Tensor Cores	512-core NVIDIA Ampere architecture GPU with 16 Tensor Cores
+GPU Max Frequency	1.3 GHz	1.2 GHz	1.3 GHz	1173MHz	1173MHz	1020MHz	1020MHz	1020MHz
+View Full Specs
+
+See the Jetson Orin compute performance comparison.
+
+Learn More
+Watch Jetson Orin in Action
+Get Started With the Jetson Orin Nano Developer Kit
+Watch Video
+Getting Started With the Jetson AGX Orin Developer Kit
+Watch Video
+Generative AI at the Edge With Jetson Orin
+Watch Video
+Jetson AGX Orin: Next-Level AI Robotics Performance
+Watch Video
+Jetson Resources
+Support Resources
+
+Get the resources and support you need to create innovative AI products.
+
+
+
+Learn More 
+Success Stories
+
+See how  companies are using Jetson to accelerate  product development
+
+
+
+Read the Stories 
+Blogs & News
+
+Get the latest news and stories on Jetson in action.
+
+
+
+Read the Blog 
+Jetson Forum
+
+Discuss the latest applications and get help from other Jetson developers.
+
+
+
+Join the Forum 
+
+Learn more about Jetson Orin and how ecosystem partners and customers are tapping into the Jetson platform to bring powerful AI solutions to market.
+
+
+Download the Jetson AGX Orin Technical Brief
+Download the Jetson Solutions Ebook
+NVIDIA Jetson Partner Ecosystem
+
+The Jetson partner ecosystem offers a wide range of AI and system software, developer tools, and custom software development. A variety of Jetson Orin systems and carrier boards are available, as well as peripherals such as sensors, cameras, connectivity modules (5G, 4G, Wi-Fi), and more.
+
+Orin-Supported Hardware Systems
+Orin- Supported Camera Modules
+Pretrained Models
+
+Many AI applications have common needs: classification, object detection, language translation, text-to-speech, recommender engines, sentiment analysis, and more. Pretrained models from the NVIDIA NGC™ catalog are performance-optimized and ready to be fine-tuned with the NVIDIA TAO Toolkit and customer datasets, reducing time and cost for production of AI software development. 
+
+Download Pretrained Models
+NVIDIA Platforms for Robotics, AI Speech, and Smart Cities
+
+NVIDIA software platforms—including NVIDIA Isaac™ for robotics, Riva for AI speech, and Metropolis for video analytics —are available to speed vertical-specific applications.
+
+NVIDIA Isaac Platform for Robotics
+
+Demand for intelligent robots is growing as more industries embrace automation to address supply chain challenges and labor force shortages. Innovators across manufacturing, retail, agriculture, logistics, warehouses, delivery, and healthcare are using the NVIDIA Isaac platform to accelerate their robotics development, simulation, and deployment.
+
+
+
+Learn About Isaac  
+NVIDIA Metropolis
+
+NVIDIA Metropolis is an application framework, set of developer tools, and partner ecosystem that brings visual data and AI together to improve operational efficiency and safety across a range of industries.
+
+
+
+Learn About Metropolis 
+
+Atlas Meditech
+
+NVIDIA Holoscan
+
+NVIDIA Holoscan streamlines the development and deployment of AI and high-performance computing (HPC) applications for real-time insights. It offers the software and hardware you need to build AI applications and deploy sensor processing capabilities, from edge to cloud.
+
+
+
+Learn About Holoscan 
+Software
+Isaac Overview
+Isaac ROS
+Isaac Lab
+Isaac Lab-Arena
+Isaac Sim
+Isaac GR00T
+OSMO
+Metropolis
+Newton
+ 
+Hardware
+Jetson Overview
+Jetson Thor Series
+Jetson Orin Nano Super
+Jetson Orin Series
+Jetson Xavier Series
+Jetson TX2 Series
+Jetson Nano
+IGX Platform
+ 
+Resources
+NVIDIA Developer Program
+NVIDIA Humanoid Robot Developer Program
+Ecosystem Partners
+Success Stories
+Robotics News
+Robotics Blog
+Robotics Technical Blog
+ 
+Community
+Isaac Forum
+Jetson Forum
+Metropolis Forum
+Community Projects
+Follow NVIDIA Robotics
+Privacy Policy Your Privacy Choices Terms of Service Accessibility Corporate Policies Product Security Contact
+Copyright © 2026 NVIDIA Corporation
+
+NVIDIA and our third-party partners use cookies and other tools to collect and record information you provide as well as information about your interactions with our websites for performance improvement, analytics, and to assist in our marketing efforts. By clicking "Accept All", you consent to our use of cookies and other tools as described in our Cookie Policy. You can manage your cookie settings by clicking on "Manage Settings". Please see our Privacy Policy for more information on our privacy practices.
+
+Manage Settings
+Reject Optional Accept All

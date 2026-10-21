@@ -1,0 +1,218 @@
+https://www.intel.com/content/www/us/en/products/sku/241636/intel-processor-n150-6m-cache-up-to-3-60-ghz/specifications.html
+accessed 2026-10-20T15:34:27.252Z
+HTTP 200
+
+Skip To Main Content
+Products
+Support
+Solutions
+Developers
+Partners
+Foundry
+Toggle Search
+Ask Intel
+Intel® Processor N-series
+Intel® Processor N150
+Specifications
+Compare
+Specifications
+Ordering & Compliance
+Downloads
+Support
+Essentials
+CPU Specifications
+Supplemental Information
+Memory Specifications
+GPU Specifications
+IPU Specifications
+Expansion Options
+I/O Specifications
+Package Specifications
+Advanced Technologies
+Security & Reliability
+Download Specs
+Essentials
+Product Collection
+Intel® Processor N-series
+Code Name
+Products formerly Twin Lake
+Vertical Segment
+Mobile
+Processor Number
+N150
+Lithography
+Intel 7
+CPU Specifications
+Total Cores
+4
+Total Threads
+4
+Max Turbo Frequency
+3.6 GHz
+Cache
+6 MB Intel® Smart Cache
+Processor Base Power
+6 W
+Supplemental Information
+Marketing Status
+Launched
+Launch Date
+Q1'25
+Embedded Options Available
+Yes
+Product Tuning (Embedded Uses)
+Yes
+Datasheet
+View now
+Memory Specifications
+Max Memory Size (dependent on memory type)
+16 GB
+Memory Types
+DDR4 3200 MT/s
+DDR5 4800 MT/s
+LPDDR5 4800 MT/s
+Maximum Memory Speed
+4800 MHz
+Max # of Memory Channels
+1
+ECC Memory Supported ‡
+No
+GPU Specifications
+GPU Name‡
+Intel® Graphics
+Graphics Max Dynamic Frequency
+1 GHz
+Graphics Output
+eDP 1.4b, DP 1.4, HDMI 2.1, MIPI-DSI 1.3
+Execution Units
+24
+4K Support
+Yes, at 60Hz
+Max Resolution (HDMI)‡
+4096 x 2160@60Hz
+Max Resolution (DP)‡
+4096 x 2160@60Hz
+DirectX* Support
+12.1
+OpenGL* Support
+4.6
+OpenCL* Support
+3.0
+View all
+IPU Specifications
+Intel® Image Processing Unit Version
+6.0
+Expansion Options
+Chipset / PCH PCIe Revision
+Gen 3
+Max # of PCI Express Lanes
+9
+I/O Specifications
+USB Revision
+2.0/3.2
+General Purpose IO
+Yes
+Package Specifications
+Sockets Supported
+FCBGA1264
+Max CPU Configuration
+1
+TJUNCTION
+105°C
+Max Operating Temperature
+105 °C
+Package Size
+35mm x 24mm
+Advanced Technologies
+Intel® Gaussian & Neural Accelerator
+3.0
+Intel® Smart Sound Technology
+Yes
+Intel® Wake on Voice
+Yes
+Intel® High Definition Audio
+Yes
+MIPI SoundWire*
+1.2
+Intel® Speed Shift Technology
+Yes
+Intel® Hyper-Threading Technology ‡
+No
+Instruction Set
+64-bit
+Instruction Set Extensions
+Intel® SSE4.1, Intel® SSE4.2, Intel® AVX2
+Enhanced Intel SpeedStep® Technology
+Yes
+View all
+Security & Reliability
+Intel® Control-Flow Enforcement Technology
+Yes
+Intel® AES New Instructions
+Yes
+Intel® Trusted Execution Technology ‡
+Yes
+Intel® OS Guard
+Yes
+Intel® Boot Guard
+Yes
+Mode-based Execute Control (MBEC)
+Yes
+Intel® Virtualization Technology (VT-x) ‡
+Yes
+Intel® Virtualization Technology for Directed I/O (VT-d) ‡
+Yes
+Intel® VT-x with Extended Page Tables (EPT) ‡
+Yes
+Product and performance information
+
+All information provided is subject to change at any time, without notice. Intel may make changes to manufacturing life cycle, specifications, and product descriptions at any time, without notice. The information herein is provided "as-is" and Intel does not make any representations or warranties whatsoever regarding accuracy of the information, nor on the product features, availability, functionality, or compatibility of the products listed. Please contact system vendor for more information on specific products or systems.
+
+Intel classifications are for general, educational and planning purposes only and consist of Export Control Classification Numbers (ECCN) and Harmonized Tariff Schedule (HTS) numbers. Any use made of Intel classifications are without recourse to Intel and shall not be construed as a representation or warranty regarding the proper ECCN or HTS. Your company as an importer and/or exporter is responsible for determining the correct classification of your transaction.
+
+Refer to Datasheet for formal definitions of product properties and features.
+
+‡ This feature may not be available on all computing systems. Please check with the system vendor to determine if your system delivers this feature, or reference the system specifications (motherboard, processor, chipset, power supply, HDD, graphics controller, memory, BIOS, drivers, virtual machine monitor-VMM, platform software, and/or operating system) for feature compatibility. Functionality, performance, and other benefits of this feature may vary depending on system configuration.
+
+Intel processor numbers are not a measure of performance. Processor numbers differentiate features within each processor family, not across different processor families. See http://www.intel.com/content/www/us/en/processors/processor-numbers.html for details.
+
+“Announced” SKUs are not yet available. Please refer to the Launch Date for market availability.
+
+Intel® Arc™ graphics only available on select V-Series Intel® Core™ Ultra processor-powered systems with qualifying system thermal design or H-series Intel® Core™ Ultra processor-powered systems with at least 16GB of system memory in a dual-channel configuration. OEM enablement required. Other Intel® Core™ Ultra processor-powered system configurations feature Intel® Graphics. Check with OEM or retailer for system configuration details.
+
+Intel® Iris® Xe Graphics only: to use the Intel® Iris® Xe brand, the system must be populated with 128-bit (dual channel) memory. Otherwise, use the Intel® UHD brand.
+
+See http://www.intel.com/content/www/us/en/architecture-and-technology/hyper-threading/hyper-threading-technology.html?wapkw=hyper+threading for more information including details on which processors support Intel® HT Technology.
+
+Some products can support AES New Instructions with a Processor Configuration update, in particular, i7-2630QM/i7-2635QM, i7-2670QM/i7-2675QM, i5-2430M/i5-2435M, i5-2410M/i5-2415M. Please contact OEM for the BIOS that includes the latest Processor configuration update.
+
+
+
+Get the latest in your inbox
+
+Subscribe
+Company
+Company overview
+Corporate Responsibility
+Our Values
+Investors
+News
+Press Hub
+Careers
+Quick links
+Products
+Processors
+Graphics
+Legal & Privacy
+Privacy
+Terms of Use
+Trademarks
+Cookies
+Support & Resources
+Download Center
+Support
+Contact Us
+
+© Intel Corporation
+
+Intel technologies may require enabled hardware, software or service activation. No product or component can be absolutely secure. Your costs and results may vary. Performance varies by use, configuration, and other factors. Learn more at intel.com/performanceindex. See our complete legal Notices and Disclaimers. Intel is committed to respecting human rights and avoiding causing or contributing to adverse impacts on human rights. See Intel’s Global Human Rights Principles. Intel’s products and software are intended only to be used in applications that do not cause or contribute to adverse impacts on human rights.

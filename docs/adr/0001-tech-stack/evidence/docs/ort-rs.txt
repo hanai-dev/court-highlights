@@ -1,0 +1,115 @@
+https://ort.pyke.io/
+accessed 2026-10-20T15:34:24.101Z
+HTTP 200
+
+Skip to Content
+CTRL K
+Sponsor
+API Reference
+Crates.io
+Docs
+ Introduction
+ Setup
+Platform support
+Cargo features
+Multiversioning
+Linking
+ Fundamentals
+Values
+ Performance
+Execution providers
+I/O Binding
+ Backends
+Alternative backends
+ort-candle
+ort-tract
+ort-web
+ Troubleshooting
+Logging
+Compiling & Linking
+Performance
+ Miscellaneous
+Version mapping
+Prebuilt binaries
+System
+Question? Give us feedback 
+Edit this page 
+Scroll to top
+ Introduction
+ort is an open-source Rust binding for ONNX Runtime.
+
+These docs are for the latest version of ort, 2.0.0-rc.14. This version is production-ready and we recommend new & existing projects use it.
+
+ort makes it easy to deploy your machine learning models to production via ONNX Runtime , a hardware-accelerated inference engine. With ort + ONNX Runtime, you can run almost any ML model (including ResNet, YOLOv8, BERT, LLaMA) on almost any hardware, often far faster than PyTorch, and with the added bonus of Rust’s efficiency.
+
+ONNX  is an interoperable neural network specification. Your ML framework of choice — PyTorch, TensorFlow, Keras, PaddlePaddle, etc. — turns your model into an ONNX graph comprised of basic operations like MatMul or Add. This graph can then be converted into a model in another framework, or inferenced directly with ONNX Runtime.
+
+Converting a neural network to a graph representation like ONNX opens the door to more optimizations and broader accelerator support. ONNX Runtime can significantly improve the inference speed/latency of most models and enable hardware acceleration with NVIDIA CUDA & TensorRT, Intel OpenVINO, Qualcomm QNN, Huawei CANN, and much more.
+
+ort is the Rust gateway to ONNX Runtime & other compatible ONNX inference engines, allowing you to run inference on your ONNX models via an easy-to-use and ergonomic API. Many commercial, open-source, & research projects use ort in some pretty serious production scenarios to boost inference performance:
+
+Boquila Foundation uses local models running via ort to aid in biodiversity conservation.
+Wasmtime, one of the most popular open-source WebAssembly runtimes, implements ONNX inference for the WASI-NN standard  using ort.
+SurrealDB’s SurrealQL query language supports calling ONNX models through ort. Supabase’s AI edge functions are also powered by ort.
+Google’s Magika file type detection library is powered by ort. 2 other members of the “Big Five”  use ort, too.
+Getting started
+Add ort to your Cargo.toml
+
+If you have a supported platform (and you probably do), installing ort couldn’t be any simpler! Just add it to your Cargo dependencies:
+
+[dependencies]
+ort = "=2.0.0-rc.14"
+Convert your model
+
+Your model will need to be converted to an ONNX graph before you can use it.
+
+The awesome folks at Hugging Face have a guide  to export 🤗 Transformers models to ONNX with 🤗 Optimum.
+For any PyTorch model: torch.onnx
+For scikit-learn models: sklearn-onnx
+For TensorFlow, Keras, TFlite, & TensorFlow.js: tf2onnx
+For PaddlePaddle: Paddle2ONNX
+Load your model
+
+Once you’ve got a model, load it in ort by creating an Environment & Session:
+
+use ort::session::{builder::GraphOptimizationLevel, Session};
+ 
+let env = ort::init().build()?;
+let mut model = Session::builder(&env)?
+    .with_optimization_level(GraphOptimizationLevel::Level3)?
+    .with_intra_threads(4)?
+    .commit_from_file("yolov8m.onnx")?;
+Perform inference
+
+Prepare your inputs, then run() the session to perform inference.
+
+let outputs = model.run(ort::inputs!["image" => image])?;
+let predictions = outputs["output0"].try_extract_array::<f32>()?;
+...
+There are some more useful examples in the ort repo!
+Next steps
+Unlock more performance with EPs
+
+Use execution providers to enable hardware acceleration in your app and unlock the full power of your GPU or NPU.
+
+Optimize I/O with IoBinding
+
+IoBinding lets you control where and when inputs/outputs end up, so you can maximize I/O efficiency when using EPs.
+
+Go beyond ONNX Runtime
+
+Deploy your application to the Web with the ort-web backend, or expand platform compatibility with the pure-Rust tract or candle backends.
+
+Support us
+
+If you or your business finds ort useful, please consider sponsoring us ! Sponsors enjoy priority support & issue resolution.
+
+Show off your project!
+
+We’d love to see what you’ve made with ort! Show off your project in GitHub Discussions  or on our Discord  💖
+
+Last updated on October 12, 2026
+Platform support
+ort
+
+made with ☕ by

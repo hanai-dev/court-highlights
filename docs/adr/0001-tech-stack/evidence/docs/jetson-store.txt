@@ -1,0 +1,213 @@
+https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/nano-super-developer-kit/
+accessed 2026-10-20T15:37:05.821Z
+HTTP 200
+
+Skip to main content
+Robotics and Edge AI
+ 
+Solutions
+ 
+Software
+ 
+Hardware
+ …
+US
+Sign In
+Jetson Orin Nano Super Developer Kit
+
+The most affordable generative AI supercomputer.
+
+Where to Buy
+
+Purchase from one of our partners. If you already have a Jetson Orin Nano™ Developer Kit, please download the latest software to make it “Super”.
+
+
+
+Purchase Now
+Download SDK
+
+Datasheet | Video | Specifications
+
+Introduction
+Highlights
+Workloads
+Benefits
+Performance
+Specs
+Community
+Purchase Now
+Transform Generative AI Concepts Into Reality
+
+The NVIDIA Jetson Orin Nano™ Super Developer Kit is a compact, yet powerful computer that redefines generative AI for small edge devices. It delivers up to 67 TOPS of AI performance—a 1.7X improvement over its predecessor—to seamlessly run the most popular generative AI models, like vision transformers, large language models, vision-language models, and more. It provides developers, students, and makers with the most affordable and accessible platform with the support of the NVIDIA AI software and a broad AI software ecosystem. Existing Jetson Orin Nano Developer Kit users can experience this performance boost with just a software upgrade, so everyone can now unlock new possibilities with generative AI.
+
+NVIDIA Unveils the Most Affordable Generative AI Supercomputer
+
+The Jetson Orin Nano Super delivers up to a 1.7X gain in generative AI performance over its predecessor, supporting popular models for hobbyists, developers, and students.
+
+
+
+Read More 
+Watch the Video 
+Jetson Orin Nano Developer Kit Gets a “Super” Boost
+
+To support emerging applications for generative AI workloads in robotics and multimodal agents, NVIDIA is refreshing the NVIDIA Jetson Orin Nano Developer Kit through a software update with an unprecedented boost in performance at an amazing new price.
+
+
+
+Learn More 
+
+Highlights
+
+Key Performance
+AI Performance
+
+67 TOPS¹
+
+Memory Bandwidth
+
+102 GB/s²
+
+CPU Frequency
+
+1.7 GHz²
+
+1 Up from 40 TOPS. | 2 Up from 68 GB/s. | 3 Up from 1.5GHz.
+
+Build the Future of Robotics With NVIDIA Jetson Orin Nano™ Super
+
+The NVIDIA Jetson Orin™ Nano Super Developer Kit is the most affordable generative AI computer, offering unparalleled performance for AI and robotics tasks. Its energy-efficient design delivers long-lasting performance for portable and embedded systems.
+
+Ideal for students, educators, and researchers, it provides hands-on experience with cutting-edge technology and supports a wide range of AI and robotics frameworks. 
+
+Join a vibrant community and access extensive resources, including tutorials and forums, to enhance your learning and innovation.
+
+Purchase Today
+
+Workloads
+
+Unlock New Physical AI Applications for the Edge
+Generative AI at the Edge
+
+NVIDIA Jetson Orin: Powering generative AI with efficiency and performance.
+
+NVIDIA Jetson Orin Nano Super delivers exceptional AI compute, fast memory bandwidth, and comprehensive software stacks, offering superior energy efficiency for the latest generative AI applications. It supports fast inference for any transformer-based generative AI models.
+
+Jetson AI Lab
+Robotics
+
+Accelerate AI-driven robotics across multiple industries.
+
+Accelerate robotics with AI from development to simulation to deployment, enabling key functions such as mobility, grasping, and vision. Build robots for a wide range of industries, including manufacturing, retail, agriculture, logistics, delivery, healthcare, and more.
+
+AI Robot Development Platform
+Vision AI
+
+Transform data from trillions of IoT devices into valuable insights using vision AI.
+
+NVIDIA Metropolis integrates visual data and AI to boost efficiency and safety in a variety of industries. It processes sensor data for applications like frictionless retail, inventory management, smart city traffic, factory inspections, and healthcare. Use Metropolis to create, deploy, and scale AI and IoT applications from the edge to the cloud.
+
+NVIDIA Metropolis
+
+Benefits
+
+Advancing Generative AI at the Edge
+A Performance Boost for Cutting- Edge Generative AI Models
+
+NVIDIA's latest software update enhances Jetson Orin Nano's AI performance from 40 to 67 AI TOPs and memory bandwidth from 68 to 102 GB/s, allowing developers and enthusiasts to run a wide range of generative AI models more efficiently.
+
+Powerful and Affordable
+
+The Jetson Orin Nano Super Developer Kit is the most powerful and affordable embedded computer for generative AI. It can be purchased through NVIDIA authorized distributors worldwide.
+
+Super Increase for All Jetson Orin Nano Developer Kits
+
+All existing Jetson Orin Nano Developer kits in the marketplace can get this ‘Super’ increase in performance through a software update.
+
+Performance
+
+Game-Changing Performance for Generative AI Models
+
+The NVIDIA Jetson Orin Nano Super delivers significant performance increases over its predecessor on a wide variety of popular Large Language Models (LLMs), Vision Language Models (VLMs), and Vision Transformers.
+
+Large Language Models
+
+LLM performance boost on Jetson Orin Nano Super
+
+Vision Language Models
+
+VLM performance boost on NVIDIA Jetson Orin Nano Super
+
+Vision Transformers
+
+Vision Transformers performance boost on Jetson Orin Nano Super
+
+Specifications
+Jetson Orin Nano Super Developer Kit
+AI Performance	67 INT8 TOPS
+GPU	NVIDIA Ampere architecture with 1024 CUDA cores and 32 tensor cores
+CPU	6-core Arm® Cortex®-A78AE v8.2 64-bit CPU 1.5MB L2 + 4MB L3
+Memory	8GB 128-bit LPDDR5
+102 GB/s
+Storage	Supports SD card slot and external NVMe
+Power	7W–25W
+
+* Refer to the Software Features section of the latest NVIDIA Jetson Linux Developer Guide for a list of supported features.
+
+View the Jetson Orin Nano Super Developer Kit Datasheet
+Join the Jetson Community
+
+Bring generative AI to the edge with NVIDIA Jetson™. Join our active community and take advantage of their extensive guides, tutorials, and articles on implementing generative AI on the Jetson platform.
+
+Explore the Projects
+
+Get Started
+
+Start Your Journey With the Jetson Orin Nano Super Developer Kit
+
+Purchase the new Jetson Orin Nano Super Developer Kit from one of our worldwide partners. If you already have a Jetson Orin Nano Developer Kit, please download the latest software to make it, “Super”.
+
+Purchase Now
+Download SDK
+Software
+Isaac Overview
+Isaac ROS
+Isaac Lab
+Isaac Lab-Arena
+Isaac Sim
+Isaac GR00T
+OSMO
+Metropolis
+Newton
+ 
+Hardware
+Jetson Overview
+Jetson Thor Series
+Jetson Orin Nano Super
+Jetson Orin Series
+Jetson Xavier Series
+Jetson TX2 Series
+Jetson Nano
+IGX Platform
+ 
+Resources
+NVIDIA Developer Program
+NVIDIA Humanoid Robot Developer Program
+Ecosystem Partners
+Success Stories
+Robotics News
+Robotics Blog
+Robotics Technical Blog
+ 
+Community
+Isaac Forum
+Jetson Forum
+Metropolis Forum
+Community Projects
+Follow NVIDIA Robotics
+Privacy Policy Your Privacy Choices Terms of Service Accessibility Corporate Policies Product Security Contact
+Copyright © 2026 NVIDIA Corporation
+
+NVIDIA and our third-party partners use cookies and other tools to collect and record information you provide as well as information about your interactions with our websites for performance improvement, analytics, and to assist in our marketing efforts. By clicking "Accept All", you consent to our use of cookies and other tools as described in our Cookie Policy. You can manage your cookie settings by clicking on "Manage Settings". Please see our Privacy Policy for more information on our privacy practices.
+
+Manage Settings
+Reject Optional Accept All

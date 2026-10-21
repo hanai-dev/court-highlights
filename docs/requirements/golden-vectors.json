@@ -1,0 +1,31 @@
+{
+  "source": "requirements.md §7 (FINAL, client-review revision 19); times are Asia/Manila; defaults 25 s before + 5 s after",
+  "vectors": [
+    { "id": "GV-1", "rule": "FR-4 default clip window", "input": { "tap": "19:40:30" }, "expected": { "clip": ["19:40:05", "19:40:35"] } },
+    { "id": "GV-2", "rule": "FR-4 shortest setting", "input": { "before_s": 10, "after_s": 0, "tap": "19:40:30" }, "expected": { "clip": ["19:40:20", "19:40:30"] } },
+    { "id": "GV-3", "rule": "FR-4 longest setting and bounds", "input": { "before_s": 60, "after_s": 15, "tap": "19:40:30", "invalid_settings": [{ "before_s": 9 }, { "before_s": 61 }, { "after_s": 16 }] }, "expected": { "clip": ["19:39:30", "19:40:45"], "invalid_settings": "refused: before 10–60 s, after 0–15 s" } },
+    { "id": "GV-4", "rule": "FR-5 merge at exactly 5.0 s", "input": { "taps": ["19:40:30.0", "19:40:35.0"] }, "expected": { "clips": [["19:40:05", "19:40:40"]] } },
+    { "id": "GV-5", "rule": "FR-5 no merge above 5 s", "input": { "taps": ["19:40:30", "19:40:36"] }, "expected": { "clips": [["19:40:05", "19:40:35"], ["19:40:11", "19:40:41"]] } },
+    { "id": "GV-6", "rule": "FR-5 chained merge", "input": { "taps": ["19:40:30", "19:40:34", "19:40:38"] }, "expected": { "clips": [["19:40:05", "19:40:43"]] } },
+    { "id": "GV-7", "rule": "FR-3/FR-4 no footage", "input": { "camera_offline": ["19:39:00", "19:42:00"], "tap": "19:40:30" }, "expected": { "clips": [], "message": "Court 2 camera is offline — clips aren't available" } },
+    { "id": "GV-8", "rule": "FR-4 partial footage", "input": { "recording_started": "06:00:00", "tap": "06:00:10" }, "expected": { "clip": ["06:00:00", "06:00:15"] } },
+    { "id": "GV-9", "rule": "FR-10 auto-stop", "input": { "start": "18:02:00", "stop": null }, "expected": { "stopped_at": "20:02:00", "game_video": ["18:02:00", "20:02:00"] } },
+    { "id": "GV-10", "rule": "FR-45 expiry", "input": { "made": "2026-10-19T19:40:00+08:00" }, "expected": { "deleted_at_cleanup": "2026-10-23T03:00:00+08:00", "email_text": "available until Fri 23 Oct 2026, 3:00 am" } },
+    { "id": "GV-11", "rule": "FR-45 expiry boundary inclusive", "input": { "made": ["2026-10-19T03:00:00+08:00", "2026-10-19T03:00:01+08:00"] }, "expected": { "deleted_at_cleanup": ["2026-10-22T03:00:00+08:00", "2026-10-23T03:00:00+08:00"] } },
+    { "id": "GV-12", "rule": "FR-45 keep limit from Keep", "input": { "kept_at": "2026-10-20T10:00:00+08:00" }, "expected": { "deleted_at_cleanup": "2027-10-21T03:00:00+08:00" } },
+    { "id": "GV-13", "rule": "FR-1 rolling footage", "input": { "now": "21:00:00", "clips": [], "games": [], "holds": [] }, "expected": { "retained": ["17:00:00", "21:00:00"], "deleted_before": "17:00:00" } },
+    { "id": "GV-14", "rule": "FR-18 court page window inclusive", "input": { "page_opened": "21:00:00", "clips_made": ["19:00:00", "18:59:59"] }, "expected": { "listed": ["19:00:00"], "not_listed": ["18:59:59"] } },
+    { "id": "GV-15", "rule": "FR-20 email limit", "input": { "existing_addresses": 8, "add": 1 }, "expected": { "refused": true, "message": "Up to 8 addresses per game", "addresses": 8 } },
+    { "id": "GV-16", "rule": "FR-28 lockout", "input": { "consecutive_failures": 5, "fifth_failure_at": "10:00:00", "correct_password_at": ["10:10:00", "10:15:00"] }, "expected": { "results": ["refused", "accepted"], "success_resets_count": true } },
+    { "id": "GV-17", "rule": "FR-28 session limit", "input": { "signed_in": "06:00:00" }, "expected": { "refused_from": "18:00:00" } },
+    { "id": "GV-18", "rule": "FR-32 hold limit", "input": { "hold_placed": "2026-10-20T10:00:00+08:00", "span": ["16:45", "17:15"], "court": "Court 4" }, "expected": { "protected_while_held": true, "auto_release": "2026-12-19T10:00:00+08:00" } },
+    { "id": "GV-19", "rule": "FR-22 send order", "input": { "games": [{ "id": "A", "stopped": "17:00", "clips": 2, "reel": true, "video": true }, { "id": "B", "stopped": "18:00", "clips": 1, "reel": true, "video": true }], "online_from": "20:00" }, "expected": { "order": ["A clip 1", "A clip 2", "A reel", "B clip 1", "B reel", "A video 720p", "B video 720p"] } },
+    { "id": "GV-20", "rule": "FR-46 disk pressure", "input": { "disk_percent": 91, "unkept_game_videos": ["Mon", "Tue"] }, "expected": { "delete_order": ["Mon", "Tue"], "stop_below_percent": 85, "rolling_footage_hours_kept": 4, "warning_from_percent": 80 } },
+    { "id": "GV-21", "rule": "FR-1/FR-10 opening hours and closing", "input": { "hours": ["06:00", "23:00"], "game_started": "22:30", "tap": "23:00:10" }, "expected": { "recording": ["06:00:00", "23:00:00"], "not_recording_at": "05:59:59", "game_stopped_at": "23:00:00", "tap": "refused: Courts are closed" } },
+    { "id": "GV-22", "rule": "FR-14 highlight trimming", "input": { "points": [["19:10:00", "19:10:31"], ["19:20:00", "19:20:12"]] }, "expected": { "highlights": [["19:10:13", "19:10:33"], ["19:20:00", "19:20:14"]] } },
+    { "id": "GV-23", "rule": "FR-14 highlight count", "input": { "found": [3, 0] }, "expected": { "results": ["reel + 3 single points", "No highlights found; game video still available"] } },
+    { "id": "GV-24", "rule": "FR-24 link expiry", "input": { "clip_made": "2026-10-19T19:40:00+08:00", "opened": ["2026-10-23T02:59:59+08:00", "2026-10-23T03:00:00+08:00"] }, "expected": { "results": ["plays", "These videos have expired"] } },
+    { "id": "GV-26", "rule": "FR-27 switch-off and expiry", "input": { "game_stopped": "2026-10-19T18:00:00+08:00", "switched_on": ["2026-10-21T12:00:00+08:00", "2026-10-23T12:00:00+08:00"] }, "expected": { "results": ["sent after reconnect", "not sent (expired 2026-10-23T03:00:00+08:00)"] } }
+  ],
+  "note": "GV-25 (clip ready ≤ 10 s after its window for 95/100 taps) is a performance target, verified as NFR-1 in the monitoring dimension, not as a logic vector."
+}

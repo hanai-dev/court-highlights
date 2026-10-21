@@ -1,0 +1,33 @@
+https://gstreamer.freedesktop.org/documentation/va/index.html
+accessed 2026-10-20T15:34:12.091Z
+HTTP 200
+
+API References
+Application manual
+Tutorials
+Language 
+API Version 
+va
+va
+(from GStreamer Bad Plug-ins)
+Name	Classification	Description
+vaav1dec	Codec/Decoder/Video/Hardware	VA-API based AV1 video decoder
+vaav1enc	Codec/Encoder/Video/Hardware	VA-API based AV1 video encoder
+vacompositor	Filter/Editor/Video/Compositor/Hardware	VA-API based video compositor
+vadeinterlace	Filter/Effect/Video/Deinterlace	VA-API based deinterlacer
+vah264dec	Codec/Decoder/Video/Hardware	VA-API based H.264 video decoder
+vah264enc	Codec/Encoder/Video/Hardware	VA-API based H.264 video encoder
+vah264lpenc	Codec/Encoder/Video/Hardware	VA-API based H.264 low power video encoder
+vah265dec	Codec/Decoder/Video/Hardware	VA-API based H.265 video decoder
+vah265enc	Codec/Encoder/Video/Hardware	VA-API based H.265 video encoder
+vah265lpenc	Codec/Encoder/Video/Hardware	VA-API based H.265 low power video encoder
+vajpegdec	Codec/Decoder/Image/Hardware	VA-API based JPEG image decoder
+vajpegenc	Codec/Encoder/Video/Hardware	VA-API based JPEG video encoder
+vampeg2dec	Codec/Decoder/Video/Hardware	VA-API based Mpeg2 video decoder
+vapostproc	Converter/Filter/Colorspace/Scaler/Video/Hardware	VA-API based video postprocessor
+vavp8alphadecodebin	Codec/Decoder/Video/Hardware	Wrapper bin to decode VP8 with alpha stream.
+vavp8dec	Codec/Decoder/Video/Hardware	VA-API based VP8 video decoder
+vavp9alphadecodebin	Codec/Decoder/Video/Hardware	Wrapper bin to decode VP9 with alpha stream.
+vavp9dec	Codec/Decoder/Video/Hardware	VA-API based VP9 video decoder
+va
+va

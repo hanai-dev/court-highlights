@@ -1,0 +1,549 @@
+https://www.digitalocean.com/pricing/managed-databases
+accessed 2026-10-20T15:35:09.287Z
+HTTP 200
+
+Introducing Agent Droplets
+
+Blog
+Docs
+Careers
+Get Support
+Contact Sales
+DigitalOcean
+Products
+
+Featured AI Products
+
+Compute
+
+Containers and Images
+
+Managed Databases
+
+Management and Dev Tools
+
+Networking
+
+Security
+
+Storage
+
+Browse all products
+Featured AI Products
+
+Managed Agents
+
+Run AI agents in the cloud with governed tool access
+
+New
+
+Learning Services
+
+Improve agents and models with evidence
+
+New
+
+Data Services
+
+Store, retrieve, and surface the context you need
+
+Inference Engine
+
+Run inference at scale with policy-driven routing
+
+Model Library
+
+Discover, compare, and evaluate AI models
+
+GPU Droplets
+
+GPU-powered virtual machines to build and run AI apps
+
+Browse all products
+Solutions
+
+AI/ML
+
+CMS
+
+Data and IoT
+
+Developer Tools
+
+Gaming and Media
+
+Hosting
+
+Security and Networking
+
+Startups and SMBs
+
+Web and App Platforms
+
+See all solutions
+AI/ML
+
+AI HR Knowledge Assistant
+
+Deploy AI tools developed for Human Resources
+
+AI Training GPU
+
+Accelerate model training with dedicated GPU infrastructure
+
+AI Recommendation Engine
+
+Build tools to personalize user experiences
+
+Multimodal AI
+
+Run models that process multiple data types
+
+GPU Clusters
+
+GPUs clustered together for large-scale tasks
+
+GPU Inference
+
+Serve models efficiently with optimized GPU compute
+
+Developers
+
+Community
+
+Documentation
+
+Developer Tools
+
+Get Involved
+
+Utilities and Help
+
+Community
+
+Blog
+
+The latest product releases and insights from our experts
+
+CSS Tricks
+
+All things web design
+
+The Wave
+
+Content to level up your business
+
+Tutorials
+
+Our extensive library of technical articles
+
+Q&A
+
+Answers to your cloud and coding questions
+
+YouTube
+
+Educational content and tutorials
+
+Visit DigitalOcean's Community Site
+Partners
+
+Become a Partner
+
+Marketplace
+
+Become a Partner
+
+About Partner Pod
+
+Discounts, revenue share, and more for businesses
+
+AI Partner Program
+
+Boost your AI business
+
+DigitalOcean Startups
+
+Resources and support to propel your startup
+
+Partners Directory
+
+Current list of DigitalOcean Partners
+
+Customer Stories
+
+Customers growing on DigitalOcean
+
+Need help? Talk to an expert
+Become a Partner
+Pricing
+Log in
+Sign up
+Simple, predictable pricing
+
+Always know what you'll pay with monthly caps and flat pricing.
+
+Get started
+<- Back to overview
+PostgreSQL
+MySQL
+MongoDB
+Kafka
+Valkey
+OpenSearch
+FAQ
+Managed Databases
+
+Fully managed MongoDB, Kafka, MySQL, PostgreSQL, and Caching database engines to give your application the performance it needs-without the operational overhead of managing your own database server.
+
+Learn more about DigitalOcean's Managed Databases or talk to an expert.
+
+PostgreSQL Standard
+
+PostgreSQL is an open source, object-relational database built with a focus on extensibility, data integrity, and speed. Its concurrency support makes it fully ACID compliant, and it supports dynamic loading and catalog-driven operations to let users customize its data types, functions, and more.
+
+
+
+
+Choose Advanced Edition for high-concurrency or data-intensive workloads requiring maximum throughput, rapid failover, self-serve controls, and deep observability.
+
+Edition:
+Standard
+Advanced
+Type of node:
+Basic
+General Purpose
+Storage Optimized
+CPU options:
+Regular
+Premium Intel
+Premium AMD
+Additional nodes:
+0
+1
+2
+Memory
+vCPUs
+Disk
+$/hr
+$/mo
+1 GiB
+1 vCPU
+$0.02254
+$15.15
+2 GiB
+1 vCPU
+$0.04531
+$30.45
+4 GiB
+2 vCPUs
+$0.09063
+$60.90
+8 GiB
+4 vCPUs
+$0.18170
+$122.10
+16 GiB
+6 vCPUs
+$0.36362
+$244.35
+MySQL Standard
+
+MySQL is a prominent open-source relational database management system. An incredibly flexible and powerful program, MySQL is used to store and retrieve data for a wide variety of popular applications.
+
+
+
+
+Choose Advanced Edition for high-concurrency or data-intensive workloads requiring maximum throughput, rapid failover, self-serve controls, and deep observability.
+
+Edition:
+Standard
+Advanced
+Type of node:
+Basic
+General Purpose
+Storage Optimized
+CPU options:
+Regular
+Premium Intel
+Premium AMD
+Additional nodes:
+0
+1
+2
+Memory
+vCPUs
+Disk
+$/hr
+$/mo
+1 GiB
+1 vCPU
+$0.02254
+$15.15
+2 GiB
+1 vCPU
+$0.04531
+$30.45
+4 GiB
+2 vCPUs
+$0.09063
+$60.90
+8 GiB
+4 vCPUs
+$0.18170
+$122.10
+16 GiB
+6 vCPUs
+$0.36362
+$244.35
+MongoDB
+
+MongoDB is a source-available cross-platform document-oriented database program for high-volume storage. Classified as a NoSQL database program, MongoDB uses JSON-like documents with optional schemas.
+
+Type of node:
+Basic
+General Purpose
+Storage Optimized
+CPU options:
+Regular
+Premium Intel
+Premium AMD
+Additional nodes:
+0
+2
+Memory
+vCPUs
+Disk
+$/hr
+$/mo
+1 GiB
+1 vCPU
+$0.02266
+$15.23
+2 GiB
+1 vCPU
+$0.04540
+$30.51
+4 GiB
+2 vCPUs
+$0.09054
+$60.84
+8 GiB
+4 vCPUs
+$0.18125
+$121.80
+16 GiB
+6 vCPUs
+$0.36268
+$243.72
+32 GiB
+8 vCPUs
+$0.72554
+$487.56
+64 GiB
+16 vCPUs
+$1.45125
+$975.24
+Kafka Clusters
+
+Kafka is an open-source distributed event and stream-processing platform built to process demanding real-time data feeds. It is inherently scalable, with high throughput and availability. All Kafka clusters are priced in terms of the number of "brokers", with plans starting out with three brokers for high availability.
+
+Type of node:
+Basic
+General Purpose
+Memory
+vCPUs
+Disk
+$/hr
+$/mo
+6 GiB
+6 vCPUs
+$0.22143
+$148.80
+12 GiB
+6 vCPUs
+$0.44085
+$296.25
+Valkey
+
+DigitalOcean Managed Caching for Valkey is compatible with Redis, which is an open-source, key-value database built with an in-memory design that emphasizes speed. It has support for rich data types, atomic operations, and Lua scripting.
+
+Type of node:
+Basic
+Memory Optimized
+Additional nodes:
+0
+1
+2
+Memory
+vCPUs
+Disk
+$/hr
+$/mo
+1 GiB
+1 vCPU
+10 GiB
+$0.02232
+$15.00
+2 GiB
+1 vCPU
+30 GiB
+$0.04464
+$30.00
+4 GiB
+2 vCPUs
+60 GiB
+$0.08929
+$60.00
+8 GiB
+4 vCPUs
+140 GiB
+$0.17857
+$120.00
+16 GiB
+6 vCPUs
+290 GiB
+$0.35714
+$240.00
+32 GiB
+8 vCPUs
+600 GiB
+$0.71429
+$480.00
+64 GiB
+16 vCPUs
+1.191 TiB
+$1.42857
+$960.00
+OpenSearch
+
+OpenSearch is a flexible open-source search and analytics suite designed to meet the needs of growing businesses. This powerful platform gives you the power to efficiently index, search, and analyze vast amounts of data.
+
+Type of node:
+Basic
+General Purpose
+Memory Optimized
+Nodes:
+1
+3
+Memory
+vCPUs
+Disk
+$/hr
+$/mo
+2 GiB
+1 vCPU
+$0.02917
+$19.60
+4 GiB
+2 vCPUs
+$0.05513
+$37.05
+8 GiB
+4 vCPUs
+$0.11347
+$76.25
+Frequently asked questions
+What forms of payment do you accept?
+When will my card be charged?
+Am I charged when I enter my credit card?
+Will taxes be included in my monthly invoice?
+How do I destroy my resources?
+Can I be notified if my bill exceeds a threshold?
+How does the $5 free credit work?
+What's the price for the Marketplace 1-Click Apps?
+How do I remove my card from the account?
+Can I prepay for my resources?
+Can I have a refund?
+Still have questions?
+
+Have a complex setup or additional questions around pricing? Contact our sales team to get more information on DigitalOcean pricing.
+
+Contact sales
+Start building today
+
+From GPU-powered inference and Kubernetes to managed databases and storage, get everything you need to build, scale, and deploy intelligent applications.
+
+Sign up
+Company
+About
+Leadership
+Blog
+Careers
+Customers
+Partners
+Referral Program
+Affiliate Program
+Press
+Legal
+Privacy Policy
+Security
+Investor Relations
+Products
+Managed Agents
+Knowledge Bases
+GPU Droplets
+Bare Metal GPUs
+Inference Engine
+Data Services
+Learning Services
+Evaluations
+Model Library
+Droplets
+Kubernetes
+Functions
+App Platform
+Load Balancers
+Managed Databases
+Spaces
+Block Storage
+Network File Storage
+API
+Uptime
+Cloud Security Posture Management (CSPM)
+Identity and Access Management (IAM)
+Cloudways
+View all Products
+Resources
+Community Tutorials
+Community Q&A
+CSS-Tricks
+Write for DOnations
+Currents Research
+DigitalOcean Startups
+Wavemakers Program
+Compass Council
+Open Source
+Newsletter Signup
+Marketplace
+Pricing
+Pricing Calculator
+Documentation
+Release Notes
+Code of Conduct
+Shop Swag
+Solutions
+AI Training GPU
+GPU Inference
+VPS Hosting
+Website Hosting
+VPN
+Docker Hosting
+Node.js Hosting
+Web Mobile Apps
+WordPress Hosting
+Virtual Machines
+View all Solutions
+Contact
+Support
+Sales
+Report Abuse
+System Status
+Share your ideas
+© 2026 DigitalOcean, LLC.
+Sitemap.
+This site uses cookies and related technologies, as described in our privacy policy, for purposes that may include site operation, analytics, enhanced user experience, or advertising. You may choose to consent to our use of these technologies, or manage your own preferences. Please visit our cookie policy for more information.
+Agree & proceed
+Decline all
+Manage choices
+Cookie Preferences

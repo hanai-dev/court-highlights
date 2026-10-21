@@ -1,0 +1,4 @@
+/target/
+/.forge/
+*.mp4
+!tests/fixtures/**/*.mp4

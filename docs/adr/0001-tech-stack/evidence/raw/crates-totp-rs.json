@@ -1,0 +1,4440 @@
+{
+  "crate": {
+    "id": "totp-rs",
+    "name": "totp-rs",
+    "updated_at": "2026-08-06T13:51:32.146705Z",
+    "versions": [
+      2942623,
+      2633786,
+      2103698,
+      1521025,
+      1213284,
+      1019333,
+      1019312,
+      914987,
+      894036,
+      868477,
+      846961,
+      799964,
+      764774,
+      761551,
+      703393,
+      697381,
+      692941,
+      656031,
+      601774,
+      599184,
+      567928,
+      558605,
+      544795,
+      544724,
+      544093,
+      544089,
+      537287,
+      533064,
+      497988,
+      486480,
+      482530,
+      482382,
+      482367,
+      415497,
+      301368,
+      282641,
+      270884,
+      270730,
+      258687,
+      255173,
+      254873,
+      254545,
+      254518,
+      254504,
+      252854,
+      234732,
+      232495,
+      231131,
+      230970,
+      230902,
+      230892
+    ],
+    "keywords": [
+      "totp",
+      "authentication",
+      "otp",
+      "2fa",
+      "hmac"
+    ],
+    "categories": [
+      "authentication",
+      "web-programming"
+    ],
+    "badges": [],
+    "created_at": "2020-04-13T15:09:13.468998Z",
+    "downloads": 11451407,
+    "recent_downloads": 3114265,
+    "default_version": "6.0.0",
+    "num_versions": 51,
+    "yanked": false,
+    "max_version": "6.0.0",
+    "newest_version": "6.0.0",
+    "max_stable_version": "6.0.0",
+    "description": "RFC-compliant TOTP implementation with ease of use as a goal and additional QoL features.",
+    "homepage": "https://github.com/constantoine/totp-rs",
+    "documentation": null,
+    "repository": "https://github.com/constantoine/totp-rs",
+    "links": {
+      "version_downloads": "/api/v1/crates/totp-rs/downloads",
+      "versions": null,
+      "owners": "/api/v1/crates/totp-rs/owners",
+      "owner_team": "/api/v1/crates/totp-rs/owner_team",
+      "owner_user": "/api/v1/crates/totp-rs/owner_user",
+      "reverse_dependencies": "/api/v1/crates/totp-rs/reverse_dependencies"
+    },
+    "exact_match": false,
+    "trustpub_only": false
+  },
+  "versions": [
+    {
+      "id": 2942623,
+      "crate": "totp-rs",
+      "num": "6.0.0",
+      "dl_path": "/api/v1/crates/totp-rs/6.0.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/6.0.0/readme",
+      "updated_at": "2026-08-06T13:51:32.146705Z",
+      "created_at": "2026-08-06T13:51:32.146705Z",
+      "downloads": 328063,
+      "features": {
+        "alloc": [
+          "serde?/alloc",
+          "dep:base32",
+          "zeroize?/alloc"
+        ],
+        "default": [
+          "std",
+          "migration"
+        ],
+        "gen_secret": [
+          "dep:rand"
+        ],
+        "migration": [
+          "alloc"
+        ],
+        "otpauth": [
+          "alloc",
+          "dep:url",
+          "dep:percent-encoding"
+        ],
+        "qr": [
+          "dep:qrcodegen-image",
+          "otpauth"
+        ],
+        "serde": [
+          "dep:serde",
+          "zeroize?/serde"
+        ],
+        "std": [
+          "rand?/thread_rng",
+          "alloc"
+        ],
+        "steam": [],
+        "zeroize": [
+          "dep:zeroize"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/6.0.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/6.0.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/6.0.0/authors"
+      },
+      "crate_size": 50073,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2026-08-06T13:51:32.146705Z"
+        }
+      ],
+      "checksum": "49d0f9b7aa5def86d3a8d8ba926fe8c1990924dd715d2b5fc54a4aa3788c11c1",
+      "rust_version": "1.88",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2024",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additional QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 3067,
+            "comment_lines": 72,
+            "files": 10
+          }
+        },
+        "total_code_lines": 3067,
+        "total_comment_lines": 72
+      }
+    },
+    {
+      "id": 2633786,
+      "crate": "totp-rs",
+      "num": "5.7.2",
+      "dl_path": "/api/v1/crates/totp-rs/5.7.2/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.7.2/readme",
+      "updated_at": "2026-06-23T13:04:46.093592Z",
+      "created_at": "2026-06-23T13:04:46.093592Z",
+      "downloads": 1063707,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "dep:qrcodegen-image",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.7.2/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.7.2/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.7.2/authors"
+      },
+      "crate_size": 28219,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2026-06-23T13:04:46.093592Z"
+        }
+      ],
+      "checksum": "50e69a15e21b2ff22c415446983978bded3244195f17d59cb113551c1e806f91",
+      "rust_version": "1.66",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1776,
+            "comment_lines": 10,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1776,
+        "total_comment_lines": 10
+      }
+    },
+    {
+      "id": 2103698,
+      "crate": "totp-rs",
+      "num": "5.7.1",
+      "dl_path": "/api/v1/crates/totp-rs/5.7.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.7.1/readme",
+      "updated_at": "2026-03-09T16:42:18.032685Z",
+      "created_at": "2026-03-09T16:42:18.032685Z",
+      "downloads": 1981470,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "dep:qrcodegen-image",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.7.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.7.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.7.1/authors"
+      },
+      "crate_size": 28163,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2026-03-09T16:42:18.032685Z"
+        }
+      ],
+      "checksum": "a2b36a9dd327e9f401320a2cb4572cc76ff43742bcfc3291f871691050f140ba",
+      "rust_version": "1.66",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1776,
+            "comment_lines": 10,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1776,
+        "total_comment_lines": 10
+      }
+    },
+    {
+      "id": 1521025,
+      "crate": "totp-rs",
+      "num": "5.7.0",
+      "dl_path": "/api/v1/crates/totp-rs/5.7.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.7.0/readme",
+      "updated_at": "2025-04-12T08:30:02.772847Z",
+      "created_at": "2025-04-12T08:30:02.772847Z",
+      "downloads": 3402557,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "dep:qrcodegen-image",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.7.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.7.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.7.0/authors"
+      },
+      "crate_size": 27499,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2025-04-12T08:30:02.772847Z"
+        }
+      ],
+      "checksum": "f124352108f58ef88299e909f6e9470f1cdc8d2a1397963901b4a6366206bf72",
+      "rust_version": "1.66",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1704,
+            "comment_lines": 8,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1704,
+        "total_comment_lines": 8
+      }
+    },
+    {
+      "id": 1213284,
+      "crate": "totp-rs",
+      "num": "5.6.0",
+      "dl_path": "/api/v1/crates/totp-rs/5.6.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.6.0/readme",
+      "updated_at": "2024-07-24T09:54:02.692440Z",
+      "created_at": "2024-07-24T09:54:02.692440Z",
+      "downloads": 566940,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "dep:qrcodegen-image",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.6.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.6.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.6.0/authors"
+      },
+      "crate_size": 25093,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2024-07-24T09:54:02.692440Z"
+        }
+      ],
+      "checksum": "17b2f27dad992486c26b4e7455f38aa487e838d6d61b57e72906ee2b8c287a90",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1704,
+            "comment_lines": 4,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1704,
+        "total_comment_lines": 4
+      }
+    },
+    {
+      "id": 1019333,
+      "crate": "totp-rs",
+      "num": "5.5.1",
+      "dl_path": "/api/v1/crates/totp-rs/5.5.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.5.1/readme",
+      "updated_at": "2024-01-19T16:03:56.990746Z",
+      "created_at": "2024-01-19T16:03:56.990746Z",
+      "downloads": 3631666,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "dep:qrcodegen-image",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.5.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.5.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.5.1/authors"
+      },
+      "crate_size": 25128,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2024-01-19T16:03:56.990746Z"
+        }
+      ],
+      "checksum": "6c4ae9724c5888c0417d2396037ed3b60665925624766416e3e342b6ba5dbd3f",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1704,
+            "comment_lines": 4,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1704,
+        "total_comment_lines": 4
+      }
+    },
+    {
+      "id": 1019312,
+      "crate": "totp-rs",
+      "num": "5.5.0",
+      "dl_path": "/api/v1/crates/totp-rs/5.5.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.5.0/readme",
+      "updated_at": "2024-01-19T15:48:48.471711Z",
+      "created_at": "2024-01-19T15:48:48.471711Z",
+      "downloads": 1220,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "dep:qrcodegen-image",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.5.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.5.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.5.0/authors"
+      },
+      "crate_size": 25127,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2024-01-19T15:48:48.471711Z"
+        }
+      ],
+      "checksum": "6e0c3a551074d0d4ef92a24abe01c8702040021cb42ee6b1457dcebb9078a259",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1704,
+            "comment_lines": 4,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1704,
+        "total_comment_lines": 4
+      }
+    },
+    {
+      "id": 914987,
+      "crate": "totp-rs",
+      "num": "5.4.0",
+      "dl_path": "/api/v1/crates/totp-rs/5.4.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.4.0/readme",
+      "updated_at": "2023-10-04T09:17:48.581989Z",
+      "created_at": "2023-10-04T09:17:48.581989Z",
+      "downloads": 290575,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "dep:qrcodegen-image",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.4.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.4.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.4.0/authors"
+      },
+      "crate_size": 25055,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2023-10-04T09:17:48.581989Z"
+        }
+      ],
+      "checksum": "df3504f96adf86d28e7eb16fa236a7951ec72c15ee100d1b5318e225944bc8cb",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1687,
+            "comment_lines": 2,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1687,
+        "total_comment_lines": 2
+      }
+    },
+    {
+      "id": 894036,
+      "crate": "totp-rs",
+      "num": "5.3.0",
+      "dl_path": "/api/v1/crates/totp-rs/5.3.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.3.0/readme",
+      "updated_at": "2023-09-10T19:54:05.442851Z",
+      "created_at": "2023-09-10T19:54:05.442851Z",
+      "downloads": 13211,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "dep:qrcodegen-image",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.3.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.3.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.3.0/authors"
+      },
+      "crate_size": 25012,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2023-09-10T19:54:05.442851Z"
+        }
+      ],
+      "checksum": "a9e97f0514f64b2c92bd6520be28fff6fca3186b123138503e80fb4ef6ea34e7",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1686,
+            "comment_lines": 2,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1686,
+        "total_comment_lines": 2
+      }
+    },
+    {
+      "id": 868477,
+      "crate": "totp-rs",
+      "num": "5.2.0",
+      "dl_path": "/api/v1/crates/totp-rs/5.2.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.2.0/readme",
+      "updated_at": "2023-08-10T08:41:50.630334Z",
+      "created_at": "2023-08-10T08:41:50.630334Z",
+      "downloads": 13568,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.2.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.2.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.2.0/authors"
+      },
+      "crate_size": 25576,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2023-08-10T08:41:50.630334Z"
+        }
+      ],
+      "checksum": "de057280e901b0cc5cd5f94636c54e89958757b8cd573cdf29703496d0d95df9",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1705,
+            "comment_lines": 15,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1705,
+        "total_comment_lines": 15
+      }
+    },
+    {
+      "id": 846961,
+      "crate": "totp-rs",
+      "num": "5.1.0",
+      "dl_path": "/api/v1/crates/totp-rs/5.1.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.1.0/readme",
+      "updated_at": "2023-07-15T17:45:49.812470Z",
+      "created_at": "2023-07-15T17:45:49.812470Z",
+      "downloads": 7399,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.1.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.1.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.1.0/authors"
+      },
+      "crate_size": 25557,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2023-07-15T17:45:49.812470Z"
+        }
+      ],
+      "checksum": "4f7b277d6c2a9dc06b706aa35156ea7b6958793c444f1f1e911b6273fc7e67c1",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1705,
+            "comment_lines": 15,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1705,
+        "total_comment_lines": 15
+      }
+    },
+    {
+      "id": 799964,
+      "crate": "totp-rs",
+      "num": "5.0.2",
+      "dl_path": "/api/v1/crates/totp-rs/5.0.2/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.0.2/readme",
+      "updated_at": "2023-05-15T13:08:52.922805Z",
+      "created_at": "2023-05-15T13:08:52.922805Z",
+      "downloads": 26543,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.0.2/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.0.2/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.0.2/authors"
+      },
+      "crate_size": 25268,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2023-05-15T13:08:52.922805Z"
+        }
+      ],
+      "checksum": "0ad5e73765ff14ae797c1a61ee0c7beaf21b4e4a0047844300e332c6c24df1fc",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1706,
+            "comment_lines": 15,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1706,
+        "total_comment_lines": 15
+      }
+    },
+    {
+      "id": 764774,
+      "crate": "totp-rs",
+      "num": "5.0.1",
+      "dl_path": "/api/v1/crates/totp-rs/5.0.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.0.1/readme",
+      "updated_at": "2023-03-31T14:22:59.051764Z",
+      "created_at": "2023-03-31T14:22:59.051764Z",
+      "downloads": 8294,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.0.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.0.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.0.1/authors"
+      },
+      "crate_size": 25065,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2023-03-31T14:22:59.051764Z"
+        }
+      ],
+      "checksum": "332e333b188e843cb4cc477b2911160a533bcfc6e9e488d7bef25011f9e2ba1b",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1700,
+            "comment_lines": 15,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1700,
+        "total_comment_lines": 15
+      }
+    },
+    {
+      "id": 761551,
+      "crate": "totp-rs",
+      "num": "5.0.0",
+      "dl_path": "/api/v1/crates/totp-rs/5.0.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/5.0.0/readme",
+      "updated_at": "2023-03-28T12:37:25.246338Z",
+      "created_at": "2023-03-28T12:37:25.246338Z",
+      "downloads": 1614,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/5.0.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/5.0.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/5.0.0/authors"
+      },
+      "crate_size": 25005,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2023-03-28T12:37:25.246338Z"
+        }
+      ],
+      "checksum": "95245474a664bf25f970cda94564081fa3e7c0c03c20640cd52320fafde3b8f7",
+      "rust_version": "1.61",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1700,
+            "comment_lines": 15,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1700,
+        "total_comment_lines": 15
+      }
+    },
+    {
+      "id": 703393,
+      "crate": "totp-rs",
+      "num": "4.2.0",
+      "dl_path": "/api/v1/crates/totp-rs/4.2.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/4.2.0/readme",
+      "updated_at": "2023-01-14T14:59:18.081202Z",
+      "created_at": "2023-01-14T14:59:18.081202Z",
+      "downloads": 23730,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/4.2.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/4.2.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/4.2.0/authors"
+      },
+      "crate_size": 24929,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2023-01-14T14:59:18.081202Z"
+        }
+      ],
+      "checksum": "9fdd21080b6cf581e0c8fe849626ad627b42af1a0f71ce980244f2d6b1a47836",
+      "rust_version": "1.59",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1693,
+            "comment_lines": 15,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1693,
+        "total_comment_lines": 15
+      }
+    },
+    {
+      "id": 697381,
+      "crate": "totp-rs",
+      "num": "4.1.0",
+      "dl_path": "/api/v1/crates/totp-rs/4.1.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/4.1.0/readme",
+      "updated_at": "2023-01-06T13:50:30.326230Z",
+      "created_at": "2023-01-06T13:50:30.326230Z",
+      "downloads": 1730,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ],
+        "steam": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/4.1.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/4.1.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/4.1.0/authors"
+      },
+      "crate_size": 24580,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2023-01-06T13:50:30.326230Z"
+        }
+      ],
+      "checksum": "d402b3bf4805dc073bcfd9cc87b64c1118d3dc77b17222794b5958fd042522a4",
+      "rust_version": "1.59",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1651,
+            "comment_lines": 15,
+            "files": 5
+          }
+        },
+        "total_code_lines": 1651,
+        "total_comment_lines": 15
+      }
+    },
+    {
+      "id": 692941,
+      "crate": "totp-rs",
+      "num": "4.0.0",
+      "dl_path": "/api/v1/crates/totp-rs/4.0.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/4.0.0/readme",
+      "updated_at": "2022-12-29T14:06:20.567253Z",
+      "created_at": "2022-12-29T14:06:20.567253Z",
+      "downloads": 1295,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/4.0.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/4.0.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/4.0.0/authors"
+      },
+      "crate_size": 23341,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-12-29T14:06:20.567253Z"
+        }
+      ],
+      "checksum": "3aa5cb74f281bd0d3ed29e80556d54bcc04f4117c70986c74e2cf91c6723e457",
+      "rust_version": "1.59",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1517,
+            "comment_lines": 14,
+            "files": 4
+          }
+        },
+        "total_code_lines": 1517,
+        "total_comment_lines": 14
+      }
+    },
+    {
+      "id": 656031,
+      "crate": "totp-rs",
+      "num": "3.1.0",
+      "dl_path": "/api/v1/crates/totp-rs/3.1.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/3.1.0/readme",
+      "updated_at": "2022-11-03T09:48:49.231668Z",
+      "created_at": "2022-11-03T09:48:49.231668Z",
+      "downloads": 13147,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/3.1.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/3.1.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/3.1.0/authors"
+      },
+      "crate_size": 20493,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-11-03T09:48:49.231668Z"
+        }
+      ],
+      "checksum": "942a8cf27d3bf8ac090ed75d3887cead18da1c6f3b0d4502edbf639ebbd37057",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1510,
+            "comment_lines": 14,
+            "files": 4
+          }
+        },
+        "total_code_lines": 1510,
+        "total_comment_lines": 14
+      }
+    },
+    {
+      "id": 601774,
+      "crate": "totp-rs",
+      "num": "3.0.1",
+      "dl_path": "/api/v1/crates/totp-rs/3.0.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/3.0.1/readme",
+      "updated_at": "2022-08-13T09:31:26.504389Z",
+      "created_at": "2022-08-13T09:31:26.504389Z",
+      "downloads": 9098,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/3.0.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/3.0.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/3.0.1/authors"
+      },
+      "crate_size": 18882,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-08-13T09:31:26.504389Z"
+        }
+      ],
+      "checksum": "c44da613dc546a6a3db824c5f1d6672d06e304a588e3816446abe13a68c3f72f",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1119,
+            "comment_lines": 12,
+            "files": 4
+          }
+        },
+        "total_code_lines": 1119,
+        "total_comment_lines": 12
+      }
+    },
+    {
+      "id": 599184,
+      "crate": "totp-rs",
+      "num": "3.0.0",
+      "dl_path": "/api/v1/crates/totp-rs/3.0.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/3.0.0/readme",
+      "updated_at": "2022-08-16T07:47:03.175641Z",
+      "created_at": "2022-08-09T13:54:55.321815Z",
+      "downloads": 1366,
+      "features": {
+        "default": [],
+        "gen_secret": [
+          "rand"
+        ],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/3.0.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/3.0.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/3.0.0/authors"
+      },
+      "crate_size": 18733,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-08-09T13:54:55.321815Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-08-16T07:47:03.178461Z"
+        }
+      ],
+      "checksum": "1ba0e3360f3f4440e1fb3a17ca6e06fdfef0a62acdc70829cd564d677656ff4e",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 1113,
+            "comment_lines": 12,
+            "files": 4
+          }
+        },
+        "total_code_lines": 1113,
+        "total_comment_lines": 12
+      }
+    },
+    {
+      "id": 567928,
+      "crate": "totp-rs",
+      "num": "2.0.1",
+      "dl_path": "/api/v1/crates/totp-rs/2.0.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/2.0.1/readme",
+      "updated_at": "2022-06-16T10:02:00.667418Z",
+      "created_at": "2022-06-16T10:02:00.667418Z",
+      "downloads": 6137,
+      "features": {
+        "default": [],
+        "otpauth": [
+          "url",
+          "urlencoding"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/2.0.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/2.0.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/2.0.1/authors"
+      },
+      "crate_size": 9236,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-06-16T10:02:00.667418Z"
+        }
+      ],
+      "checksum": "b9254defd2c9202c8e5a03e4120faa0c1e0cb8ed365fb5d7305a33d0b4cf571c",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 510,
+            "comment_lines": 12,
+            "files": 1
+          }
+        },
+        "total_code_lines": 510,
+        "total_comment_lines": 12
+      }
+    },
+    {
+      "id": 558605,
+      "crate": "totp-rs",
+      "num": "2.0.0",
+      "dl_path": "/api/v1/crates/totp-rs/2.0.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/2.0.0/readme",
+      "updated_at": "2022-05-30T20:02:33.916979Z",
+      "created_at": "2022-05-30T20:02:33.916979Z",
+      "downloads": 4079,
+      "features": {
+        "default": [],
+        "otpauth": [
+          "url"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64",
+          "otpauth"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/2.0.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/2.0.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/2.0.0/authors"
+      },
+      "crate_size": 9094,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-30T20:02:33.916979Z"
+        }
+      ],
+      "checksum": "bb938fe0a13c97a1f7e6aab365f41bb2d6d3fdf84e9a97e0d0aaf4f90013dd80",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 483,
+            "comment_lines": 12,
+            "files": 1
+          }
+        },
+        "total_code_lines": 483,
+        "total_comment_lines": 12
+      }
+    },
+    {
+      "id": 544795,
+      "crate": "totp-rs",
+      "num": "1.4.0",
+      "dl_path": "/api/v1/crates/totp-rs/1.4.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/1.4.0/readme",
+      "updated_at": "2022-05-06T13:44:21.437473Z",
+      "created_at": "2022-05-06T13:44:21.437473Z",
+      "downloads": 4487,
+      "features": {
+        "default": [],
+        "otpauth": [
+          "url"
+        ],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/1.4.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/1.4.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/1.4.0/authors"
+      },
+      "crate_size": 7986,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-06T13:44:21.437473Z"
+        }
+      ],
+      "checksum": "665c8ac1c4280d5e2deb982cf2ee8b90df0e86cf5234acaaef5b785cb1150040",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 383,
+            "comment_lines": 12,
+            "files": 1
+          }
+        },
+        "total_code_lines": 383,
+        "total_comment_lines": 12
+      }
+    },
+    {
+      "id": 544724,
+      "crate": "totp-rs",
+      "num": "1.3.0",
+      "dl_path": "/api/v1/crates/totp-rs/1.3.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/1.3.0/readme",
+      "updated_at": "2022-05-06T10:52:16.836523Z",
+      "created_at": "2022-05-06T10:52:16.836523Z",
+      "downloads": 1153,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/1.3.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/1.3.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/1.3.0/authors"
+      },
+      "crate_size": 7218,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-06T10:52:16.836523Z"
+        }
+      ],
+      "checksum": "7506330f6e00645b3e784f120fde6617f54eab96cf998f2a507611a24bb13d37",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 302,
+            "comment_lines": 12,
+            "files": 1
+          }
+        },
+        "total_code_lines": 302,
+        "total_comment_lines": 12
+      }
+    },
+    {
+      "id": 544093,
+      "crate": "totp-rs",
+      "num": "1.2.1",
+      "dl_path": "/api/v1/crates/totp-rs/1.2.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/1.2.1/readme",
+      "updated_at": "2022-05-05T10:51:55.979353Z",
+      "created_at": "2022-05-05T10:51:55.979353Z",
+      "downloads": 1171,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/1.2.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/1.2.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/1.2.1/authors"
+      },
+      "crate_size": 7644,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-05T10:51:55.979353Z"
+        }
+      ],
+      "checksum": "f1677f559ee408d0315ca1f8243df622f0b292669c1a243068e6faa30d44393e",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 285,
+            "comment_lines": 12,
+            "files": 1
+          }
+        },
+        "total_code_lines": 285,
+        "total_comment_lines": 12
+      }
+    },
+    {
+      "id": 544089,
+      "crate": "totp-rs",
+      "num": "1.2.0",
+      "dl_path": "/api/v1/crates/totp-rs/1.2.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/1.2.0/readme",
+      "updated_at": "2022-05-05T10:14:23.951641Z",
+      "created_at": "2022-05-05T10:14:23.951641Z",
+      "downloads": 1158,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcodegen",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/1.2.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/1.2.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/1.2.0/authors"
+      },
+      "crate_size": 7624,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-05T10:14:23.951641Z"
+        }
+      ],
+      "checksum": "46a8485110b8926e98ba4cda8876c8c0a8248412bf4f4ce20a7af9e8a561d29e",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 285,
+            "comment_lines": 12,
+            "files": 1
+          }
+        },
+        "total_code_lines": 285,
+        "total_comment_lines": 12
+      }
+    },
+    {
+      "id": 537287,
+      "crate": "totp-rs",
+      "num": "1.1.0",
+      "dl_path": "/api/v1/crates/totp-rs/1.1.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/1.1.0/readme",
+      "updated_at": "2022-04-24T14:57:35.633235Z",
+      "created_at": "2022-04-24T14:57:35.633235Z",
+      "downloads": 1616,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/1.1.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/1.1.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/1.1.0/authors"
+      },
+      "crate_size": 6380,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-04-24T14:57:35.633235Z"
+        }
+      ],
+      "checksum": "c68add541589e9201cd39a9370cd695e4525ae2d157d31b51d964d55fcc30543",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 246,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 246,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 533064,
+      "crate": "totp-rs",
+      "num": "1.0.0",
+      "dl_path": "/api/v1/crates/totp-rs/1.0.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/1.0.0/readme",
+      "updated_at": "2022-04-15T13:36:27.478504Z",
+      "created_at": "2022-04-15T13:36:27.478504Z",
+      "downloads": 1794,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/1.0.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/1.0.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/1.0.0/authors"
+      },
+      "crate_size": 6702,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-04-15T13:36:27.478504Z"
+        }
+      ],
+      "checksum": "b8707de57599ceb299004ba63de6733d7eb393116e07d4492dcf11191297e373",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 192,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 192,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 497988,
+      "crate": "totp-rs",
+      "num": "0.7.4",
+      "dl_path": "/api/v1/crates/totp-rs/0.7.4/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.7.4/readme",
+      "updated_at": "2022-05-09T13:06:49.279751Z",
+      "created_at": "2022-02-10T10:56:41.045825Z",
+      "downloads": 3646,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.7.4/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.7.4/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.7.4/authors"
+      },
+      "crate_size": 6660,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-02-10T10:56:41.045825Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:06:49.283942Z"
+        }
+      ],
+      "checksum": "d09dc5fcc745500594f90020fdbcbbff029d1ca1f08f2940617f7ab697c17729",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 192,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 192,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 486480,
+      "crate": "totp-rs",
+      "num": "0.7.3",
+      "dl_path": "/api/v1/crates/totp-rs/0.7.3/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.7.3/readme",
+      "updated_at": "2022-05-09T13:07:18.861144Z",
+      "created_at": "2022-01-20T17:04:39.541845Z",
+      "downloads": 2367,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.7.3/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.7.3/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.7.3/authors"
+      },
+      "crate_size": 6531,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-01-20T17:04:39.541845Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:18.865002Z"
+        }
+      ],
+      "checksum": "9e160ae928ed3ed45f89e79183831abcc6822c7ac58fb7b3f275d77004157ea8",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 192,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 192,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 482530,
+      "crate": "totp-rs",
+      "num": "0.7.2",
+      "dl_path": "/api/v1/crates/totp-rs/0.7.2/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.7.2/readme",
+      "updated_at": "2022-05-09T13:07:18.082288Z",
+      "created_at": "2022-01-13T21:06:14.359168Z",
+      "downloads": 1202,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.7.2/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.7.2/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.7.2/authors"
+      },
+      "crate_size": 6590,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-01-13T21:06:14.359168Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:18.091249Z"
+        }
+      ],
+      "checksum": "6a959a46a35f4faabefa3ed022594ad4b1902dddcadadb946061e2155bd46f72",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 195,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 195,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 482382,
+      "crate": "totp-rs",
+      "num": "0.7.1",
+      "dl_path": "/api/v1/crates/totp-rs/0.7.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.7.1/readme",
+      "updated_at": "2022-05-09T13:07:17.323524Z",
+      "created_at": "2022-01-13T15:37:06.706467Z",
+      "downloads": 1165,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.7.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.7.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.7.1/authors"
+      },
+      "crate_size": 5509,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-01-13T15:37:06.706467Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:17.329550Z"
+        }
+      ],
+      "checksum": "fb6a4fb62f431912f8fd7d1c9b084d1eddbe378afbaa1918b6160a431a2241d7",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 170,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 170,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 482367,
+      "crate": "totp-rs",
+      "num": "0.6.5",
+      "dl_path": "/api/v1/crates/totp-rs/0.6.5/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.6.5/readme",
+      "updated_at": "2022-05-09T13:07:16.176407Z",
+      "created_at": "2022-01-13T15:21:02.851159Z",
+      "downloads": 2880,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.6.5/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.6.5/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.6.5/authors"
+      },
+      "crate_size": 8441,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-01-13T15:21:02.851159Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:16.178865Z"
+        }
+      ],
+      "checksum": "d29f3829797254f9199935d13793034d0f95242e06cf7224b911de1122e3abc5",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 170,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 170,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 415497,
+      "crate": "totp-rs",
+      "num": "0.6.4",
+      "dl_path": "/api/v1/crates/totp-rs/0.6.4/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.6.4/readme",
+      "updated_at": "2022-05-09T13:07:15.379448Z",
+      "created_at": "2021-08-20T16:52:30.359406Z",
+      "downloads": 2825,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.6.4/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.6.4/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.6.4/authors"
+      },
+      "crate_size": 5476,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2021-08-20T16:52:30.359406Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:15.383108Z"
+        }
+      ],
+      "checksum": "d1baec279dcc94b0e66335bd0822a775113666f95e484a1c956641ba955c2a41",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 170,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 170,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 301368,
+      "crate": "totp-rs",
+      "num": "0.6.3",
+      "dl_path": "/api/v1/crates/totp-rs/0.6.3/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.6.3/readme",
+      "updated_at": "2022-05-09T13:07:13.850863Z",
+      "created_at": "2020-11-02T22:25:07.157698Z",
+      "downloads": 5791,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.6.3/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.6.3/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.6.3/authors"
+      },
+      "crate_size": 5534,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-11-02T22:25:07.157698Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:13.855182Z"
+        }
+      ],
+      "checksum": "71aa19b1e6a6bdf8c212498da1a8e54c50ec7c22da9862dea576910616d1137e",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 170,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 170,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 282641,
+      "crate": "totp-rs",
+      "num": "0.6.2",
+      "dl_path": "/api/v1/crates/totp-rs/0.6.2/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.6.2/readme",
+      "updated_at": "2022-05-09T13:07:12.684849Z",
+      "created_at": "2020-09-12T06:57:20.921206Z",
+      "downloads": 1370,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.6.2/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.6.2/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.6.2/authors"
+      },
+      "crate_size": 5628,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-09-12T06:57:20.921206Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:12.686309Z"
+        }
+      ],
+      "checksum": "4a80522f20b944c8cca4a0611fbc9da5f597311bba769f8739a5f7a7e16e9a64",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 170,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 170,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 270884,
+      "crate": "totp-rs",
+      "num": "0.6.1",
+      "dl_path": "/api/v1/crates/totp-rs/0.6.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.6.1/readme",
+      "updated_at": "2022-05-09T13:07:10.944877Z",
+      "created_at": "2020-08-09T06:36:17.441465Z",
+      "downloads": 1323,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.6.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.6.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.6.1/authors"
+      },
+      "crate_size": 5637,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-08-09T06:36:17.441465Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:10.948359Z"
+        }
+      ],
+      "checksum": "d2c720a58e7e4eea073980808e0e011af7ed84021181e0f6236e022c5908fdb0",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 170,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 170,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 270730,
+      "crate": "totp-rs",
+      "num": "0.6.0",
+      "dl_path": "/api/v1/crates/totp-rs/0.6.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.6.0/readme",
+      "updated_at": "2022-05-09T13:07:10.537668Z",
+      "created_at": "2020-08-08T15:23:10.851101Z",
+      "downloads": 1235,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.6.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.6.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.6.0/authors"
+      },
+      "crate_size": 5628,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-08-08T15:23:10.851101Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:10.542482Z"
+        }
+      ],
+      "checksum": "2cc364eeef0be0fe7de3aaf6d16a5c3b6f44abb9f7d4499b1a92e06cdd6687b0",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 170,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 170,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 258687,
+      "crate": "totp-rs",
+      "num": "0.5.0",
+      "dl_path": "/api/v1/crates/totp-rs/0.5.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.5.0/readme",
+      "updated_at": "2022-05-09T13:07:10.076049Z",
+      "created_at": "2020-07-03T12:36:52.749007Z",
+      "downloads": 1561,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ],
+        "serde_support": [
+          "serde"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.5.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.5.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.5.0/authors"
+      },
+      "crate_size": 5569,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-07-03T12:36:52.749007Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:10.081129Z"
+        }
+      ],
+      "checksum": "ddb9e9e806c555ca1a2845c64bbf408a5d9a9eb06f5b23b8566c7e495055ad57",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "RFC-compliant TOTP implementation with ease of use as a goal and additionnal QoL features.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 167,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 167,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 255173,
+      "crate": "totp-rs",
+      "num": "0.4.1",
+      "dl_path": "/api/v1/crates/totp-rs/0.4.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.4.1/readme",
+      "updated_at": "2022-05-09T13:07:09.731992Z",
+      "created_at": "2020-06-23T08:32:38.380484Z",
+      "downloads": 1291,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.4.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.4.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.4.1/authors"
+      },
+      "crate_size": 5448,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-06-23T08:32:38.380484Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:09.734245Z"
+        }
+      ],
+      "checksum": "f14a3b17117e23a139a1df195285776daf7054f445902306eae400133237717d",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits. With additional feature \"qr\", you can use it to generate a base64 png qrcode.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 164,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 164,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 254873,
+      "crate": "totp-rs",
+      "num": "0.4.0",
+      "dl_path": "/api/v1/crates/totp-rs/0.4.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.4.0/readme",
+      "updated_at": "2022-05-09T13:07:09.327424Z",
+      "created_at": "2020-06-22T15:08:17.410074Z",
+      "downloads": 1242,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.4.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.4.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.4.0/authors"
+      },
+      "crate_size": 5181,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-06-22T15:08:17.410074Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:09.329418Z"
+        }
+      ],
+      "checksum": "bbd5a2f4c546c7bd13722eac34818713bb2195133fea1e4d380a2500fddcef03",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits. With additional feature \"qr\", you can use it to generate a base64 png qrcode.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 164,
+            "comment_lines": 1,
+            "files": 1
+          }
+        },
+        "total_code_lines": 164,
+        "total_comment_lines": 1
+      }
+    },
+    {
+      "id": 254545,
+      "crate": "totp-rs",
+      "num": "0.3.2",
+      "dl_path": "/api/v1/crates/totp-rs/0.3.2/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.3.2/readme",
+      "updated_at": "2022-05-09T13:07:08.826239Z",
+      "created_at": "2020-06-21T17:09:29.176179Z",
+      "downloads": 1260,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.3.2/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.3.2/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.3.2/authors"
+      },
+      "crate_size": 4727,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-06-21T17:09:29.176179Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:08.827994Z"
+        }
+      ],
+      "checksum": "a7f3305ebeac2c80ec02e1e2ff9b6863c1bbb7b67ba42e2daf032768bd03fa67",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits. With additional feature \"qr\", you can use it to generate a base64 png qrcode.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 114,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 114,
+        "total_comment_lines": 0
+      }
+    },
+    {
+      "id": 254518,
+      "crate": "totp-rs",
+      "num": "0.3.1",
+      "dl_path": "/api/v1/crates/totp-rs/0.3.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.3.1/readme",
+      "updated_at": "2022-05-09T13:07:08.564509Z",
+      "created_at": "2020-06-21T15:26:17.727021Z",
+      "downloads": 1250,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.3.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.3.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.3.1/authors"
+      },
+      "crate_size": 4685,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-06-21T15:26:17.727021Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:08.567821Z"
+        }
+      ],
+      "checksum": "76d1d8339d21bd757369140a8239712308474f1f23f8c8f81f7a254d7732d502",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits. With additional feature \"qr\", you can use it to generate a base64 png qrcode.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 114,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 114,
+        "total_comment_lines": 0
+      }
+    },
+    {
+      "id": 254504,
+      "crate": "totp-rs",
+      "num": "0.3.0",
+      "dl_path": "/api/v1/crates/totp-rs/0.3.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.3.0/readme",
+      "updated_at": "2022-05-09T13:07:07.976554Z",
+      "created_at": "2020-06-21T14:06:26.702409Z",
+      "downloads": 1259,
+      "features": {
+        "default": [],
+        "qr": [
+          "qrcode",
+          "image",
+          "base64"
+        ]
+      },
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.3.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.3.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.3.0/authors"
+      },
+      "crate_size": 4677,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-06-21T14:06:26.702409Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:07.980036Z"
+        }
+      ],
+      "checksum": "bbe591ebb10d5035308eac58b5e05c56f425b6f5a684b22671a3a8a653606721",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits. With additional feature \"qr\", you can use it to generate a base64 png qrcode.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 114,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 114,
+        "total_comment_lines": 0
+      }
+    },
+    {
+      "id": 252854,
+      "crate": "totp-rs",
+      "num": "0.2.6",
+      "dl_path": "/api/v1/crates/totp-rs/0.2.6/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.2.6/readme",
+      "updated_at": "2022-05-09T13:07:05.432539Z",
+      "created_at": "2020-06-16T12:40:53.163311Z",
+      "downloads": 1425,
+      "features": {},
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.2.6/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.2.6/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.2.6/authors"
+      },
+      "crate_size": 4388,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-06-16T12:40:53.163311Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:05.437953Z"
+        }
+      ],
+      "checksum": "bfb8e1f49c24b32ff36b1ea174decd65c79afd4007fa8c2dc36ff591f54a5597",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 114,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 114,
+        "total_comment_lines": 0
+      }
+    },
+    {
+      "id": 234732,
+      "crate": "totp-rs",
+      "num": "0.2.5",
+      "dl_path": "/api/v1/crates/totp-rs/0.2.5/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.2.5/readme",
+      "updated_at": "2022-05-09T13:07:04.979213Z",
+      "created_at": "2020-04-25T17:21:42.438128Z",
+      "downloads": 1291,
+      "features": {},
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.2.5/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.2.5/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.2.5/authors"
+      },
+      "crate_size": 4263,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-04-25T17:21:42.438128Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:04.982867Z"
+        }
+      ],
+      "checksum": "63df622347c513a692e53abc3fef97dc313079dabd6b068c8eb867d7b92d6232",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 113,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 113,
+        "total_comment_lines": 0
+      }
+    },
+    {
+      "id": 232495,
+      "crate": "totp-rs",
+      "num": "0.2.4",
+      "dl_path": "/api/v1/crates/totp-rs/0.2.4/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.2.4/readme",
+      "updated_at": "2022-05-09T13:07:04.665243Z",
+      "created_at": "2020-04-18T12:28:58.152860Z",
+      "downloads": 1264,
+      "features": {},
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.2.4/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.2.4/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.2.4/authors"
+      },
+      "crate_size": 4275,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-04-18T12:28:58.152860Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:04.667102Z"
+        }
+      ],
+      "checksum": "091828d954891b5c3369b51936afb90ab582829519fff13dd4aaefe0cb1242e9",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 113,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 113,
+        "total_comment_lines": 0
+      }
+    },
+    {
+      "id": 231131,
+      "crate": "totp-rs",
+      "num": "0.2.3",
+      "dl_path": "/api/v1/crates/totp-rs/0.2.3/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.2.3/readme",
+      "updated_at": "2022-05-09T13:07:04.186092Z",
+      "created_at": "2020-04-14T10:55:16.332022Z",
+      "downloads": 1245,
+      "features": {},
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.2.3/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.2.3/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.2.3/authors"
+      },
+      "crate_size": 4268,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-04-14T10:55:16.332022Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:04.187295Z"
+        }
+      ],
+      "checksum": "cb853b242ed494cc170b67e5e8416c012d9757b5cf49e8652b7a865c46b6071e",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 113,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 113,
+        "total_comment_lines": 0
+      }
+    },
+    {
+      "id": 230970,
+      "crate": "totp-rs",
+      "num": "0.2.2",
+      "dl_path": "/api/v1/crates/totp-rs/0.2.2/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.2.2/readme",
+      "updated_at": "2022-05-09T13:07:03.642762Z",
+      "created_at": "2020-04-13T20:58:07.570276Z",
+      "downloads": 1242,
+      "features": {},
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.2.2/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.2.2/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.2.2/authors"
+      },
+      "crate_size": 4203,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-04-13T20:58:07.570276Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:03.644689Z"
+        }
+      ],
+      "checksum": "9e8690a8f2e9313e492cec05e417670f9afe4ff380e49884a61f4d6aa0d79a04",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 112,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 112,
+        "total_comment_lines": 0
+      }
+    },
+    {
+      "id": 230902,
+      "crate": "totp-rs",
+      "num": "0.2.1",
+      "dl_path": "/api/v1/crates/totp-rs/0.2.1/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.2.1/readme",
+      "updated_at": "2022-05-09T13:07:02.823467Z",
+      "created_at": "2020-04-13T15:59:56.727859Z",
+      "downloads": 1234,
+      "features": {},
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.2.1/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.2.1/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.2.1/authors"
+      },
+      "crate_size": 3801,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-04-13T15:59:56.727859Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:07:02.826780Z"
+        }
+      ],
+      "checksum": "2f9414e90eff3215b9f6e25319335d5cf110d71c7ab8052ffab48ab711a70825",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 112,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 112,
+        "total_comment_lines": 0
+      }
+    },
+    {
+      "id": 230892,
+      "crate": "totp-rs",
+      "num": "0.2.0",
+      "dl_path": "/api/v1/crates/totp-rs/0.2.0/download",
+      "readme_path": "/api/v1/crates/totp-rs/0.2.0/readme",
+      "updated_at": "2022-05-09T13:06:58.297659Z",
+      "created_at": "2020-04-13T15:09:13.468998Z",
+      "downloads": 1215,
+      "features": {},
+      "yanked": true,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT",
+      "links": {
+        "dependencies": "/api/v1/crates/totp-rs/0.2.0/dependencies",
+        "version_downloads": "/api/v1/crates/totp-rs/0.2.0/downloads",
+        "authors": "/api/v1/crates/totp-rs/0.2.0/authors"
+      },
+      "crate_size": 3794,
+      "published_by": {
+        "id": 85540,
+        "login": "constantoine",
+        "name": "Cléo Rebert",
+        "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+        "url": "https://github.com/constantoine",
+        "github_username_matches": true,
+        "created_at": "2015-08-23T15:19:25Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2020-04-13T15:09:13.468998Z"
+        },
+        {
+          "action": "yank",
+          "user": {
+            "id": 85540,
+            "login": "constantoine",
+            "name": "Cléo Rebert",
+            "avatar": "https://avatars.githubusercontent.com/u/13930958?v=4",
+            "url": "https://github.com/constantoine",
+            "github_username_matches": true,
+            "created_at": "2015-08-23T15:19:25Z"
+          },
+          "time": "2022-05-09T13:06:58.301367Z"
+        }
+      ],
+      "checksum": "238d5e4c967024485e882cc46dca5c1c1b632b305f7cd6ff39507629548fa7d4",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "This library permits the creation of 2FA authentification tokens per TOTP, the verification of said tokens, with configurable time skew, validity time of each token, algorithm and number of digits.",
+      "homepage": "https://github.com/constantoine/totp-rs",
+      "documentation": null,
+      "repository": "https://github.com/constantoine/totp-rs",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 112,
+            "comment_lines": 0,
+            "files": 1
+          }
+        },
+        "total_code_lines": 112,
+        "total_comment_lines": 0
+      }
+    }
+  ],
+  "keywords": [
+    {
+      "id": "totp",
+      "keyword": "totp",
+      "created_at": "2015-03-02T07:24:59.686129Z",
+      "crates_cnt": 91
+    },
+    {
+      "id": "authentication",
+      "keyword": "authentication",
+      "created_at": "2015-03-06T02:07:33.479882Z",
+      "crates_cnt": 799
+    },
+    {
+      "id": "otp",
+      "keyword": "otp",
+      "created_at": "2015-05-28T14:08:58.398350Z",
+      "crates_cnt": 107
+    },
+    {
+      "id": "2fa",
+      "keyword": "2fa",
+      "created_at": "2015-07-26T15:20:53.602635Z",
+      "crates_cnt": 61
+    },
+    {
+      "id": "hmac",
+      "keyword": "hmac",
+      "created_at": "2016-08-16T10:38:10.382281Z",
+      "crates_cnt": 94
+    }
+  ],
+  "categories": [
+    {
+      "id": "authentication",
+      "category": "Authentication",
+      "slug": "authentication",
+      "description": "Crates to help with the process of confirming identities.",
+      "created_at": "2017-01-17T19:13:05.112025Z",
+      "crates_cnt": 3039
+    },
+    {
+      "id": "web-programming",
+      "category": "Web programming",
+      "slug": "web-programming",
+      "description": "Crates to create applications for the web.",
+      "created_at": "2017-01-17T19:13:05.112025Z",
+      "crates_cnt": 11002
+    }
+  ]
+}

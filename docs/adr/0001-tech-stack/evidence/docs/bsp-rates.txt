@@ -1,0 +1,117 @@
+https://www.bsp.gov.ph/SitePages/Statistics/ExchangeRate.aspx
+accessed 2026-10-20T15:37:33.084Z
+HTTP 200
+
+Visit https://asean2026.gov.ph/ for more information about the ASEAN 2026.
+Visit https://asean2026.gov.ph/ for more information about the ASEAN 2026.
+About
+Core Functions
+Media and Research
+Consumer Corner
+Media and Research  Statistics
+​
+​​
+Share
+ 
+BANGKO SENTRAL NG PILIPINAS
+FINANCIAL MARKETS
+REFERENCE EXCHANGE RATE BULLETIN
+October 20, 2026
+COUNTRY	UNIT	SYMBOL	EURO EQUIVALENT	U.S. DOLLAR EQUIVALENT	PHIL. PESO EQUIVALENT
+
+1 UNITED STATES	DOLLAR*	USD	0.891663	1.000000	63.0880
+2 JAPAN	YEN	JPY	0.005628	0.006312	0.3982
+3 UNITED KINGDOM	POUND	GBP	1.186893	1.331100	83.9764
+4 HONGKONG	DOLLAR	HKD	0.113624	0.127429	8.0392
+5 SWITZERLAND	FRANC	CHF	1.079364	1.210507	76.3685
+6 CANADA	DOLLAR	CAD	0.631981	0.708767	44.7147
+7 SINGAPORE	DOLLAR	SGD	0.696992	0.781677	49.3144
+8 AUSTRALIA	DOLLAR	AUD	0.622113	0.697700	44.0165
+9 BAHRAIN	DINAR	BHD	2.363273	2.650411	167.2091
+10 KUWAIT	DINAR	KWD	N/A	N/A	N/A
+11 SAUDI ARABIA	RIYAL	SAR	0.237637	0.266510	16.8136
+12 BRUNEI	DOLLAR	BND	0.694279	0.778634	49.1225
+13 INDONESIA	RUPIAH	IDR	0.000049	0.000055	0.0035
+14 THAILAND	BAHT	THB	0.026567	0.029795	1.8797
+15 UNITED ARAB EMIRATES	DIRHAM	AED	0.242768	0.272264	17.1766
+16 EUROPEAN MONETARY UNION	EURO	EUR	1.000000	1.121500	70.7532
+17 KOREA	WON	KRW	0.000670	0.000751	0.0474
+18 CHINA	YUAN**	CNY	0.133462	0.149678	9.4429
+
+19 ARGENTINA	PESO	ARS	0.000585	0.000656	0.0414
+20 BRAZIL	REAL	BRL	0.176885	0.198377	12.5152
+21 DENMARK	KRONER	DKK	0.133797	0.150053	9.4665
+22 INDIA	RUPEE	INR	0.009394	0.010535	0.6646
+23 MALAYSIA	RINGGIT	MYR	0.218545	0.245098	15.4627
+24 MEXICO	NEW PESO	MXN	0.048425	0.054309	3.4262
+25 NEW ZEALAND	DOLLAR	NZD	0.504949	0.566300	35.7267
+26 NORWAY	KRONER	NOK	0.094901	0.106432	6.7146
+27 PAKISTAN	RUPEE	PKR	0.003225	0.003617	0.2282
+28 SOUTH AFRICA	RAND	ZAR	0.054304	0.060902	3.8422
+29 SWEDEN	KRONER	SEK	0.090027	0.100965	6.3697
+30 SYRIA	POUND	SYP	0.007338	0.008230	0.5192
+31 TAIWAN	NT DOLLAR	TWD	0.027456	0.030792	1.9426
+32 VENEZUELA	BOLIVAR	VES	0.001014	0.001137	0.0717
+BSP Buying Rate (T/T): PHP	62.850	
+BSP Selling Rate (T/T): PHP	63.350	
+BSP Reference Rate: PHP	63.100	
+PDS Closing Rate (19-Oct-2026): PHP	63.09	
+SDR Rate: $	1.35487 /SDR	
+GOLD BUYING: $	4,136.50	
+SILVER BUYING: $	56.95	
+Source: LSEG FOREX CLOSING PRICES as of NY Time - 19-Oct-2026
+* Weighted average rate in the USD/PHP Market in the last trading day
+** Asian Time Closing Rate as of 19-Oct-2026
+0
+0
+Run date/time: 20-Oct-2026 12:11 PM
+
+
+
+Advisory:
+
+
+
+The Online Interactive Statistics Database has been temporarily disabled due to technical issues. You may also use the following links to access historical data:
+
+
+
+
+Philippine Peso per US Dollar Exchange Rates:
+
+Daily Peso per US Dollar
+Daily, Monthly (Average and End-of-Period)and Annual Peso per US Dollar
+
+
+
+Daily Reference Exchange Rate Bulletin (RERB):
+
+Daily (current day, Excel file)
+Daily (starting January 2017)
+
+
+
+Cross Rates:
+
+Daily Peso, US Dollar and Euro Cross Rates
+Monthly and Annual Philippine Peso Cross Rates
+Monthly and Annual US Dollar Cross Rates
+Back
+Related Content
+
+
+Exchange Rate - FAQs
+Q&A on the Exchange Rate Impact: How Much, What We Can Do, and What's Next
+The BSP’s Exchange Rate Policy (Infographics)
+Legal
+Privacy Notice
+Terms of Use
+Abbreviations and Glossary
+Site Map
+Quick Links
+Citizen's Charter
+Careers
+BSP Directory
+Feedback
+New Order of Payment System (NOPS)
+© 2025 BANGKO SENTRAL NG PILIPINAS - All Rights Reserved

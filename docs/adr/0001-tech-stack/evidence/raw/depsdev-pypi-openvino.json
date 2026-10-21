@@ -1,0 +1,26 @@
+{
+  "versionKey": {
+    "system": "PYPI",
+    "name": "openvino",
+    "version": "2026.4.1"
+  },
+  "publishedAt": "2026-10-01T09:59:24Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "Apache-2.0"
+  ],
+  "advisoryKeys": [],
+  "links": [],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://pypi.org/simple"
+  ],
+  "relatedProjects": [],
+  "projectStatus": {
+    "status": "active",
+    "reason": ""
+  }
+}

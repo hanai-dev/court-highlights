@@ -1,0 +1,436 @@
+https://www.seeedstudio.com/reComputer-J4012-p-5586.html
+accessed 2026-10-20T15:37:11.706Z
+HTTP 200
+
+US Warehouse: Enjoy FREE UNIUNI shipping on orders under $50! (Excludes XIAO & Raspberry Pi series)
+the AI Hardware Partner
+For Industry
+Products
+Local Warehouse
+Documents
+Customization
+Solution
+Software
+Support
+Account
+$USD
+Home  NVIDIA Jetson  reComputer J4012 - Edge AI Computer with NVIDIA® Jetson™ Orin™ NX 16GB （Super Mode NOT Supported)
+Skip to the end of the images gallery
+Skip to the beginning of the images gallery
+reComputer J4012 - Edge AI Computer with NVIDIA® Jetson™ Orin™ NX 16GB （Super Mode NOT Supported)
+SKU 110110145
+Rating:
+	32  Reviews
+Custom Logo, Packaging & Firmware
+
+Powerful and compact edge AI device with NVIDIA® Jetson Orin™ NX SoM, pre-built Jetpack 5.1.1, 128GB SSD, 4x USB 3.2, HDMI, GbE, carrier board also includes M.2 key E for WIFI, M.2 Key M for SSD, RTC, CAN, 40-pin and more.
+
+ 
+
+ 
+
+USD
+$1,399.00
+10+: $1,385.00
+Selection Guide
+Wireless
+: Wi-Fi/BT
+Wi-Fi/BT
+Wi-Fi/BT/LTE
+Processor
+: Orin NX
+Orin Nano
+Orin NX
+Memory
+: 16GB
+4GB
+8GB
+16GB
+Warehouse
+	
+	
+	
+In Stock
+	
+	
+	
+
+
+Back Order
+	
+	
+	
+-  +
+Add To Cart
+Fast Checkout With
+Also Add:
+$0.00
+reSpeaker XMOS XVF3000 with Case - AI-powered 4-Mic USB Array
+$69
+RTL8822CE Wireless NIC Kits
+$9.6 - $9.6
+256GB NVMe M.2 PCle Gen3x4 2280 Internal SSD
+$109
+512GB NVMe M.2 PCle Gen3x4 2280 Internal SSD
+$179
+Raspberry Pi Camera Module 3 Wide - Sony IMX708, 4608 × 2592 pixels, 120 degrees Diagonal FOV, IR cut filter, autofocus
+$35
+Free Insurance Included On Us
+Flexible Payments with PayPal Pay Later
+Avoid Import Fees: Ship Tax-Free from Local Warehouses
+1 on 1 Support | 12-Month Warranty | 30-Day Return Policy
+ ReComputer J4012 ReComputer J4012 Jetson Jetson Orin Orin Jetson NX NX Nvidia Jetson ReComputer For Jetson Jetson Orin 16GB Edge AI Deep Learning IoT Development Board Edge Device 128GB NVMe SSD
+Product Details
+Wiki & Learn
+Reviews
+Download PDF
+Feature
+Specification
+Hardware Overview
+Application
+Documents
+Certification
+Part List
+Feature
+
+ 
+
+Note
+
+ reComputer Super J4012 comes with Jetson Orin NX 16GB module, delivers up to 157 TOPS in MAXN Super Mode. 
+If you are looking for the version without power adapter, please check out reComputer J4012 without power adapter
+For optimal performance with reComputer, we recommend using 128GB / 256GB / 512GB / 1TB SSDs from Seeed. Since some SSDs on the market may only be compatible with specific JetPack versions which may cause the device to fail to function properly, and this issue is also present with official NVIDIA dev kits.
+Specification
+
+Jetson Orin NX System on Module
+
+
+
+
+AI Performance
+
+	
+
+reComputer J4012 - Orin NX 16GB, 100 TOPS
+
+	
+
+reComputer J4011- Orin NX 8GB – 70 TOPS
+
+
+
+
+GPU
+
+	
+
+1024-core NVIDIA Ampere architecture GPU with 32 Tensor Cores
+
+
+
+
+CPU
+
+	
+
+8-core Arm® Cortex®-A78AE v8.2 64-bit CPU (Orin NX 16GB)
+
+	
+
+6-core Arm® Cortex®-A78AE (Orin NX 8GB)
+
+
+
+
+Memory
+
+	
+
+16GB 128-bit LPDDR5 (Orin NX 16GB)
+
+	
+
+8GB 128-bit LPDDR5 (Orin NX 8GB)
+
+
+
+
+Video Encode
+
+	
+
+1x 4K60 (H.265) | 3x 4K30 (H.265) | 6x 1080p60 (H.265) | 12x 1080p30 (H.265)
+
+
+
+
+Video Decode
+
+	
+
+1x 8K30 (H.265) | 2x 4K60 (H.265) | 4x 4K30 (H.265) | 9x 1080p60 (H.265) | 18x 1080p30 (H.265)
+
+
+
+
+DL Accelerator
+
+	
+
+2x NVDLA v2
+
+	
+
+1x NVDLA v2
+
+
+
+
+Carrier Board
+
+
+
+
+Storage
+
+	
+
+1x M.2 Key M PCIe (M.2 NVMe 2280 SSD 128G included)
+
+
+
+
+Networking
+
+	
+
+Ethernet
+
+	
+
+1x RJ-45 Gigabit Ethernet (10/100/1000M)
+
+
+
+
+M.2 KEY E
+
+	
+
+1x M.2 Key E for WiFi/Bluetooth module（module not included）
+
+
+
+
+I/O
+
+	
+
+USB
+
+	
+
+4x USB 3.2 Type-A (10Gbps)
+
+1x USB2.0 Type-C (Device Mode)
+
+
+
+
+Camera
+
+	
+
+2x CSI (2-lane 15pin)
+
+
+
+
+Display
+
+	
+
+1x HDMI 2.1
+
+
+
+
+Fan
+
+	
+
+1x 4 pin Fan Connector (5V PWM)
+
+
+
+
+CAN
+
+	
+
+1x CAN
+
+
+
+
+Multifunctional Port
+
+	
+
+1x 40-Pin Expansion header
+
+1x 12-Pin Control and UART header
+
+
+
+
+RTC
+
+	
+
+1x RTC 2-pin, supports CR1220 (not included)
+
+
+
+
+Power
+
+	
+
+9-19V DC
+
+
+
+
+Mechanical
+
+	
+
+Dimensions (W x D x H)
+
+	
+
+130mm x 120mm x 58.5mm (with case)
+
+
+
+
+Installation
+
+	
+
+Desk, wall-mounting
+
+
+
+
+Operating Temperature
+
+	
+
+-10℃~60℃
+
+
+
+
+Warranty
+
+	
+
+1 Year
+
+Hardware Overview
+reComputer J401 carrier board, included in the full system - reComputer J4012
+
+Desktop, wall Mount, expandable, or fit in anywhere
+
+Application
+Designed for Developers — Out-of-the-Box Experience
+Whether you're an experienced developer or a complete beginner for embedded AI/GPU inference, use reComputer Super AI box as your first AI workstation, together diving into NVIDIA Jetson for Beginners — your fast track to vision AI, Generative AI, and robotics development! Through these tutorials, you will learn:
+From Zero to Real Projects: Master Linux basics on the Jetson environment to build an end-to-end AI NVR/AMR.
+Hardware Integration: Tailored for reComputer Jetson devices for a seamless, out-of-the-box experience.
+Coverage of Cutting-Edge Domains: Deep dive into CV, GenAI, ROS, agentic AI, and TensorRT optimization.
+Toolchain Mastery: Hands-on tutorials with NVIDIA JetPack SDK, CUDA, DeepStream, PyTorch, and TensorFlow.
+
+ 
+
+One-line deployment
+
+To improve the developer experience, Seeed offers reComputer AI Lab — a platform that helps you deploy AI applications with one-click tools and ready-to-use resources. It includes optimized latest edge AI model demos for CV, LLM, VLM, interactive tutorials, deployment tools, containerized applications, and community projects to speed up development on Jetson.
+ 
+
+ 
+
+Tool for Developers
+
+Seeed Jetson Develop Tool is a desktop client for all developers who are going to use reComputer Jetson device for the very first time. It brings the common bring-up and development workflow into one GUI: firmware flashing, first-boot initialization, device diagnostics, remote development, app deployment, skill-based automation, OTA updates, and community resources. All we provide here is to help you to get started with Seeed reComputer Jetson hardware much more easily and seamlessly.
+
+ 
+
+ 
+
+Documents
+Datasheet
+Schematic
+3D File
+Seeed Nvidia Jetson Product Catalog
+Nvidia Jetson Comparison
+Nvidia Jetson Product Comparison
+Seeed Nvidia Jetson Success Cases
+Seeed Jetson One Pager
+Certification
+HSCODE	8471419000
+USHSCODE	8517180050
+UPC	
+EUHSCODE	8471707000
+COO	CHINA
+Part List
+
+reComputer J4012 (System Installed)
+
+	
+
+x1
+
+
+
+
+12V/5A(Barrel Jack 5.5/2.5mm) Power Adapter (Power cord not included) 
+
+	
+
+x1
+
+ 
+
+Note: 
+
+Please note that the product comes with a power adapter, but does not include a AC cloverleaf power cord. Kindly purchase the appropriate AC cloverleaf power cord based on your local power socket specifications.
+
+AC Cloverleaf Power Cord - US
+AC Cloverleaf Power Cord - EU
+Company
+Contact Us
+About Us
+Become Distributor
+Join Us
+Community Events
+Seeedstudio Design System
+Products & Solutions
+Product catalog
+Solution
+Customization
+Customer Service
+Shipping & Order
+Warranty& Returns
+Payment Information
+Support
+Tech support
+FAQ
+Wiki
+Forum
+Stay Tuned
+Stay up to date with the latest products,news and offers
+        
+© 2008-2026 Seeed Technology Co.,Ltd. All rights reserved.
+Site Map Privacy Policy Export Control Compliance Security Policy

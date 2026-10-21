@@ -1,0 +1,2831 @@
+{
+  "crate": {
+    "id": "retina",
+    "name": "retina",
+    "updated_at": "2026-10-04T13:41:07.008979Z",
+    "versions": [
+      3400605,
+      2999647,
+      2119638,
+      2108666,
+      2038705,
+      2010684,
+      1792176,
+      1758357,
+      1429154,
+      1424749,
+      1417901,
+      1255233,
+      1241171,
+      1156315,
+      1008144,
+      999316,
+      717829,
+      691550,
+      631058,
+      630647,
+      599212,
+      550971,
+      546413,
+      531409,
+      513013,
+      491522,
+      474769,
+      460852,
+      444923,
+      440698,
+      431624,
+      423735,
+      420084,
+      415592,
+      412780,
+      399028,
+      395041,
+      395021,
+      394186,
+      388100
+    ],
+    "keywords": [
+      "streaming",
+      "video",
+      "multimedia",
+      "rtsp",
+      "ip-camera"
+    ],
+    "categories": [
+      "multimedia",
+      "network-programming"
+    ],
+    "badges": [],
+    "created_at": "2021-06-09T20:51:39.723990Z",
+    "downloads": 202537,
+    "recent_downloads": 88611,
+    "default_version": "0.4.21",
+    "num_versions": 40,
+    "yanked": false,
+    "max_version": "0.4.21",
+    "newest_version": "0.4.21",
+    "max_stable_version": "0.4.21",
+    "description": "high-level RTSP multimedia streaming library",
+    "homepage": null,
+    "documentation": null,
+    "repository": "https://github.com/scottlamb/retina",
+    "links": {
+      "version_downloads": "/api/v1/crates/retina/downloads",
+      "versions": null,
+      "owners": "/api/v1/crates/retina/owners",
+      "owner_team": "/api/v1/crates/retina/owner_team",
+      "owner_user": "/api/v1/crates/retina/owner_user",
+      "reverse_dependencies": "/api/v1/crates/retina/reverse_dependencies"
+    },
+    "exact_match": false,
+    "trustpub_only": false
+  },
+  "versions": [
+    {
+      "id": 3400605,
+      "crate": "retina",
+      "num": "0.4.21",
+      "dl_path": "/api/v1/crates/retina/0.4.21/download",
+      "readme_path": "/api/v1/crates/retina/0.4.21/readme",
+      "updated_at": "2026-10-04T13:41:07.008979Z",
+      "created_at": "2026-10-04T13:41:07.008979Z",
+      "downloads": 6135,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.21/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.21/downloads",
+        "authors": "/api/v1/crates/retina/0.4.21/authors"
+      },
+      "crate_size": 361147,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2026-10-04T13:41:07.008979Z"
+        }
+      ],
+      "checksum": "031b39326ce8613be3273edaac2d132709a08790f73c4dee446a781f6c990e7c",
+      "rust_version": "1.88",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2024",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 17860,
+            "comment_lines": 1099,
+            "files": 31
+          }
+        },
+        "total_code_lines": 17860,
+        "total_comment_lines": 1099
+      }
+    },
+    {
+      "id": 2999647,
+      "crate": "retina",
+      "num": "0.4.20",
+      "dl_path": "/api/v1/crates/retina/0.4.20/download",
+      "readme_path": "/api/v1/crates/retina/0.4.20/readme",
+      "updated_at": "2026-08-14T19:41:15.925415Z",
+      "created_at": "2026-08-14T19:41:15.925415Z",
+      "downloads": 23907,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.20/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.20/downloads",
+        "authors": "/api/v1/crates/retina/0.4.20/authors"
+      },
+      "crate_size": 358904,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2026-08-14T19:41:15.925415Z"
+        }
+      ],
+      "checksum": "0e0eb740f743e678e071628ff6bf84ed5ed03df879997cc3d43b5afef64aff93",
+      "rust_version": "1.88",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2024",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 17724,
+            "comment_lines": 1065,
+            "files": 31
+          }
+        },
+        "total_code_lines": 17724,
+        "total_comment_lines": 1065
+      }
+    },
+    {
+      "id": 2119638,
+      "crate": "retina",
+      "num": "0.4.19",
+      "dl_path": "/api/v1/crates/retina/0.4.19/download",
+      "readme_path": "/api/v1/crates/retina/0.4.19/readme",
+      "updated_at": "2026-03-13T18:48:34.689031Z",
+      "created_at": "2026-03-13T18:48:34.689031Z",
+      "downloads": 81269,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.19/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.19/downloads",
+        "authors": "/api/v1/crates/retina/0.4.19/authors"
+      },
+      "crate_size": 340354,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2026-03-13T18:48:34.689031Z"
+        }
+      ],
+      "checksum": "e15d30599ab355dde5e0d443463e1c6177278e3a9822e2393c0d3ed98789edd0",
+      "rust_version": "1.88",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2024",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 15794,
+            "comment_lines": 993,
+            "files": 30
+          }
+        },
+        "total_code_lines": 15794,
+        "total_comment_lines": 993
+      }
+    },
+    {
+      "id": 2108666,
+      "crate": "retina",
+      "num": "0.4.18",
+      "dl_path": "/api/v1/crates/retina/0.4.18/download",
+      "readme_path": "/api/v1/crates/retina/0.4.18/readme",
+      "updated_at": "2026-03-10T21:39:00.978333Z",
+      "created_at": "2026-03-10T21:39:00.978333Z",
+      "downloads": 309,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.18/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.18/downloads",
+        "authors": "/api/v1/crates/retina/0.4.18/authors"
+      },
+      "crate_size": 339758,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2026-03-10T21:39:00.978333Z"
+        }
+      ],
+      "checksum": "83a242b21eef96f9a10c5c0ea231d5e119209b06f497779dd5065b0ae3d0f6a2",
+      "rust_version": "1.88",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2024",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 15694,
+            "comment_lines": 989,
+            "files": 30
+          }
+        },
+        "total_code_lines": 15694,
+        "total_comment_lines": 989
+      }
+    },
+    {
+      "id": 2038705,
+      "crate": "retina",
+      "num": "0.4.17",
+      "dl_path": "/api/v1/crates/retina/0.4.17/download",
+      "readme_path": "/api/v1/crates/retina/0.4.17/readme",
+      "updated_at": "2026-02-18T01:51:24.387963Z",
+      "created_at": "2026-02-18T01:51:24.387963Z",
+      "downloads": 1604,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.17/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.17/downloads",
+        "authors": "/api/v1/crates/retina/0.4.17/authors"
+      },
+      "crate_size": 316651,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2026-02-18T01:51:24.387963Z"
+        }
+      ],
+      "checksum": "6f8c5c4fd6591f15d0639791b2ecc2ed68dfad679bb82a8c6e3d0425306f8d87",
+      "rust_version": "1.88",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2024",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 13103,
+            "comment_lines": 836,
+            "files": 24
+          }
+        },
+        "total_code_lines": 13103,
+        "total_comment_lines": 836
+      }
+    },
+    {
+      "id": 2010684,
+      "crate": "retina",
+      "num": "0.4.16",
+      "dl_path": "/api/v1/crates/retina/0.4.16/download",
+      "readme_path": "/api/v1/crates/retina/0.4.16/readme",
+      "updated_at": "2026-02-09T01:15:12.539193Z",
+      "created_at": "2026-02-09T01:15:12.539193Z",
+      "downloads": 626,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.16/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.16/downloads",
+        "authors": "/api/v1/crates/retina/0.4.16/authors"
+      },
+      "crate_size": 315745,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2026-02-09T01:15:12.539193Z"
+        }
+      ],
+      "checksum": "0f5557c3e4ecf6c9dff60826ad3f8e1394a596de2f9d26487f448c155336dbf9",
+      "rust_version": "1.88",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2024",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 12937,
+            "comment_lines": 829,
+            "files": 24
+          }
+        },
+        "total_code_lines": 12937,
+        "total_comment_lines": 829
+      }
+    },
+    {
+      "id": 1792176,
+      "crate": "retina",
+      "num": "0.4.15",
+      "dl_path": "/api/v1/crates/retina/0.4.15/download",
+      "readme_path": "/api/v1/crates/retina/0.4.15/readme",
+      "updated_at": "2025-10-25T18:22:03.624838Z",
+      "created_at": "2025-10-25T18:22:03.624838Z",
+      "downloads": 20507,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.15/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.15/downloads",
+        "authors": "/api/v1/crates/retina/0.4.15/authors"
+      },
+      "crate_size": 313433,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2025-10-25T18:22:03.624838Z"
+        }
+      ],
+      "checksum": "909a725f225b5e44f120cb834ed9a46361deb009da196ef1147e3a781223a24b",
+      "rust_version": "1.88",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2024",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 12716,
+            "comment_lines": 810,
+            "files": 24
+          }
+        },
+        "total_code_lines": 12716,
+        "total_comment_lines": 810
+      }
+    },
+    {
+      "id": 1758357,
+      "crate": "retina",
+      "num": "0.4.14",
+      "dl_path": "/api/v1/crates/retina/0.4.14/download",
+      "readme_path": "/api/v1/crates/retina/0.4.14/readme",
+      "updated_at": "2025-10-03T20:54:28.668783Z",
+      "created_at": "2025-10-03T20:54:28.668783Z",
+      "downloads": 688,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.14/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.14/downloads",
+        "authors": "/api/v1/crates/retina/0.4.14/authors"
+      },
+      "crate_size": 312972,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2025-10-03T20:54:28.668783Z"
+        }
+      ],
+      "checksum": "783b4b9caaf5c46c93b9946590b29e58b267832b2b9e71fd85740f5001586fe4",
+      "rust_version": "1.88",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2024",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 12671,
+            "comment_lines": 810,
+            "files": 24
+          }
+        },
+        "total_code_lines": 12671,
+        "total_comment_lines": 810
+      }
+    },
+    {
+      "id": 1429154,
+      "crate": "retina",
+      "num": "0.4.13",
+      "dl_path": "/api/v1/crates/retina/0.4.13/download",
+      "readme_path": "/api/v1/crates/retina/0.4.13/readme",
+      "updated_at": "2025-02-01T05:25:57.252482Z",
+      "created_at": "2025-02-01T05:25:57.252482Z",
+      "downloads": 20189,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.13/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.13/downloads",
+        "authors": "/api/v1/crates/retina/0.4.13/authors"
+      },
+      "crate_size": 310745,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2025-02-01T05:25:57.252482Z"
+        }
+      ],
+      "checksum": "2cb881f2fb51b0b4e814a524bfb938007bdf3df5f8430ec0b4e014d2dc877f50",
+      "rust_version": "1.79",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 12506,
+            "comment_lines": 804,
+            "files": 24
+          }
+        },
+        "total_code_lines": 12506,
+        "total_comment_lines": 804
+      }
+    },
+    {
+      "id": 1424749,
+      "crate": "retina",
+      "num": "0.4.12",
+      "dl_path": "/api/v1/crates/retina/0.4.12/download",
+      "readme_path": "/api/v1/crates/retina/0.4.12/readme",
+      "updated_at": "2025-01-28T17:01:49.970901Z",
+      "created_at": "2025-01-28T17:01:49.970901Z",
+      "downloads": 944,
+      "features": {
+        "default": [
+          "h265"
+        ],
+        "h265": []
+      },
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.12/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.12/downloads",
+        "authors": "/api/v1/crates/retina/0.4.12/authors"
+      },
+      "crate_size": 307775,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2025-01-28T17:01:49.970901Z"
+        }
+      ],
+      "checksum": "2135e9c5a2ffcab6428221605faa39f1cca4bef6fc5756dbfd02ab57cf68f670",
+      "rust_version": "1.79",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 12225,
+            "comment_lines": 778,
+            "files": 24
+          }
+        },
+        "total_code_lines": 12225,
+        "total_comment_lines": 778
+      }
+    },
+    {
+      "id": 1417901,
+      "crate": "retina",
+      "num": "0.4.11",
+      "dl_path": "/api/v1/crates/retina/0.4.11/download",
+      "readme_path": "/api/v1/crates/retina/0.4.11/readme",
+      "updated_at": "2025-01-22T16:46:15.376857Z",
+      "created_at": "2025-01-22T16:46:15.376857Z",
+      "downloads": 939,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.11/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.11/downloads",
+        "authors": "/api/v1/crates/retina/0.4.11/authors"
+      },
+      "crate_size": 287294,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2025-01-22T16:46:15.376857Z"
+        }
+      ],
+      "checksum": "30d83a8e0892d8e0836cd9be6cc413ab3f1c574276e047ac6e27e3027832d00e",
+      "rust_version": "1.70",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 10207,
+            "comment_lines": 655,
+            "files": 20
+          }
+        },
+        "total_code_lines": 10207,
+        "total_comment_lines": 655
+      }
+    },
+    {
+      "id": 1255233,
+      "crate": "retina",
+      "num": "0.4.10",
+      "dl_path": "/api/v1/crates/retina/0.4.10/download",
+      "readme_path": "/api/v1/crates/retina/0.4.10/readme",
+      "updated_at": "2024-08-31T16:16:01.489201Z",
+      "created_at": "2024-08-31T16:16:01.489201Z",
+      "downloads": 2324,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.10/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.10/downloads",
+        "authors": "/api/v1/crates/retina/0.4.10/authors"
+      },
+      "crate_size": 273917,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2024-08-31T16:16:01.489201Z"
+        }
+      ],
+      "checksum": "cd5652758580215edaf590a03298ff72ff5f965c2dea8d6e3f058ef728fbf773",
+      "rust_version": "1.70",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 9825,
+            "comment_lines": 630,
+            "files": 20
+          }
+        },
+        "total_code_lines": 9825,
+        "total_comment_lines": 630
+      }
+    },
+    {
+      "id": 1241171,
+      "crate": "retina",
+      "num": "0.4.9",
+      "dl_path": "/api/v1/crates/retina/0.4.9/download",
+      "readme_path": "/api/v1/crates/retina/0.4.9/readme",
+      "updated_at": "2024-08-19T13:35:18.875891Z",
+      "created_at": "2024-08-19T13:35:18.875891Z",
+      "downloads": 1170,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.9/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.9/downloads",
+        "authors": "/api/v1/crates/retina/0.4.9/authors"
+      },
+      "crate_size": 273917,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2024-08-19T13:35:18.875891Z"
+        }
+      ],
+      "checksum": "ef9828fb04b8b2bd763887cf4be07aa85aecaa7fce3ee3c7f57bf61e804e9e5c",
+      "rust_version": "1.67",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 9825,
+            "comment_lines": 630,
+            "files": 20
+          }
+        },
+        "total_code_lines": 9825,
+        "total_comment_lines": 630
+      }
+    },
+    {
+      "id": 1156315,
+      "crate": "retina",
+      "num": "0.4.8",
+      "dl_path": "/api/v1/crates/retina/0.4.8/download",
+      "readme_path": "/api/v1/crates/retina/0.4.8/readme",
+      "updated_at": "2024-05-26T17:21:25.640739Z",
+      "created_at": "2024-05-26T17:21:25.640739Z",
+      "downloads": 1933,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.8/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.8/downloads",
+        "authors": "/api/v1/crates/retina/0.4.8/authors"
+      },
+      "crate_size": 271635,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2024-05-26T17:21:25.640739Z"
+        }
+      ],
+      "checksum": "fdd73fbdea4177bdc50179d23a85d1db7c329bfbe06e064947a6b92d87332d81",
+      "rust_version": "1.67",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 9676,
+            "comment_lines": 620,
+            "files": 20
+          }
+        },
+        "total_code_lines": 9676,
+        "total_comment_lines": 620
+      }
+    },
+    {
+      "id": 1008144,
+      "crate": "retina",
+      "num": "0.4.7",
+      "dl_path": "/api/v1/crates/retina/0.4.7/download",
+      "readme_path": "/api/v1/crates/retina/0.4.7/readme",
+      "updated_at": "2024-01-09T05:18:42.815141Z",
+      "created_at": "2024-01-09T05:18:42.815141Z",
+      "downloads": 2689,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.7/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.7/downloads",
+        "authors": "/api/v1/crates/retina/0.4.7/authors"
+      },
+      "crate_size": 260620,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2024-01-09T05:18:42.815141Z"
+        }
+      ],
+      "checksum": "4bd37013571868f71dcb9db28833296e5e260b5df938ad98b5a8da8a4eeea98e",
+      "rust_version": "1.67",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 8823,
+            "comment_lines": 573,
+            "files": 19
+          }
+        },
+        "total_code_lines": 8823,
+        "total_comment_lines": 573
+      }
+    },
+    {
+      "id": 999316,
+      "crate": "retina",
+      "num": "0.4.6",
+      "dl_path": "/api/v1/crates/retina/0.4.6/download",
+      "readme_path": "/api/v1/crates/retina/0.4.6/readme",
+      "updated_at": "2023-12-29T23:05:26.129695Z",
+      "created_at": "2023-12-29T23:05:26.129695Z",
+      "downloads": 1249,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.6/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.6/downloads",
+        "authors": "/api/v1/crates/retina/0.4.6/authors"
+      },
+      "crate_size": 260248,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2023-12-29T23:05:26.129695Z"
+        }
+      ],
+      "checksum": "f7a6f81778011f8ef41fab80570f1dba39dcace1d4d2dd054760a14d41332c6a",
+      "rust_version": "1.67",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 8795,
+            "comment_lines": 573,
+            "files": 19
+          }
+        },
+        "total_code_lines": 8795,
+        "total_comment_lines": 573
+      }
+    },
+    {
+      "id": 717829,
+      "crate": "retina",
+      "num": "0.4.5",
+      "dl_path": "/api/v1/crates/retina/0.4.5/download",
+      "readme_path": "/api/v1/crates/retina/0.4.5/readme",
+      "updated_at": "2023-02-02T17:01:15.328884Z",
+      "created_at": "2023-02-02T17:01:15.328884Z",
+      "downloads": 6652,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.5/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.5/downloads",
+        "authors": "/api/v1/crates/retina/0.4.5/authors"
+      },
+      "crate_size": 257436,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2023-02-02T17:01:15.328884Z"
+        }
+      ],
+      "checksum": "1b8c5ef4eec9b0c6178ac107e1a533bbc5d2ff6a90f8aabd000d71e119c42d96",
+      "rust_version": "1.64",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 8466,
+            "comment_lines": 566,
+            "files": 19
+          }
+        },
+        "total_code_lines": 8466,
+        "total_comment_lines": 566
+      }
+    },
+    {
+      "id": 691550,
+      "crate": "retina",
+      "num": "0.4.4",
+      "dl_path": "/api/v1/crates/retina/0.4.4/download",
+      "readme_path": "/api/v1/crates/retina/0.4.4/readme",
+      "updated_at": "2022-12-26T14:33:31.300985Z",
+      "created_at": "2022-12-26T14:33:31.300985Z",
+      "downloads": 1651,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.4/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.4/downloads",
+        "authors": "/api/v1/crates/retina/0.4.4/authors"
+      },
+      "crate_size": 257236,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2022-12-26T14:33:31.300985Z"
+        }
+      ],
+      "checksum": "f5c9340b86c0e462a124be2c32a96b102d8b06f8dd9e107b5ab5d25730b61b09",
+      "rust_version": "1.59",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 8501,
+            "comment_lines": 569,
+            "files": 19
+          }
+        },
+        "total_code_lines": 8501,
+        "total_comment_lines": 569
+      }
+    },
+    {
+      "id": 631058,
+      "crate": "retina",
+      "num": "0.4.3",
+      "dl_path": "/api/v1/crates/retina/0.4.3/download",
+      "readme_path": "/api/v1/crates/retina/0.4.3/readme",
+      "updated_at": "2022-09-29T05:13:38.858344Z",
+      "created_at": "2022-09-29T05:13:38.858344Z",
+      "downloads": 1887,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.3/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.3/downloads",
+        "authors": "/api/v1/crates/retina/0.4.3/authors"
+      },
+      "crate_size": 256330,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2022-09-29T05:13:38.858344Z"
+        }
+      ],
+      "checksum": "23d3ea4f2188bdf8136617a4b5e5827820107ce24407c6a977a45441f12edeb0",
+      "rust_version": "1.59",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 8452,
+            "comment_lines": 551,
+            "files": 19
+          }
+        },
+        "total_code_lines": 8452,
+        "total_comment_lines": 551
+      }
+    },
+    {
+      "id": 630647,
+      "crate": "retina",
+      "num": "0.4.2",
+      "dl_path": "/api/v1/crates/retina/0.4.2/download",
+      "readme_path": "/api/v1/crates/retina/0.4.2/readme",
+      "updated_at": "2022-09-28T16:18:32.437427Z",
+      "created_at": "2022-09-28T16:18:32.437427Z",
+      "downloads": 1210,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.2/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.2/downloads",
+        "authors": "/api/v1/crates/retina/0.4.2/authors"
+      },
+      "crate_size": 256234,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2022-09-28T16:18:32.437427Z"
+        }
+      ],
+      "checksum": "b99f4f845f11c47edb36a1ac75198c5022eca34b179628d3a14afd7e1c3e7005",
+      "rust_version": "1.59",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 8438,
+            "comment_lines": 551,
+            "files": 19
+          }
+        },
+        "total_code_lines": 8438,
+        "total_comment_lines": 551
+      }
+    },
+    {
+      "id": 599212,
+      "crate": "retina",
+      "num": "0.4.1",
+      "dl_path": "/api/v1/crates/retina/0.4.1/download",
+      "readme_path": "/api/v1/crates/retina/0.4.1/readme",
+      "updated_at": "2022-08-09T14:51:37.406360Z",
+      "created_at": "2022-08-09T14:51:37.406360Z",
+      "downloads": 1210,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.1/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.1/downloads",
+        "authors": "/api/v1/crates/retina/0.4.1/authors"
+      },
+      "crate_size": 255818,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2022-08-09T14:51:37.406360Z"
+        }
+      ],
+      "checksum": "35edba0fc81d60f9ac4d69afaa640b150d761e0a3982c1381d7929139306ef06",
+      "rust_version": "1.59",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 8415,
+            "comment_lines": 551,
+            "files": 19
+          }
+        },
+        "total_code_lines": 8415,
+        "total_comment_lines": 551
+      }
+    },
+    {
+      "id": 550971,
+      "crate": "retina",
+      "num": "0.4.0",
+      "dl_path": "/api/v1/crates/retina/0.4.0/download",
+      "readme_path": "/api/v1/crates/retina/0.4.0/readme",
+      "updated_at": "2022-05-17T23:56:07.687829Z",
+      "created_at": "2022-05-17T23:56:07.687829Z",
+      "downloads": 1279,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.4.0/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.4.0/downloads",
+        "authors": "/api/v1/crates/retina/0.4.0/authors"
+      },
+      "crate_size": 262049,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2022-05-17T23:56:07.687829Z"
+        }
+      ],
+      "checksum": "57bdeafed8d429e892754895f028852e666cdf77c3fb248c3780d70606e3e2c7",
+      "rust_version": "1.59",
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2021",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 8318,
+            "comment_lines": 538,
+            "files": 19
+          }
+        },
+        "total_code_lines": 8318,
+        "total_comment_lines": 538
+      }
+    },
+    {
+      "id": 546413,
+      "crate": "retina",
+      "num": "0.3.10",
+      "dl_path": "/api/v1/crates/retina/0.3.10/download",
+      "readme_path": "/api/v1/crates/retina/0.3.10/readme",
+      "updated_at": "2022-05-09T20:06:31.782388Z",
+      "created_at": "2022-05-09T20:06:31.782388Z",
+      "downloads": 1293,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.10/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.10/downloads",
+        "authors": "/api/v1/crates/retina/0.3.10/authors"
+      },
+      "crate_size": 258134,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2022-05-09T20:06:31.782388Z"
+        }
+      ],
+      "checksum": "01358b10b0e442f1cbe1417a888698c88969bfef230290c0aaec65228238a8ca",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 7670,
+            "comment_lines": 534,
+            "files": 18
+          }
+        },
+        "total_code_lines": 7670,
+        "total_comment_lines": 534
+      }
+    },
+    {
+      "id": 531409,
+      "crate": "retina",
+      "num": "0.3.9",
+      "dl_path": "/api/v1/crates/retina/0.3.9/download",
+      "readme_path": "/api/v1/crates/retina/0.3.9/readme",
+      "updated_at": "2022-04-12T21:51:57.776925Z",
+      "created_at": "2022-04-12T21:51:57.776925Z",
+      "downloads": 1236,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.9/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.9/downloads",
+        "authors": "/api/v1/crates/retina/0.3.9/authors"
+      },
+      "crate_size": 257874,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2022-04-12T21:51:57.776925Z"
+        }
+      ],
+      "checksum": "df90aca400866f8b1327902f7c9e93ab17f195c36b7e06b804e8acd3a79bbe41",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 7662,
+            "comment_lines": 534,
+            "files": 18
+          }
+        },
+        "total_code_lines": 7662,
+        "total_comment_lines": 534
+      }
+    },
+    {
+      "id": 513013,
+      "crate": "retina",
+      "num": "0.3.8",
+      "dl_path": "/api/v1/crates/retina/0.3.8/download",
+      "readme_path": "/api/v1/crates/retina/0.3.8/readme",
+      "updated_at": "2022-03-08T18:48:06.287303Z",
+      "created_at": "2022-03-08T18:48:06.287303Z",
+      "downloads": 1241,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.8/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.8/downloads",
+        "authors": "/api/v1/crates/retina/0.3.8/authors"
+      },
+      "crate_size": 253350,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2022-03-08T18:48:06.287303Z"
+        }
+      ],
+      "checksum": "3629d5f6a30d1a0ee184bd2a3e62eba8ffbb121250a8c72ed984575c9ffb0601",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 7345,
+            "comment_lines": 542,
+            "files": 17
+          }
+        },
+        "total_code_lines": 7345,
+        "total_comment_lines": 542
+      }
+    },
+    {
+      "id": 491522,
+      "crate": "retina",
+      "num": "0.3.7",
+      "dl_path": "/api/v1/crates/retina/0.3.7/download",
+      "readme_path": "/api/v1/crates/retina/0.3.7/readme",
+      "updated_at": "2022-01-28T17:25:31.216390Z",
+      "created_at": "2022-01-28T17:25:31.216390Z",
+      "downloads": 1277,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.7/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.7/downloads",
+        "authors": "/api/v1/crates/retina/0.3.7/authors"
+      },
+      "crate_size": 250495,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2022-01-28T17:25:31.216390Z"
+        }
+      ],
+      "checksum": "336d478eaa052ee3057964ddcff06fe3adb2c15a00703fe91a2930728b7dfc67",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 6876,
+            "comment_lines": 493,
+            "files": 17
+          }
+        },
+        "total_code_lines": 6876,
+        "total_comment_lines": 493
+      }
+    },
+    {
+      "id": 474769,
+      "crate": "retina",
+      "num": "0.3.6",
+      "dl_path": "/api/v1/crates/retina/0.3.6/download",
+      "readme_path": "/api/v1/crates/retina/0.3.6/readme",
+      "updated_at": "2021-12-30T06:12:42.784815Z",
+      "created_at": "2021-12-30T06:12:42.784815Z",
+      "downloads": 1233,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.6/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.6/downloads",
+        "authors": "/api/v1/crates/retina/0.3.6/authors"
+      },
+      "crate_size": 248550,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-12-30T06:12:42.784815Z"
+        }
+      ],
+      "checksum": "eabc6843bc7b6796cf21741df4bad786e49ffdbf09c1c4b6ec0ad34dcc7058d5",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 6836,
+            "comment_lines": 485,
+            "files": 17
+          }
+        },
+        "total_code_lines": 6836,
+        "total_comment_lines": 485
+      }
+    },
+    {
+      "id": 460852,
+      "crate": "retina",
+      "num": "0.3.5",
+      "dl_path": "/api/v1/crates/retina/0.3.5/download",
+      "readme_path": "/api/v1/crates/retina/0.3.5/readme",
+      "updated_at": "2021-11-30T21:09:23.743296Z",
+      "created_at": "2021-11-30T21:09:23.743296Z",
+      "downloads": 1157,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.5/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.5/downloads",
+        "authors": "/api/v1/crates/retina/0.3.5/authors"
+      },
+      "crate_size": 246866,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-11-30T21:09:23.743296Z"
+        }
+      ],
+      "checksum": "e8db4511b1faa66c36b9186f9b8fa8b80b21fa8232a674d4666dc620d89467db",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 6611,
+            "comment_lines": 461,
+            "files": 17
+          }
+        },
+        "total_code_lines": 6611,
+        "total_comment_lines": 461
+      }
+    },
+    {
+      "id": 444923,
+      "crate": "retina",
+      "num": "0.3.4",
+      "dl_path": "/api/v1/crates/retina/0.3.4/download",
+      "readme_path": "/api/v1/crates/retina/0.3.4/readme",
+      "updated_at": "2021-10-27T04:39:09.936022Z",
+      "created_at": "2021-10-27T04:39:09.936022Z",
+      "downloads": 1299,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.4/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.4/downloads",
+        "authors": "/api/v1/crates/retina/0.3.4/authors"
+      },
+      "crate_size": 245195,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-10-27T04:39:09.936022Z"
+        }
+      ],
+      "checksum": "fff0d27b2637d691ead29895d151928ee6a569fef5788c3f0712cd624bf24d70",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 6519,
+            "comment_lines": 447,
+            "files": 17
+          }
+        },
+        "total_code_lines": 6519,
+        "total_comment_lines": 447
+      }
+    },
+    {
+      "id": 440698,
+      "crate": "retina",
+      "num": "0.3.3",
+      "dl_path": "/api/v1/crates/retina/0.3.3/download",
+      "readme_path": "/api/v1/crates/retina/0.3.3/readme",
+      "updated_at": "2021-10-20T21:54:14.034676Z",
+      "created_at": "2021-10-20T21:54:14.034676Z",
+      "downloads": 1218,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.3/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.3/downloads",
+        "authors": "/api/v1/crates/retina/0.3.3/authors"
+      },
+      "crate_size": 245514,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-10-20T21:54:14.034676Z"
+        }
+      ],
+      "checksum": "99806071cb433bda0abe688798940f64ea8412482c4049e27b924e4d78675c9a",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 6519,
+            "comment_lines": 447,
+            "files": 17
+          }
+        },
+        "total_code_lines": 6519,
+        "total_comment_lines": 447
+      }
+    },
+    {
+      "id": 431624,
+      "crate": "retina",
+      "num": "0.3.2",
+      "dl_path": "/api/v1/crates/retina/0.3.2/download",
+      "readme_path": "/api/v1/crates/retina/0.3.2/readme",
+      "updated_at": "2021-09-29T12:49:30.951971Z",
+      "created_at": "2021-09-29T12:49:30.951971Z",
+      "downloads": 1216,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.2/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.2/downloads",
+        "authors": "/api/v1/crates/retina/0.3.2/authors"
+      },
+      "crate_size": 245759,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-09-29T12:49:30.951971Z"
+        }
+      ],
+      "checksum": "c9d52cea718605a7425537d1859af58d3b1ea669b5572faf481eb6fe7310da17",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 6539,
+            "comment_lines": 450,
+            "files": 17
+          }
+        },
+        "total_code_lines": 6539,
+        "total_comment_lines": 450
+      }
+    },
+    {
+      "id": 423735,
+      "crate": "retina",
+      "num": "0.3.1",
+      "dl_path": "/api/v1/crates/retina/0.3.1/download",
+      "readme_path": "/api/v1/crates/retina/0.3.1/readme",
+      "updated_at": "2021-09-10T05:03:24.875602Z",
+      "created_at": "2021-09-10T05:03:24.875602Z",
+      "downloads": 1239,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.1/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.1/downloads",
+        "authors": "/api/v1/crates/retina/0.3.1/authors"
+      },
+      "crate_size": 243549,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-09-10T05:03:24.875602Z"
+        }
+      ],
+      "checksum": "819b5befff8af9b03e21256d577d101754527eb981dcd2804cb8725ce1dca978",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 6392,
+            "comment_lines": 409,
+            "files": 16
+          }
+        },
+        "total_code_lines": 6392,
+        "total_comment_lines": 409
+      }
+    },
+    {
+      "id": 420084,
+      "crate": "retina",
+      "num": "0.3.0",
+      "dl_path": "/api/v1/crates/retina/0.3.0/download",
+      "readme_path": "/api/v1/crates/retina/0.3.0/readme",
+      "updated_at": "2021-08-31T14:00:27.567838Z",
+      "created_at": "2021-08-31T14:00:27.567838Z",
+      "downloads": 1198,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.3.0/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.3.0/downloads",
+        "authors": "/api/v1/crates/retina/0.3.0/authors"
+      },
+      "crate_size": 237796,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-08-31T14:00:27.567838Z"
+        }
+      ],
+      "checksum": "446070f3caf291e982d240c7f921837f6da0cbffbc26f1d785b0a8d214f2cadd",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 5915,
+            "comment_lines": 388,
+            "files": 16
+          }
+        },
+        "total_code_lines": 5915,
+        "total_comment_lines": 388
+      }
+    },
+    {
+      "id": 415592,
+      "crate": "retina",
+      "num": "0.2.0",
+      "dl_path": "/api/v1/crates/retina/0.2.0/download",
+      "readme_path": "/api/v1/crates/retina/0.2.0/readme",
+      "updated_at": "2021-08-20T23:49:30.113017Z",
+      "created_at": "2021-08-20T23:49:30.113017Z",
+      "downloads": 1203,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.2.0/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.2.0/downloads",
+        "authors": "/api/v1/crates/retina/0.2.0/authors"
+      },
+      "crate_size": 233477,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-08-20T23:49:30.113017Z"
+        }
+      ],
+      "checksum": "954bff9dec477d485c8fba6433f120b570e8fac582e2ea19d7c0c900a36c38e4",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 5531,
+            "comment_lines": 371,
+            "files": 16
+          }
+        },
+        "total_code_lines": 5531,
+        "total_comment_lines": 371
+      }
+    },
+    {
+      "id": 412780,
+      "crate": "retina",
+      "num": "0.1.0",
+      "dl_path": "/api/v1/crates/retina/0.1.0/download",
+      "readme_path": "/api/v1/crates/retina/0.1.0/readme",
+      "updated_at": "2021-08-13T18:42:22.652233Z",
+      "created_at": "2021-08-13T18:42:22.652233Z",
+      "downloads": 1264,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.1.0/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.1.0/downloads",
+        "authors": "/api/v1/crates/retina/0.1.0/authors"
+      },
+      "crate_size": 229022,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-08-13T18:42:22.652233Z"
+        }
+      ],
+      "checksum": "90f1c5358f01c77609ea1b56b86b96ff3b14e2f535bdd51fc214144cf266738b",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 4957,
+            "comment_lines": 337,
+            "files": 15
+          }
+        },
+        "total_code_lines": 4957,
+        "total_comment_lines": 337
+      }
+    },
+    {
+      "id": 399028,
+      "crate": "retina",
+      "num": "0.0.5",
+      "dl_path": "/api/v1/crates/retina/0.0.5/download",
+      "readme_path": "/api/v1/crates/retina/0.0.5/readme",
+      "updated_at": "2021-07-08T22:21:41.231859Z",
+      "created_at": "2021-07-08T22:21:41.231859Z",
+      "downloads": 1234,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.0.5/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.0.5/downloads",
+        "authors": "/api/v1/crates/retina/0.0.5/authors"
+      },
+      "crate_size": 227301,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-07-08T22:21:41.231859Z"
+        }
+      ],
+      "checksum": "712fc240bf72a74aafd9dfe0f5ff8e16180b3fb4dd3fec5351a8361a89bf8f57",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 4825,
+            "comment_lines": 335,
+            "files": 14
+          }
+        },
+        "total_code_lines": 4825,
+        "total_comment_lines": 335
+      }
+    },
+    {
+      "id": 395041,
+      "crate": "retina",
+      "num": "0.0.4",
+      "dl_path": "/api/v1/crates/retina/0.0.4/download",
+      "readme_path": "/api/v1/crates/retina/0.0.4/readme",
+      "updated_at": "2021-06-28T22:35:12.333583Z",
+      "created_at": "2021-06-28T22:35:12.333583Z",
+      "downloads": 1212,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.0.4/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.0.4/downloads",
+        "authors": "/api/v1/crates/retina/0.0.4/authors"
+      },
+      "crate_size": 222630,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-06-28T22:35:12.333583Z"
+        }
+      ],
+      "checksum": "4a2197de61111c2ffd1d4a9c04edf7a883bdbf8ab3e5d7d21fc19fce7547e54f",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 4232,
+            "comment_lines": 311,
+            "files": 12
+          }
+        },
+        "total_code_lines": 4232,
+        "total_comment_lines": 311
+      }
+    },
+    {
+      "id": 395021,
+      "crate": "retina",
+      "num": "0.0.3",
+      "dl_path": "/api/v1/crates/retina/0.0.3/download",
+      "readme_path": "/api/v1/crates/retina/0.0.3/readme",
+      "updated_at": "2021-06-28T21:17:07.258207Z",
+      "created_at": "2021-06-28T21:17:07.258207Z",
+      "downloads": 1175,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.0.3/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.0.3/downloads",
+        "authors": "/api/v1/crates/retina/0.0.3/authors"
+      },
+      "crate_size": 222722,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-06-28T21:17:07.258207Z"
+        }
+      ],
+      "checksum": "151ca8320bb2fb48dc29a9106b7e6fcde088720cb7895b3a3aacac7e09faa68b",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 4231,
+            "comment_lines": 311,
+            "files": 12
+          }
+        },
+        "total_code_lines": 4231,
+        "total_comment_lines": 311
+      }
+    },
+    {
+      "id": 394186,
+      "crate": "retina",
+      "num": "0.0.2",
+      "dl_path": "/api/v1/crates/retina/0.0.2/download",
+      "readme_path": "/api/v1/crates/retina/0.0.2/readme",
+      "updated_at": "2021-06-25T23:49:39.246317Z",
+      "created_at": "2021-06-25T23:49:39.246317Z",
+      "downloads": 1155,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.0.2/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.0.2/downloads",
+        "authors": "/api/v1/crates/retina/0.0.2/authors"
+      },
+      "crate_size": 220193,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-06-25T23:49:39.246317Z"
+        }
+      ],
+      "checksum": "b04428be09b2f6bdf49044996484de051bbdcff0fffea51bb933debb7ec2e2e1",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": "https://github.com/scottlamb/retina",
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Rust": {
+            "code_lines": 4157,
+            "comment_lines": 313,
+            "files": 12
+          }
+        },
+        "total_code_lines": 4157,
+        "total_comment_lines": 313
+      }
+    },
+    {
+      "id": 388100,
+      "crate": "retina",
+      "num": "0.0.1",
+      "dl_path": "/api/v1/crates/retina/0.0.1/download",
+      "readme_path": "/api/v1/crates/retina/0.0.1/readme",
+      "updated_at": "2021-06-09T20:51:39.723990Z",
+      "created_at": "2021-06-09T20:51:39.723990Z",
+      "downloads": 1183,
+      "features": {},
+      "yanked": false,
+      "yank_message": null,
+      "lib_links": null,
+      "license": "MIT/Apache-2.0",
+      "links": {
+        "dependencies": "/api/v1/crates/retina/0.0.1/dependencies",
+        "version_downloads": "/api/v1/crates/retina/0.0.1/downloads",
+        "authors": "/api/v1/crates/retina/0.0.1/authors"
+      },
+      "crate_size": 66805,
+      "published_by": {
+        "id": 4132,
+        "login": "scottlamb",
+        "name": "Scott Lamb",
+        "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+        "url": "https://github.com/scottlamb",
+        "github_username_matches": true,
+        "created_at": "2014-09-28T18:01:24Z"
+      },
+      "audit_actions": [
+        {
+          "action": "publish",
+          "user": {
+            "id": 4132,
+            "login": "scottlamb",
+            "name": "Scott Lamb",
+            "avatar": "https://avatars.githubusercontent.com/u/8949524?v=4",
+            "url": "https://github.com/scottlamb",
+            "github_username_matches": true,
+            "created_at": "2014-09-28T18:01:24Z"
+          },
+          "time": "2021-06-09T20:51:39.723990Z"
+        }
+      ],
+      "checksum": "3ac613fa999c0d1075a825705e01ab302f7bab09410ed8df5d65a63eb9e922da",
+      "rust_version": null,
+      "has_lib": true,
+      "bin_names": [],
+      "edition": "2018",
+      "description": "high-level RTSP multimedia streaming library",
+      "homepage": null,
+      "documentation": null,
+      "repository": null,
+      "trustpub_data": null,
+      "linecounts": {
+        "languages": {
+          "Python": {
+            "code_lines": 36,
+            "comment_lines": 19,
+            "files": 1
+          },
+          "Rust": {
+            "code_lines": 3831,
+            "comment_lines": 252,
+            "files": 12
+          }
+        },
+        "total_code_lines": 3867,
+        "total_comment_lines": 271
+      }
+    }
+  ],
+  "keywords": [
+    {
+      "id": "streaming",
+      "keyword": "streaming",
+      "created_at": "2014-11-21T05:01:05.249817Z",
+      "crates_cnt": 1184
+    },
+    {
+      "id": "video",
+      "keyword": "video",
+      "created_at": "2015-01-04T02:10:45.207390Z",
+      "crates_cnt": 1276
+    },
+    {
+      "id": "multimedia",
+      "keyword": "multimedia",
+      "created_at": "2017-01-02T13:06:21.185823Z",
+      "crates_cnt": 566
+    },
+    {
+      "id": "rtsp",
+      "keyword": "rtsp",
+      "created_at": "2019-06-30T19:49:57.498766Z",
+      "crates_cnt": 37
+    },
+    {
+      "id": "ip-camera",
+      "keyword": "ip-camera",
+      "created_at": "2021-06-09T20:51:39.723990Z",
+      "crates_cnt": 5
+    }
+  ],
+  "categories": [
+    {
+      "id": "multimedia",
+      "category": "Multimedia",
+      "slug": "multimedia",
+      "description": "Crates that provide audio, video, and image processing or rendering engines.",
+      "created_at": "2017-01-17T19:13:05.112025Z",
+      "crates_cnt": 2330
+    },
+    {
+      "id": "network-programming",
+      "category": "Network programming",
+      "slug": "network-programming",
+      "description": "Crates dealing with higher-level network protocols such as FTP, HTTP, or SSH, or lower-level network protocols such as TCP or UDP.",
+      "created_at": "2017-01-17T19:13:05.112025Z",
+      "crates_cnt": 15239
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "info": {
+    "author": null,
+    "author_email": "Charles Leifer <coleifer@gmail.com>",
+    "bugtrack_url": null,
+    "classifiers": [
+      "Development Status :: 5 - Production/Stable",
+      "Intended Audience :: Developers",
+      "Operating System :: OS Independent",
+      "Programming Language :: Python :: 3",
+      "Programming Language :: Python :: Implementation :: CPython",
+      "Programming Language :: Python :: Implementation :: PyPy",
+      "Topic :: Database",
+      "Topic :: Database :: Front-Ends",
+      "Topic :: Software Development :: Libraries :: Python Modules"
+    ],
+    "description": ".. image:: https://media.charlesleifer.com/blog/photos/peewee4-logo.png\n\npeewee\n======\n\nPeewee is a simple and small ORM. It has few (but expressive) concepts, making\nit easy to learn and intuitive to use.\n\nPeewee is a single module with no required dependencies and has been running\nproduction workloads of all sizes since 2010.\n\n* a small, expressive ORM\n* flexible query-builder that exposes full power of SQL\n* supports sqlite, mysql, mariadb, postgresql\n* `asyncio support <https://docs.peewee-orm.com/en/latest/peewee/asyncio.html>`__\n  built on the standard async drivers (aiosqlite, asyncpg, aiomysql)\n* `schema migrations <https://docs.peewee-orm.com/en/latest/peewee/db_tools.html#migration-runner>`__\n  with diff-based generation (``pwmigrate``)\n* tons of extensions\n* use with `flask <https://docs.peewee-orm.com/en/latest/peewee/framework_integration.html#flask>`__,\n  `fastapi <https://docs.peewee-orm.com/en/latest/peewee/framework_integration.html#fastapi>`__,\n  `pydantic <https://docs.peewee-orm.com/en/latest/peewee/orm_utils.html#module-playhouse.pydantic_utils>`__, and\n  `more <https://docs.peewee-orm.com/en/latest/peewee/framework_integration.html>`__.\n\nNew to peewee? These may help:\n\n* `Quickstart <https://docs.peewee-orm.com/en/latest/peewee/quickstart.html#quickstart>`_\n* `Example twitter app <https://docs.peewee-orm.com/en/latest/peewee/example.html#example>`_\n* `Using peewee interactively <https://docs.peewee-orm.com/en/latest/peewee/interactive.html#interactive>`_\n* `Models and fields <http://docs.peewee-orm.com/en/latest/peewee/models.html>`_\n* `Querying <http://docs.peewee-orm.com/en/latest/peewee/querying.html>`_\n* `Relationships and joins <http://docs.peewee-orm.com/en/latest/peewee/relationships.html>`_\n* `Extensive library of SQL / Peewee examples <https://docs.peewee-orm.com/en/latest/peewee/query_library.html#query-library>`_\n* `Flask setup <https://docs.peewee-orm.com/en/latest/peewee/framework_integration.html#flask>`_\n  or `FastAPI setup <https://docs.peewee-orm.com/en/latest/peewee/framework_integration.html#fastapi>`_\n\nInstallation:\n\n.. code-block:: console\n\n    pip install peewee\n\nSqlite comes built-in provided by the standard-lib ``sqlite3`` module. Other\nbackends can be installed using the following instead:\n\n.. code-block:: console\n\n    pip install peewee[mysql]  # Install peewee with pymysql.\n    pip install peewee[postgres]  # Install peewee with psycopg2.\n    pip install peewee[psycopg3]  # Install peewee with psycopg3.\n\n    # AsyncIO implementations.\n    pip install peewee[aiosqlite]  # Install peewee with aiosqlite.\n    pip install peewee[aiomysql]  # Install peewee with aiomysql.\n    pip install peewee[asyncpg]  # Install peewee with asyncpg.\n\nExamples\n--------\n\nDefining models is similar to Django or SQLAlchemy:\n\n.. code-block:: python\n\n    from peewee import *\n    import datetime\n\n\n    db = SqliteDatabase('my_database.db')\n\n    class BaseModel(Model):\n        class Meta:\n            database = db\n\n    class User(BaseModel):\n        username = CharField(unique=True)\n\n    class Tweet(BaseModel):\n        user = ForeignKeyField(User, backref='tweets')\n        message = TextField()\n        created_date = DateTimeField(default=datetime.datetime.now)\n        is_published = BooleanField(default=True)\n\nConnect to the database and create tables:\n\n.. code-block:: python\n\n    db.connect()\n    db.create_tables([User, Tweet])\n\nCreate a few rows:\n\n.. code-block:: python\n\n    charlie = User.create(username='charlie')\n    huey = User(username='huey')\n    huey.save()\n\n    # No need to set `is_published` or `created_date` since they\n    # will just use the default values we specified.\n    Tweet.create(user=charlie, message='My first tweet')\n\nQueries are expressive and composable:\n\n.. code-block:: python\n\n    # A simple query selecting a user.\n    User.get(User.username == 'charlie')\n\n    # Get tweets created by one of several users.\n    usernames = ['charlie', 'huey', 'mickey']\n    users = User.select().where(User.username.in_(usernames))\n    tweets = Tweet.select().where(Tweet.user.in_(users))\n\n    # We could accomplish the same using a JOIN:\n    tweets = (Tweet\n              .select()\n              .join(User)\n              .where(User.username.in_(usernames)))\n\n    # How many tweets were published today?\n    tweets_today = (Tweet\n                    .select()\n                    .where(\n                        (Tweet.created_date >= datetime.date.today()) &\n                        (Tweet.is_published == True))\n                    .count())\n\n    # Paginate the user table and show me page 3 (users 41-60).\n    User.select().order_by(User.username).paginate(3, 20)\n\n    # Order users by the number of tweets they've created:\n    tweet_ct = fn.Count(Tweet.id)\n    users = (User\n             .select(User, tweet_ct.alias('ct'))\n             .join(Tweet, JOIN.LEFT_OUTER)\n             .group_by(User)\n             .order_by(tweet_ct.desc()))\n\n    # Do an atomic update (for illustrative purposes only, imagine a simple\n    # table for tracking a \"count\" associated with each URL). We don't want to\n    # naively get the save in two separate steps since this is prone to race\n    # conditions.\n    Counter.update(count=Counter.count + 1).where(Counter.url == request.url).execute()\n\nCheck out the `example twitter app <http://docs.peewee-orm.com/en/latest/peewee/example.html>`_.\n\nAsyncio\n-------\n\n.. code-block:: python\n\n    import asyncio\n    from peewee import *\n    from playhouse.pwasyncio import AsyncPostgresqlDatabase\n\n    db = AsyncPostgresqlDatabase('my_app')\n\n    class User(db.Model):\n        username = CharField(unique=True)\n\n    class Tweet(db.Model):\n        user = ForeignKeyField(User, backref='tweets')\n        message = TextField()\n\n    async def main():\n        async with db:\n            await db.acreate_tables([User, Tweet])\n\n            # Queries are awaited on the event loop using asyncpg.\n            huey = await User.acreate(username='huey')\n            tweet = await Tweet.acreate(user=huey, message='meow')\n\n            async with db.atomic():\n                tweet.message = 'purr'\n                await tweet.asave()\n\n            # Create a query - nothing is executed yet.\n            query = Tweet.select(Tweet, User).join(User)\n\n            # Execute and buffer the results.\n            tweets = await query.aexecute()  # Or: await db.list(query)\n            for tweet in tweets:\n                print(tweet.user.username, '->', tweet.message)\n\n            # Streaming results via server-side cursor.\n            async for tweet in db.iterate(query):\n                print(tweet.user.username, '->', tweet.message)\n\n        await db.close_pool()\n\n    asyncio.run(main())\n\nSee the `asyncio docs <https://docs.peewee-orm.com/en/latest/peewee/asyncio.html>`_\nfor details.\n\nLearning more\n-------------\n\nCheck the `documentation <http://docs.peewee-orm.com/>`_ for more examples.\n\nSpecific question? Come hang out in the #peewee channel on irc.libera.chat, or post to the mailing list, http://groups.google.com/group/peewee-orm . If you would like to report a bug, `create a new issue <https://github.com/coleifer/peewee/issues/new>`_ on GitHub.\n\nStill want more info?\n---------------------\n\n.. image:: https://media.charlesleifer.com/blog/photos/wat.jpg\n\nI've written a number of blog posts about building applications and web-services with peewee (and usually Flask). If you'd like to see some real-life applications that use peewee, the following resources may be useful:\n\n* `Building a note-taking app with Flask and Peewee <https://charlesleifer.com/blog/saturday-morning-hack-a-little-note-taking-app-with-flask/>`_ as well as `Part 2 <https://charlesleifer.com/blog/saturday-morning-hacks-revisiting-the-notes-app/>`_ and `Part 3 <https://charlesleifer.com/blog/saturday-morning-hacks-adding-full-text-search-to-the-flask-note-taking-app/>`_.\n* `Analytics web service built with Flask and Peewee <https://charlesleifer.com/blog/saturday-morning-hacks-building-an-analytics-app-with-flask/>`_.\n* `Personalized news digest (with a boolean query parser!) <https://charlesleifer.com/blog/saturday-morning-hack-personalized-news-digest-with-boolean-query-parser/>`_.\n* `Structuring Flask apps with Peewee <https://charlesleifer.com/blog/structuring-flask-apps-a-how-to-for-those-coming-from-django/>`_.\n* `Creating a lastpass clone with Flask and Peewee <https://charlesleifer.com/blog/creating-a-personal-password-manager/>`_.\n* `Creating a bookmarking web-service that takes screenshots of your bookmarks <https://charlesleifer.com/blog/building-bookmarking-service-python-and-phantomjs/>`_.\n* `Building a pastebin, wiki and a bookmarking service using Flask and Peewee <https://charlesleifer.com/blog/dont-sweat-small-stuff-use-flask-blueprints/>`_.\n* `Encrypted databases with Python and SQLCipher <https://charlesleifer.com/blog/encrypted-sqlite-databases-with-python-and-sqlcipher/>`_.\n* `Dear Diary: An Encrypted, Command-Line Diary with Peewee <https://charlesleifer.com/blog/dear-diary-an-encrypted-command-line-diary-with-python/>`_.\n",
+    "description_content_type": "text/x-rst",
+    "docs_url": null,
+    "download_url": null,
+    "downloads": {
+      "last_day": -1,
+      "last_month": -1,
+      "last_week": -1
+    },
+    "dynamic": [
+      "License-File"
+    ],
+    "home_page": null,
+    "keywords": null,
+    "license": null,
+    "license_expression": null,
+    "license_files": [
+      "LICENSE"
+    ],
+    "maintainer": null,
+    "maintainer_email": null,
+    "name": "peewee",
+    "package_url": "https://pypi.org/project/peewee/",
+    "platform": null,
+    "project_url": "https://pypi.org/project/peewee/",
+    "project_urls": {
+      "Changelog": "https://github.com/coleifer/peewee/blob/master/CHANGELOG.md",
+      "Documentation": "https://docs.peewee-orm.com/",
+      "Repository": "https://github.com/coleifer/peewee"
+    },
+    "provides_extra": [
+      "mysql",
+      "postgres",
+      "psycopg3",
+      "cysqlite",
+      "aiosqlite",
+      "aiomysql",
+      "asyncpg"
+    ],
+    "release_url": "https://pypi.org/project/peewee/4.5.3/",
+    "requires_dist": [
+      "pymysql; extra == \"mysql\"",
+      "psycopg2-binary; extra == \"postgres\"",
+      "psycopg[binary]; extra == \"psycopg3\"",
+      "cysqlite>=0.3.5; extra == \"cysqlite\"",
+      "aiosqlite; extra == \"aiosqlite\"",
+      "greenlet; extra == \"aiosqlite\"",
+      "aiomysql; extra == \"aiomysql\"",
+      "greenlet; extra == \"aiomysql\"",
+      "asyncpg; extra == \"asyncpg\"",
+      "greenlet; extra == \"asyncpg\""
+    ],
+    "requires_python": ">=3.8",
+    "summary": "a little orm",
+    "version": "4.5.3",
+    "yanked": false,
+    "yanked_reason": null
+  },
+  "releases_count": 223
+}

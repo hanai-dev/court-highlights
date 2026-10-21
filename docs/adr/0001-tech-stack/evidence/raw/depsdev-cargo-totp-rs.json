@@ -1,0 +1,39 @@
+{
+  "versionKey": {
+    "system": "CARGO",
+    "name": "totp-rs",
+    "version": "6.0.0"
+  },
+  "publishedAt": "2026-08-06T13:51:32Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/constantoine/totp-rs"
+    },
+    {
+      "label": "HOMEPAGE",
+      "url": "https://github.com/constantoine/totp-rs"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://crates.io/"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/constantoine/totp-rs"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ]
+}

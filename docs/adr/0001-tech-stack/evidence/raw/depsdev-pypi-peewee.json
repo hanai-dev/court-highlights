@@ -1,0 +1,41 @@
+{
+  "versionKey": {
+    "system": "PYPI",
+    "name": "peewee",
+    "version": "4.5.3"
+  },
+  "publishedAt": "2026-10-07T11:49:34Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "DOCUMENTATION",
+      "url": "https://docs.peewee-orm.com/"
+    },
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/coleifer/peewee"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://pypi.org/simple"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/coleifer/peewee"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ],
+  "projectStatus": {
+    "status": "active",
+    "reason": ""
+  }
+}

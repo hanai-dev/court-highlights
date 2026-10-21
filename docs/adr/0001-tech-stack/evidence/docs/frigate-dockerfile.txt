@@ -1,0 +1,357 @@
+https://github.com/blakeblackshear/frigate/blob/dev/docker/main/install_deps.sh
+accessed 2026-10-20T15:37:01.864Z
+HTTP 200
+
+Skip to content
+Navigation Menu
+Platform
+Solutions
+Resources
+Open Source
+Enterprise
+Pricing
+Sign in
+Sign up
+blakeblackshear
+frigate
+Repository navigation
+Code
+Issues
+71
+ (71)
+Pull requests
+23
+ (23)
+Discussions
+Actions
+Projects
+Security and quality
+38
+ (38)
+Insights
+Files
+dev
+.cspell
+.cursor
+.devcontainer
+.github
+.vscode
+config
+docker
+deepx
+hailo8l
+main
+rootfs
+Dockerfile
+build_intel_media_driver.sh
+build_nginx.sh
+build_ov_model.py
+build_pysqlite3.sh
+build_sqlite_vec.sh
+fake_frigate_run
+install_deps.sh
+install_go2rtc.sh
+install_s6_overlay.sh
+install_tempio.sh
+requirements-dev.txt
+requirements-ov.txt
+requirements-wheels.txt
+requirements.txt
+memryx
+migration
+rockchip
+rocm
+rpi
+synaptics
+tensorrt
+docs
+frigate
+migrations
+notebooks
+testing-scripts
+web
+.dockerignore
+.gitignore
+.pylintrc
+AGENTS.md
+AI_POLICY.md
+CLAUDE.md
+CODEOWNERS
+CONTRIBUTING.md
+Breadcrumbs
+frigate/docker/main
+/install_deps.sh
+Latest commit
+hawkeye217
+and
+NickM-27
+Container security hardening (phase 3, breaking) (#24081)
+3be59c9
+ · 
+History
+History
+File metadata and controls
+Code
+Blame
+Executable File
+·
+212 lines (184 loc) · 11.5 KB
+Raw
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+#!/bin/bash
+
+
+set -euxo pipefail
+
+
+apt-get -qq update
+
+
+apt-get -qq install --no-install-recommends -y \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
+    wget \
+    lbzip2 \
+    procps vainfo acl \
+    unzip locales tzdata libxml2 xz-utils \
+    python3.11 \
+    curl \
+    lsof \
+    jq \
+    nethogs \
+    libgl1 \
+    libglib2.0-0 \
+    libusb-1.0.0 \
+    python3-h2 \
+    libgomp1  # memryx detector
+
+
+update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
+
+
+mkdir -p -m 600 /root/.gnupg
+
+
+# install coral runtime
+# sha256 digests of the release debs; update when bumping the libedgetpu release.
+declare -A edgetpu_checksums=(
+    ["amd64"]="63fd00989d29160fa9894e115156a9abe456e88751fc9be89d26e4696200441b"
+    ["arm64"]="eab8aa4576b4dbf738135d8094f32270b24117f77147d25cbe0f49d0144d85f2"
+)
+wget -q -O /tmp/libedgetpu1-max.deb "https://github.com/feranick/libedgetpu/releases/download/16.0TF2.17.1-1/libedgetpu1-max_16.0tf2.17.1-1.bookworm_${TARGETARCH}.deb"
+echo "${edgetpu_checksums[${TARGETARCH}]}  /tmp/libedgetpu1-max.deb" | sha256sum -c -
+unset DEBIAN_FRONTEND
+yes | dpkg -i /tmp/libedgetpu1-max.deb && export DEBIAN_FRONTEND=noninteractive
+rm /tmp/libedgetpu1-max.deb
+
+
+# install mesa-teflon-delegate from bookworm-backports
+# Only available for arm64 at the moment
+if [[ "${TARGETARCH}" == "arm64" ]]; then
+    if [[ "${BASE_IMAGE}" == *"nvcr.io/nvidia/tensorrt"* ]]; then
+        echo "Info: Skipping apt-get commands because BASE_IMAGE includes 'nvcr.io/nvidia/tensorrt' for arm64."
+    else
+        echo "deb http://deb.debian.org/debian bookworm-backports main" | tee /etc/apt/sources.list.d/bookworm-backbacks.list
+        apt-get -qq update
+        apt-get -qq install --no-install-recommends --no-install-suggests -y mesa-teflon-delegate/bookworm-backports
+    fi
+fi
+
+
+# sha256 digests of the ffmpeg builds, keyed "<install dir>-<arch>".
+# Upstream publishes no checksums; these come from a one-time fetch and guard
+# against later substitution. Update when bumping a build URL.
+declare -A ffmpeg_checksums=(
+    ["5.0-amd64"]="377abec133f9d9e8014dee1b91c9684ac8bb0b5b7d80100a57116ff837c4c0d4"
+    ["7.0-amd64"]="e13860eb90409c8218319c928067834ce450128e86f24cfed5cfe91ce6e31037"
+    ["8.0-amd64"]="9bac85054d351cdc89c0a4f45c8ea5c44df94009aabd964b719bbadd56aedae9"
+    ["5.0-arm64"]="57ee475407bad49910ba9b946428396e30cf075ea28a7912fbe1aa2578085af0"
+    ["7.0-arm64"]="16c8b04e9d0ea9c769ad964c4c453fcf05121a1947237329d2e9d8a5e43e2a3c"
+    ["8.0-arm64"]="cd91948468d0f11ce795a2cdaa0c69911bd1db313b49bb19c22512beb88cde69"
+)
+
+
+# the tarballs nest their binaries under a directory named for the arch, which
+# matches TARGETARCH for both builds we consume
+install_ffmpeg() {
+    local dir="$1" url="$2"
+    mkdir -p "/usr/lib/ffmpeg/${dir}"
+    wget -qO ffmpeg.tar.xz "${url}"
+    echo "${ffmpeg_checksums[${dir}-${TARGETARCH}]}  ffmpeg.tar.xz" | sha256sum -c -
+    tar -xf ffmpeg.tar.xz -C "/usr/lib/ffmpeg/${dir}" --strip-components 1 "${TARGETARCH}/bin/ffmpeg" "${TARGETARCH}/bin/ffprobe"
+    rm -f ffmpeg.tar.xz
+}
+
+
+# ffmpeg -> amd64
+if [[ "${TARGETARCH}" == "amd64" ]]; then
+    install_ffmpeg 5.0 "https://github.com/NickM-27/FFmpeg-Builds/releases/download/autobuild-2022-07-31-12-37/ffmpeg-n5.1-2-g915ef932a3-linux64-gpl-5.1.tar.xz"
+    install_ffmpeg 7.0 "https://github.com/NickM-27/FFmpeg-Builds/releases/download/autobuild-2024-09-19-12-51/ffmpeg-n7.0.2-18-g3e6cec1286-linux64-gpl-7.0.tar.xz"
+    install_ffmpeg 8.0 "https://github.com/NickM-27/FFmpeg-Builds/releases/download/autobuild-2026-06-02-14-20/ffmpeg-n8.1.1-9-g58d4114d36-linux64-gpl-8.1.tar.xz"
+fi
+
+
+# ffmpeg -> arm64
+if [[ "${TARGETARCH}" == "arm64" ]]; then
+    install_ffmpeg 5.0 "https://github.com/NickM-27/FFmpeg-Builds/releases/download/autobuild-2022-07-31-12-37/ffmpeg-n5.1-2-g915ef932a3-linuxarm64-gpl-5.1.tar.xz"
+    install_ffmpeg 7.0 "https://github.com/NickM-27/FFmpeg-Builds/releases/download/autobuild-2024-09-19-12-51/ffmpeg-n7.0.2-18-g3e6cec1286-linuxarm64-gpl-7.0.tar.xz"
+    install_ffmpeg 8.0 "https://github.com/NickM-27/FFmpeg-Builds/releases/download/autobuild-2026-06-02-14-20/ffmpeg-n8.1.1-9-g58d4114d36-linuxarm64-gpl-8.1.tar.xz"
+fi
+
+
+# arch specific packages
+if [[ "${TARGETARCH}" == "amd64" ]]; then
+  # Install non-free version of i965 driver
+  sed -i -E "/^Components: main$/s/main/main contrib non-free non-free-firmware/" "/etc/apt/sources.list.d/debian.sources" \
+      && apt-get -qq update \
+      && apt-get install --no-install-recommends --no-install-suggests -y i965-va-driver-shaders \
+      && sed -i -E "/^Components: main contrib non-free non-free-firmware$/s/main contrib non-free non-free-firmware/main/" "/etc/apt/sources.list.d/debian.sources" \
+      && apt-get update
+
+
+    # install amd / intel-i965 driver packages
+    apt-get -qq install --no-install-recommends --no-install-suggests -y \
+        intel-gpu-tools onevpl-tools \
+        libva-drm2 \
+        mesa-va-drivers radeontop
+
+
+    # intel packages use zst compression so we need to update dpkg
+    apt-get install -y dpkg
+
+
+    # use intel apt repo for libmfx1 (legacy QSV, pre-Gen12)
+    wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | gpg --yes --dearmor --output /usr/share/keyrings/intel-graphics.gpg
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy client" | tee /etc/apt/sources.list.d/intel-gpu-jammy.list
+    apt-get -qq update
+
+
+    # intel-media-va-driver-non-free is built from source in the
+    # intel-media-driver Dockerfile stage for Battlemage (Xe2) support
+    apt-get -qq install --no-install-recommends --no-install-suggests -y \
+        libmfx1
+    rm -f /usr/share/keyrings/intel-graphics.gpg
+    rm -f /etc/apt/sources.list.d/intel-gpu-jammy.list
+
+
+While the code is focused, press Alt+F1 for a menu of operations.

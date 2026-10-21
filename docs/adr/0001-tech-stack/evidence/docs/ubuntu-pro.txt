@@ -1,0 +1,253 @@
+https://ubuntu.com/pricing/pro
+accessed 2026-10-20T15:37:38.852Z
+HTTP 200
+
+Skip to main content
+Canonical Ubuntu
+Products
+Use cases
+Support
+Community
+Get Ubuntu
+Careers
+All Canonical
+Sign in
+Pricing
+Ubuntu Pro Subscription
+Desktop provisioning
+Devices
+Ubuntu Pro pricing
+
+Evaluate Ubuntu Pro pricing and get comprehensive open source security and support. Find the subscription that fits your needs.
+
+Get in touch
+Subscribe now
+Looking for a free trial?  ›
+Ubuntu Pro
+Enterprise
+Personal
+
+Workstation
+
+$25
+
+per machine per year
+
+Server with unlimited VMs
+
+$500
+
+per machine per year
+
+Ubuntu Pro with
+24/7 Enterprise support
+
+Weekday support is 50% price of 24/7 support
+
+Workstation
+
+$300
+
+full support per machine per year
+
+Server with unlimited VMs
+
+$1,775
+
+infra support per machine per year
+$3,400 full support per machine per year
+
+Looking for Ubuntu Pro on public clouds?
+
+Ubuntu Pro on public clouds is metered by the hour and charged through your cloud provider’s bill. Pricing is relative to your compute cost, typically between 3–4.5% of the list price. For exact rates, please refer to the pricing pages for AWS, Azure and GCP. Please note, you can also deprecate your committed spend with Ubuntu Pro.
+
+Coverage for both open source infrastructure and applications
+
+Ubuntu Pro covers Canonical’s complete open source portfolio, including infrastructure automation, scalable storage, private and edge clouds, container orchestration, and applications.
+
+Security and compliance
+Operations and management
+Infrastructure
+Applications
+Services
+Security
+Livepatch
+Compliance and hardening
+Security
+Expanded Security Maintenance for Ubuntu and open source software
+
+Availability
+
+Details
+
+Included in an Ubuntu Pro subscription
+
+Expanded Security Maintenance for Ubuntu’s Main repository for an additional 5 years beyond Ubuntu LTS end of standard support (infra-only)
+
+Security patching for the Ubuntu Universe repository for 10 years (Ubuntu 16.04 LTS onwards)
+
+Ubuntu Pro subscription with Legacy price is 50% more
+
+5-year Legacy add-on: an additional five years of security maintenance and support, extending total coverage to 15 years
+
+Coverage levels
+Infra-only coverage
+
+Encompasses over 4,700 open source deb packages in Ubuntu’s Main repository for an additional 5 years, including:
+
+ 
+ 
+ 
+ 
+ 
+Full-stack coverage
+
+Provides security maintenance for over 36,000 open source deb packages in the Ubuntu Universe repository for up to 10 years, including:
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+Check the coverage for your packages ›
+
+What are main and universe repositories? ›
+
+Get security maintenance
+Learn more ›
+Livepatch
+Reduce downtime and unplanned work
+
+Availability
+
+Details
+
+Included in an Ubuntu Pro subscription
+
+Patch critical and high severity kernel vulnerabilities while the system runs and defer maintenance windows
+
+Enable Livepatch
+Learn more ›
+Compliance and hardening
+Run Ubuntu in high-security environments
+
+Availability
+
+Details
+
+Included in an Ubuntu Pro subscription
+
+NIST-certified FIPS crypto-modules (pending for Ubuntu 24.04 LTS)
+
+USG hardening with CIS and DISA-STIG profiles (DISA-STIG tooling and automation for Ubuntu 20.04 LTS and 22.04 LTS)
+
+Common Criteria EAL2 (Ubuntu 14.04 LTS and 16.04 LTS only)
+
+Certified Windows drivers for KVM guests
+
+Advanced Active Directory policies for Ubuntu Desktop
+
+Certified hardware with Ubuntu
+
+Get audit-ready
+Learn more ›
+
+Companies that trust Ubuntu Pro
+
+ 
+ 
+ 
+ 
+ 
+ 
+Education, Research and Academia
+
+Ubuntu Pro is available for purchase through our website, or through our global network of partners. For more information on purchasing Ubuntu Pro, please contact us.
+
+Get in touch
+Get started with Ubuntu Pro today
+Contact us
+Subscribe now
+Buy on public clouds ›
+OpenStack
+Install Support
+Ceph
+What is Ceph Managed Consulting Docs Install
+Kubernetes
+What is Kubernetes Managed Install Docs Resources
+Managed infrastructure
+Managed apps
+AI / ML
+Consulting Data Science
+Robotics
+ROS ESM What is ROS Community Docs
+IoT
+App store Embedded Linux Management
+Ubuntu Core
+Features Success stories Services Docs
+Ubuntu Desktop
+Organizations Developers Flavors
+Ubuntu Server
+Hyperscale Docs
+Cloud
+What is cloud computing What is private cloud What is hybrid cloud What is multi-cloud Public cloud
+Security
+Platform Security ESM Livepatch Security standards CVEs Notices Assurances
+Landscape
+Features Managed Compare Install Docs Log in to Landscape
+Containers
+What are containers Chiseled Ubuntu Chiseled and .NET Container Build Service Rockcraft Docs
+Downloads
+Desktop Server WSL Core Cloud
+Support
+Your subscriptions Account users Pricing Discourse Firefighting support
+Pricing
+Ubuntu Pro Subscription Desktop provisioning Devices
+Solutions
+AI
+Data
+Infrastructure
+Managed Infrastructure
+Open source security
+IoT and devices
+Cloud native development
+Sectors
+Automotive
+Industrial
+Public sector
+Telco
+Finance
+Contact us
+About us
+Community
+Careers
+Blog
+Resources
+Press center
+ 
+ 
+ 
+ 
+ 
+ 
+
+© 2026 Canonical Ltd.
+
+Ubuntu and Canonical are registered trademarks of Canonical Ltd.
+
+Legal information
+Data privacy
+Manage your tracker settings
+Report a bug on this site
+Go to the top of the page
+Your tracker settings
+
+We use cookies and similar methods to recognize visitors and remember preferences. We also use them to measure campaign effectiveness and analyze traffic on our websites. By selecting ‘Accept‘, you consent to the use of these methods by us and trusted third parties. For further details or to change your consent choices at any time see our cookie policy.
+
+Manage your tracker settings Accept all

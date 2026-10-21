@@ -1,0 +1,35 @@
+{
+  "versionKey": {
+    "system": "CARGO",
+    "name": "retina",
+    "version": "0.4.21"
+  },
+  "publishedAt": "2026-10-04T13:41:07Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "Apache-2.0 OR MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/scottlamb/retina"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://crates.io/"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/scottlamb/retina"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ]
+}

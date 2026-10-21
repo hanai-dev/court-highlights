@@ -1,0 +1,62 @@
+{
+  "versionKey": {
+    "system": "PYPI",
+    "name": "uvicorn",
+    "version": "0.54.0"
+  },
+  "publishedAt": "2026-09-25T06:52:35Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "BSD-3-Clause"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "HOMEPAGE",
+      "url": "https://uvicorn.dev/"
+    },
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/sponsors/Kludex"
+    },
+    {
+      "label": "ATTESTATION",
+      "url": "https://pypi.org/integrity/uvicorn/0.54.0/uvicorn-0.54.0-py3-none-any.whl/provenance"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [
+    {
+      "type": "https://docs.pypi.org/attestations/publish/v1",
+      "url": "https://pypi.org/integrity/uvicorn/0.54.0/uvicorn-0.54.0-py3-none-any.whl/provenance",
+      "verified": true,
+      "sourceRepository": "https://github.com/Kludex/uvicorn",
+      "commit": "3eb9a9ab9af69005c687728097461c1fd2a95db9"
+    }
+  ],
+  "registries": [
+    "https://pypi.org/simple"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/sponsors/kludex"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    },
+    {
+      "projectKey": {
+        "id": "github.com/kludex/uvicorn"
+      },
+      "relationProvenance": "PYPI_PUBLISH_ATTESTATION",
+      "relationType": "SOURCE_REPO"
+    }
+  ],
+  "projectStatus": {
+    "status": "active",
+    "reason": ""
+  }
+}

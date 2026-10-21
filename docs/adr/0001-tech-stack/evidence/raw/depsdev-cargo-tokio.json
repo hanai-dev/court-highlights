@@ -1,0 +1,39 @@
+{
+  "versionKey": {
+    "system": "CARGO",
+    "name": "tokio",
+    "version": "1.54.0"
+  },
+  "publishedAt": "2026-10-19T16:33:48Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/tokio-rs/tokio"
+    },
+    {
+      "label": "HOMEPAGE",
+      "url": "https://tokio.rs"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://crates.io/"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/tokio-rs/tokio"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ]
+}

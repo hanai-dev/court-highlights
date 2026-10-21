@@ -1,0 +1,691 @@
+https://www.digitalocean.com/pricing/droplets
+accessed 2026-10-20T15:35:05.572Z
+HTTP 200
+
+Introducing Agent Droplets
+
+Blog
+Docs
+Careers
+Get Support
+Contact Sales
+DigitalOcean
+Products
+
+Featured AI Products
+
+Compute
+
+Containers and Images
+
+Managed Databases
+
+Management and Dev Tools
+
+Networking
+
+Security
+
+Storage
+
+Browse all products
+Featured AI Products
+
+Managed Agents
+
+Run AI agents in the cloud with governed tool access
+
+New
+
+Learning Services
+
+Improve agents and models with evidence
+
+New
+
+Data Services
+
+Store, retrieve, and surface the context you need
+
+Inference Engine
+
+Run inference at scale with policy-driven routing
+
+Model Library
+
+Discover, compare, and evaluate AI models
+
+GPU Droplets
+
+GPU-powered virtual machines to build and run AI apps
+
+Browse all products
+Solutions
+
+AI/ML
+
+CMS
+
+Data and IoT
+
+Developer Tools
+
+Gaming and Media
+
+Hosting
+
+Security and Networking
+
+Startups and SMBs
+
+Web and App Platforms
+
+See all solutions
+AI/ML
+
+AI HR Knowledge Assistant
+
+Deploy AI tools developed for Human Resources
+
+AI Training GPU
+
+Accelerate model training with dedicated GPU infrastructure
+
+AI Recommendation Engine
+
+Build tools to personalize user experiences
+
+Multimodal AI
+
+Run models that process multiple data types
+
+GPU Clusters
+
+GPUs clustered together for large-scale tasks
+
+GPU Inference
+
+Serve models efficiently with optimized GPU compute
+
+Developers
+
+Community
+
+Documentation
+
+Developer Tools
+
+Get Involved
+
+Utilities and Help
+
+Community
+
+Blog
+
+The latest product releases and insights from our experts
+
+CSS Tricks
+
+All things web design
+
+The Wave
+
+Content to level up your business
+
+Tutorials
+
+Our extensive library of technical articles
+
+Q&A
+
+Answers to your cloud and coding questions
+
+YouTube
+
+Educational content and tutorials
+
+Visit DigitalOcean's Community Site
+Partners
+
+Become a Partner
+
+Marketplace
+
+Become a Partner
+
+About Partner Pod
+
+Discounts, revenue share, and more for businesses
+
+AI Partner Program
+
+Boost your AI business
+
+DigitalOcean Startups
+
+Resources and support to propel your startup
+
+Partners Directory
+
+Current list of DigitalOcean Partners
+
+Customer Stories
+
+Customers growing on DigitalOcean
+
+Need help? Talk to an expert
+Become a Partner
+Pricing
+Log in
+Sign up
+Simple, predictable pricing for virtual machines
+
+Manage your budget with our monthly caps or usage-based pricing options.
+
+Get started
+<- Back to overview
+Basic
+CPU-Optimized
+General Purpose
+Memory-Optimized
+Storage-Optimized
+v5 Droplets
+Additional product pricing
+FAQ
+Droplets
+
+Deploy Droplets (cloud VMs) in seconds. Run any workload, from mission critical CPU, memory, and storage intensive apps to low traffic sites.
+
+Effective January 1, 2026, we're moving to per-second billing (with a minimum charge of 60 seconds or $0.01, whichever is higher) for Droplets. This offers truly granular cost control, drastically reducing spending on short-lived workloads like running batch jobs and automated testing.
+
+View our DigitalOcean Droplet product documentation to learn which Droplet plan is right for you or talk to an expert.
+
+Choose the right Droplet type
+
+Basic Droplets
+
+Basic Droplets have the most efficient CPU usage at a lower cost for workloads that underuse dedicated threads. They’re ideal for bursty applications that can handle variable levels of CPU.
+
+CPU Options
+Regular
+Premium Intel
+Premium AMD
+Memory
+vCPU
+Transfer
+SSD
+$/hr
+$/mo
+512 MiB
+1 vCPU
+500 GiB
+10 GiB
+$0.00595
+$4.00
+1 GiB
+1 vCPU
+1,000 GiB
+25 GiB
+$0.00893
+$6.00
+2 GiB
+1 vCPU
+2,000 GiB
+50 GiB
+$0.01786
+$12.00
+2 GiB
+2 vCPUs
+3,000 GiB
+60 GiB
+$0.02679
+$18.00
+4 GiB
+2 vCPUs
+4,000 GiB
+80 GiB
+$0.03571
+$24.00
+8 GiB
+4 vCPUs
+5,000 GiB
+160 GiB
+$0.07143
+$48.00
+16 GiB
+8 vCPUs
+6,000 GiB
+320 GiB
+$0.14286
+$96.00
+CPU-Optimized Droplets
+
+CPU-Optimized Droplets provide a 2:1 ratio of memory to CPU. This configuration with fast (2.6GHz+), dedicated vCPUs is optimal for applications that demand fast, consistent performance such as media streaming, gaming and data analytics. The Premium variant of CPU-Optimized Droplets also provides up to 10Gbps outbound network speeds and NVMe SSDs.
+
+CPU Options
+Regular
+Premium Intel
+Memory
+vCPU
+Transfer
+SSD Variant
+SSD
+$/hr
+$/mo
+4 GiB
+2 vCPUs
+4,000 GiB
+1x
+25 GiB
+$0.06250
+$42.00
+8 GiB
+4 vCPUs
+5,000 GiB
+1x
+50 GiB
+$0.12500
+$84.00
+16 GiB
+8 vCPUs
+6,000 GiB
+1x
+100 GiB
+$0.25000
+$168.00
+32 GiB
+16 vCPUs
+7,000 GiB
+1x
+200 GiB
+$0.50000
+$336.00
+64 GiB
+32 vCPUs
+9,000 GiB
+1x
+400 GiB
+$1.00000
+$672.00
+96 GiB
+48 vCPUs
+11,000 GiB
+1x
+600 GiB
+$1.50000
+$1,008.00
+General Purpose Droplets
+
+General Purpose Droplets have a balanced ratio of memory to dedicated CPU, suitable for a wide variety of production workloads. They’re best for general purpose workloads that require dedicated computer power. The Premium variant of General Purpose Droplets also provides up to 10Gbps outbound network speeds and NVMe SSDs.
+
+CPU Options
+Regular
+Premium Intel
+Memory
+vCPU
+Transfer
+SSD Variant
+SSD
+$/hr
+$/mo
+8 GiB
+2 vCPUs
+4,000 GiB
+1x
+25 GiB
+$0.09375
+$63.00
+16 GiB
+4 vCPUs
+5,000 GiB
+1x
+50 GiB
+$0.18750
+$126.00
+32 GiB
+8 vCPUs
+6,000 GiB
+1x
+100 GiB
+$0.37500
+$252.00
+64 GiB
+16 vCPUs
+7,000 GiB
+1x
+200 GiB
+$0.75000
+$504.00
+128 GiB
+32 vCPUs
+8,000 GiB
+1x
+400 GiB
+$1.50000
+$1,008.00
+160 GiB
+40 vCPUs
+9,000 GiB
+1x
+500 GiB
+$1.87500
+$1,260.00
+Memory-Optimized Droplets
+
+Memory-optimized Droplets provide 8 GiB RAM for each vCPU. The additional memory can help you avoid excessively swapping to disk or getting out-of-memory errors, both of which significantly impact your application's performance and stability. Memory-Optimized Droplets use NVMe SSDs which deliver better disk performance for workloads that involve a large number of transactions
+
+CPU Options
+Regular
+Premium Intel
+Memory
+vCPU
+Transfer
+SSD Variant
+SSD
+$/hr
+$/mo
+16 GiB
+2 vCPUs
+4,000 GiB
+1x
+50 GiB
+$0.12500
+$84.00
+32 GiB
+4 vCPUs
+6,000 GiB
+1x
+100 GiB
+$0.25000
+$168.00
+64 GiB
+8 vCPUs
+7,000 GiB
+1x
+200 GiB
+$0.50000
+$336.00
+128 GiB
+16 vCPUs
+8,000 GiB
+1x
+400 GiB
+$1.00000
+$672.00
+192 GiB
+24 vCPUs
+9,000 GiB
+1x
+600 GiB
+$1.50000
+$1,008.00
+256 GiB
+32 vCPUs
+10,000 GiB
+1x
+800 GiB
+$2.00000
+$1,344.00
+Storage-Optimized Droplets
+
+Storage-Optimized Droplets use NVMe (non-volatile memory express), which is an interface protocol explicitly built for modern SSDs. It takes advantage of parallelism to deliver disk performance that can be order of magnitude faster than our regular SSDs.
+
+CPU Options
+Regular
+Premium Intel
+Memory
+vCPU
+Transfer
+SSD Variant
+SSD
+$/hr
+$/mo
+16 GiB
+2 vCPUs
+4,000 GiB
+1x
+300 GiB
+$0.19494
+$131.00
+32 GiB
+4 vCPUs
+6,000 GiB
+1x
+600 GiB
+$0.38988
+$262.00
+64 GiB
+8 vCPUs
+7,000 GiB
+1x
+1,170 GiB
+$0.77976
+$524.00
+128 GiB
+16 vCPUs
+8,000 GiB
+1x
+2,340 GiB
+$1.55952
+$1,048.00
+192 GiB
+24 vCPUs
+9,000 GiB
+1x
+3,520 GiB
+$2.33929
+$1,572.00
+256 GiB
+32 vCPUs
+10,000 GiB
+1x
+4,690 GiB
+$3.11905
+$2,096.00
+v5 Droplets
+
+Workload-optimized compute, powered by 5th Gen AMD EPYC™ processors. Purpose built to deliver higher performance for demanding workloads such as compute-intensive video/audio transcoding, agentic platforms, AI/ML tools, and high-traffic distributed applications.
+
+How it works:You pick vCPU, memory, and storage independently and pay for only the resources you use. Pricing is simple and based on an hourly rate, so your total bill reflects the actual hours used each month. You see each resource’s price as you configure, a running total as you go, and one line per Droplet on your bill. Learn more.
+
+Designed for these common workloads
+
+Below are examples of common workload patterns and a recommended starting configuration for each. Shared v5 Droplets are designed for bursty, variable work that doesn't need guaranteed access to a dedicated core at all times, so you pay only for the compute you need. General Purpose v5 Droplets provide guaranteed, dedicated CPU, with memory ratios from 2x to 8x per vCPU.
+
+High-traffic web apps & APIs
+
+Starting at
+
+$0.181/hour
+
+General Purpose • Dedicated CPU:
+(selected: 4 vCPU, 16 GB RAM)
+
+Reduced latency and steady execution under heavy concurrent traffic
+Great for production APIs, app servers, and microservices
+
+Get started
+
+Bursty data pipelines
+
+Starting at
+
+$0.052/hour
+
+Shared • Shared CPU:
+(selected: 2 vCPU, 4 GB RAM)
+
+Absorb unpredictable spikes without paying for capacity you don't use
+Great for pipelines, ad tech, and background workers
+
+Get started
+
+Agentic Platforms & AI/ML tooling
+
+Starting at
+
+$0.024/hour
+
+Shared • Shared CPU:
+(selected: 1 vCPU, 1 GB RAM)
+
+Run CPU pre-processing alongside GPU fleets
+Scale orchestration without over-provisioning storage
+Great for agent execution and AI/ML orchestration
+
+Get started
+
+Large-scale, high-throughput services
+
+Starting at
+
+$0.36/hour
+
+General Purpose • Dedicated CPU:
+(selected: 8 vCPU, 32 GB RAM)
+
+Scale up to 64 vCPUs and 512GB RAM in one Droplet
+Great for data processing, proxies, and streaming origins
+
+Get started
+
+Additional product pricing
+Product
+Cost
+Backup
+
+Choose between:
+
+Percentage-based Backups, set at 20% (Weekly) or 30% (Daily) of Droplet cost.
+Usage-based plans start at $0.01/GiB per month and offer highly flexible frequencies (up to every 4 hours) and custom retention periods (3 days to 6 months).
+View complete pricing details for our Backups plans.
+Droplet Snapshots
+$0.06/GB per month
+Droplets specific questions
+What is a DigitalOcean Droplet?
+What is the difference between a Droplet and a VPS?
+Is a Droplet a form of IaaS or PaaS?
+What operating systems can I run on a Droplet?
+Do Droplets come with a dedicated IP address?
+What kind of storage do Droplets use?
+How much bandwidth is included with each Droplet?
+How much does a DigitalOcean Droplet cost?
+How am I billed for Droplets?
+Is there a free trial for DigitalOcean Droplets?
+What can I use a DigitalOcean Droplet for?
+Are Droplets suitable for e-commerce websites?
+How does DigitalOcean Droplets compare to AWS EC2?
+What is the difference between DigitalOcean Droplets and Google Compute Engine?
+How do I create a Droplet?
+How do I connect to my Droplet?
+Does DigitalOcean offer managed Droplets?
+Where are DigitalOcean's datacenters located?
+Can I get a Droplet with a server in the UK?
+Are there any datacenter options in India?
+What is the difference between a v5 Droplet and Bundled Plan Droplet?
+How are v5 Droplets shown on my billing statement?
+Frequently asked questions
+What forms of payment do you accept?
+When will my card be charged?
+Am I charged when I enter my credit card?
+Will taxes be included in my monthly invoice?
+How do I destroy my resources?
+Can I be notified if my bill exceeds a threshold?
+How does the $5 free credit work?
+What's the price for the Marketplace 1-Click Apps?
+How do I remove my card from the account?
+Can I prepay for my resources?
+Can I have a refund?
+Still have questions?
+
+Have a complex setup or additional questions around pricing? Contact our sales team to get more information on DigitalOcean pricing.
+
+Contact sales
+Start building today
+
+From GPU-powered inference and Kubernetes to managed databases and storage, get everything you need to build, scale, and deploy intelligent applications.
+
+Sign up
+Company
+About
+Leadership
+Blog
+Careers
+Customers
+Partners
+Referral Program
+Affiliate Program
+Press
+Legal
+Privacy Policy
+Security
+Investor Relations
+Products
+Managed Agents
+Knowledge Bases
+GPU Droplets
+Bare Metal GPUs
+Inference Engine
+Data Services
+Learning Services
+Evaluations
+Model Library
+Droplets
+Kubernetes
+Functions
+App Platform
+Load Balancers
+Managed Databases
+Spaces
+Block Storage
+Network File Storage
+API
+Uptime
+Cloud Security Posture Management (CSPM)
+Identity and Access Management (IAM)
+Cloudways
+View all Products
+Resources
+Community Tutorials
+Community Q&A
+CSS-Tricks
+Write for DOnations
+Currents Research
+DigitalOcean Startups
+Wavemakers Program
+Compass Council
+Open Source
+Newsletter Signup
+Marketplace
+Pricing
+Pricing Calculator
+Documentation
+Release Notes
+Code of Conduct
+Shop Swag
+Solutions
+AI Training GPU
+GPU Inference
+VPS Hosting
+Website Hosting
+VPN
+Docker Hosting
+Node.js Hosting
+Web Mobile Apps
+WordPress Hosting
+Virtual Machines
+View all Solutions
+Contact
+Support
+Sales
+Report Abuse
+System Status
+Share your ideas
+© 2026 DigitalOcean, LLC.
+Sitemap.
+This site uses cookies and related technologies, as described in our privacy policy, for purposes that may include site operation, analytics, enhanced user experience, or advertising. You may choose to consent to our use of these technologies, or manage your own preferences. Please visit our cookie policy for more information.
+Agree & proceed
+Decline all
+Manage choices
+Cookie Preferences

@@ -1,0 +1,39 @@
+{
+  "versionKey": {
+    "system": "CARGO",
+    "name": "askama",
+    "version": "0.16.1"
+  },
+  "publishedAt": "2026-09-04T12:10:52Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "Apache-2.0 OR MIT"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/askama-rs/askama"
+    },
+    {
+      "label": "HOMEPAGE",
+      "url": "https://askama.rs/"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://crates.io/"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/askama-rs/askama"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+https://gstreamer.freedesktop.org/releases/
+accessed 2026-10-20T15:34:15.844Z
+HTTP 200
+
+	
+
+
+	
+
+
+GStreamer Conference 2026
+
+
+10-11 October 2026 · Prague, Czech Republic
+
+
+Join us!
+
+
+
+Home	
+
+Features	
+
+News	
+
+Annual Conference	
+
+Planet (Blogs)	
+
+Download	
+
+	
+
+Security Center	
+
+GitLab	
+
+Developers	
+
+Documentation	
+
+Forum	
+
+File a Bug	
+
+	
+
+Artwork	
+
+Follow us on Bluesky	
+
+Follow us on Mastodon	
+
+Chat with us on Matrix	
+
+		
+
+GStreamer Releases
+Latest stable release: 1.28.8
+Latest development snapshot release: 1.29.2
+Current stable release
+
+The current API and ABI stable GStreamer 1.x series is:
+
+GStreamer 1.28 release series
+Older stable releases
+
+These releases are all part of the API and ABI stable GStreamer 1.x series:
+
+GStreamer 1.26 release series
+GStreamer 1.24 release series
+GStreamer 1.22 release series
+GStreamer 1.20 release series
+GStreamer 1.18 release series
+GStreamer 1.16 release series
+GStreamer 1.14 release series
+GStreamer 1.12 release series
+GStreamer 1.10 release series
+GStreamer 1.8 release series
+GStreamer 1.6 release series
+GStreamer 1.4 release series
+GStreamer 1.2 release series
+GStreamer 1.0 release series
+Prehistoric releases
+GStreamer 0.10 was the previous API series (2005-2013) and is no longer maintained or supported.
+
+License: CC BY-SA 4.0
+
+	
+
+
+
+
+Report a problem on this page.

@@ -1,0 +1,35 @@
+{
+  "versionKey": {
+    "system": "CARGO",
+    "name": "aws-sdk-s3",
+    "version": "1.152.0"
+  },
+  "publishedAt": "2026-10-01T19:41:31Z",
+  "isDefault": true,
+  "isDeprecated": false,
+  "deprecatedReason": "",
+  "licenses": [
+    "Apache-2.0"
+  ],
+  "advisoryKeys": [],
+  "links": [
+    {
+      "label": "SOURCE_REPO",
+      "url": "https://github.com/awslabs/aws-sdk-rust"
+    }
+  ],
+  "slsaProvenances": [],
+  "attestations": [],
+  "registries": [
+    "https://crates.io/"
+  ],
+  "relatedProjects": [
+    {
+      "projectKey": {
+        "id": "github.com/awslabs/aws-sdk-rust"
+      },
+      "relationProvenance": "UNVERIFIED_METADATA",
+      "relationType": "SOURCE_REPO"
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "queries": [
+    {
+      "package": {
+        "name": "tokio",
+        "ecosystem": "crates.io"
+      },
+      "version": "1.54.0"
+    },
+    {
+      "package": {
+        "name": "axum",
+        "ecosystem": "crates.io"
+      },
+      "version": "0.8.9"
+    },
+    {
+      "package": {
+        "name": "retina",
+        "ecosystem": "crates.io"
+      },
+      "version": "0.4.21"
+    },
+    {
+      "package": {
+        "name": "gstreamer",
+        "ecosystem": "crates.io"
+      },
+      "version": "0.25.4"
+    },
+    {
+      "package": {
+        "name": "gstreamer-video",
+        "ecosystem": "crates.io"
+      },
+      "version": "0.25.4"
+    },
+    {
+      "package": {
+        "name": "ort",
+        "ecosystem": "crates.io"
+      },
+      "version": "2.0.0-rc.15"
+    },
+    {
+      "package": {
+        "name": "rusqlite",
+        "ecosystem": "crates.io"
+      },
+      "version": "0.40.2"
+    },
+    {
+      "package": {
+        "name": "askama",
+        "ecosystem": "crates.io"
+      },
+      "version": "0.16.1"
+    },
+    {
+      "package": {
+        "name": "argon2",
+        "ecosystem": "crates.io"
+      },
+      "version": "0.6.0"
+    },
+    {
+      "package": {
+        "name": "totp-rs",
+        "ecosystem": "crates.io"
+      },
+      "version": "6.0.0"
+    },
+    {
+      "package": {
+        "name": "aws-sdk-s3",
+        "ecosystem": "crates.io"
+      },
+      "version": "1.152.0"
+    },
+    {
+      "package": {
+        "name": "aws-sdk-sesv2",
+        "ecosystem": "crates.io"
+      },
+      "version": "1.140.1"
+    },
+    {
+      "package": {
+        "name": "sqlx",
+        "ecosystem": "crates.io"
+      },
+      "version": "0.9.0"
+    },
+    {
+      "package": {
+        "name": "tower-http",
+        "ecosystem": "crates.io"
+      },
+      "version": "0.7.1"
+    },
+    {
+      "package": {
+        "name": "fastapi",
+        "ecosystem": "PyPI"
+      },
+      "version": "0.153.0"
+    },
+    {
+      "package": {
+        "name": "uvicorn",
+        "ecosystem": "PyPI"
+      },
+      "version": "0.54.0"
+    },
+    {
+      "package": {
+        "name": "openvino",
+        "ecosystem": "PyPI"
+      },
+      "version": "2026.4.1"
+    },
+    {
+      "package": {
+        "name": "onnxruntime",
+        "ecosystem": "PyPI"
+      },
+      "version": "1.31.0"
+    },
+    {
+      "package": {
+        "name": "peewee",
+        "ecosystem": "PyPI"
+      },
+      "version": "4.5.3"
+    }
+  ],
+  "response": {
+    "results": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ]
+  }
+}

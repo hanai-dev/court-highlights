@@ -1,0 +1,369 @@
+https://www.bee-link.com/products/beelink-eq14-n150
+accessed 2026-10-20T15:37:21.326Z
+HTTP 200
+
+Products
+Beelink + OpenClaw🦞
+AI PC 🤖
+NAS✨
+News
+Support
+
+Home > All PC > Beelink EQ14 Intel® Twin Lake N150
+
+Free Shipping
+
+30 Days Return
+
+3 Year Warranty
+
+Beelink EQ14 Intel® Twin Lake N150
+$385.00 $469.00
+RAM+SSD: 16G (16G*1) DDR4 + 500GB SSD + Dual LAN 2.5G (Pre-order)
+16G (16G*1) DDR4 + 500GB SSD + Dual LAN 2.5G (Pre-order)
+Color: Navy Blue
+Navy Blue
+Power Adapter: US
+US EU UK AU JP
+QTY
+-
++
+Add To Cart
+Functional Features
+
+📢 【Shipping & Stock Note】
+All EU, UK, US Orders: No Import Fees.
+
+- EU address: Ships from EU Warehouse (EU Adapter).
+- UK address: Ships from UK Warehouse (UK Adapter).
+- US address: Ships from US Warehouse (US Adapter).
+- Other address: Ships from CN Warehouse.
+
+🎉【EQ14 Intel® Twin Lake N150】---Beelink Mini PC EQ14 is equipped with Intel® Twin Lake N150 quad core processor with Max Turbo Frequency of 3.6GHz and Intel Graphics iGPU with 24EUs. It is designed for all kinds of light office needs, and allows you to enjoy stable and smooth operation even in multitasking, eliminating lags and crashes that used to hinder your work efficiency.
+🎉【Easy Expansion Options】---EQ14 supports DDR4 of up to 16GB. There are dual M.2 PCle 3.0 SSD slots, supporting up to 8TB fast internal storage. The retail unit ships with a SATA III SSD.
+🎉【Near-Silent Operation】---Air intake from the bottom is so efficient at dissipating the heat that EQ14 needs very low fan speed to stay cool and stable, ensuring near-silent operation. Since there are no vents on the top and side panels, the mini PC can now have a more refreshing design.
+🎉【Seamlessly Connect with Intel Unison】---EQ14 supports connecting mobile devices seamlessly with the Intel unison app. For example, you will be able to view smartphone photo galleries on your PC, extend your PC screen with a tablet, make and receive phone calls from your PC, transfer files from phone or tablet to your PC, send and receive text messages from your PC, manage device notifications from a single source and so on.
+🎉【Built-in Power Supply】---Only one cable is needed for power supply, an external adapter is on longer required, keeping the desktop neat and clean.
+🎉【Dual LAN Ports】--- Dual LAN , paired with Wi-Fi 6, to enjoy high-speed data transfer and lag-free experiences in live streaming, file downloading and VR on both wired and wireless connections.
+
+Features
+
+Specs
+
+Reviews
+
+Beelink EQ14 Intel® Twin Lake N150
+$385.00
+Buy Now
+Intel® Twin Lake N150
+
+Light office, multimedia playback, virtual machine, NAS,
+meeting all your daily needs, and helping you balance work and entertainment.
+
+3.6 GHz
+
+Max Turbo Frequency
+TDP(MSP): 25W
+
+4 Cores
+
+Core number Intel UHD Graphics 24EUs
+
+4 Threads
+
+Lithography: Intel 7
+6MB L3 Intel Smart Cache
+
+Processor Performance Comparison:
+33%
+Intel® Processor N150
+Benchmark
+Intel® Processor N100
+4C/4T Intel® Processor Twin Lake-N150
+RAM 16GB DDR4
+SSD 500GB
+GPU Intel® UHD Graphics 24EUs
+32dB Near-Silent Operation
+Built-in Power Supply
+Dual LAN Ports
+32
+10
+58
+dB
+
+32dB Noise Level, Ultra Quiet
+
+16
+28
+75
+GB RAM
+
+SO-DIMM DDR4 Up to 16GB
+
+500
+454
+883
+GB SSD
+
+Dual M.2 PCle 3.0 SSD slots Up to 8TBShips with a SATA III SSD
+
+2.5
+1.3
+8.1
+bps
+
+Optional Dual LAN 2.5G
+
+5.2
+2.3
+8.1
+
+Bluetooth 5.2
+
+5
+5
+2
+Gbps
+
+2.4G & 5G Dual-band WiFi6 (Intel AX101)
+
+Easy Expansion Options
+
+The EQ14 features dual M.2 PCle 3.0 SSD slots supporting up to 8TB of fast internal storage (The retail unit ships with a SATA III SSD), it also supports single-channel DDR4 3200MHz memory of up to 16GB.
+
+32dB Near-Silent Operation
+
+Air intake from the bottom is so efficient at dissipating the heat that EQ14 needs very low fan speed to stay cool and stable, ensuring near-silent operation. Since there are no vents on the top and side panels, the mini PC can now have a more refreshing design.
+
+Seamlessly Connect with Intel Unison
+
+EQ14 supports connecting mobile devices seamlessly with the Intel unison app. For example, you will be able to view smartphone photo galleries on your PC, extend your PC screen with a tablet, make and receive phone calls from your PC, transfer files from phone or tablet to your PC, send and receive text messages from your PC, manage device notifications from a single source and so on.
+
+Compact and Space-saving
+
+Compact and Space-saving
+
+Near-Silent Operation
+
+Near-Silent Operation
+
+Versatile and Adept
+
+Versatile and Adept
+
+Efficient and Smooth Performance
+
+Efficient and Smooth Performance
+
+Material Detail
+
+Material Detail
+
+EQ14 Intel® Alder Lake N150
+
+Beelink Mini PC EQ14 is equipped with Intel® Twin Lake N150 quad core processor with Max Turbo Frequency of 3.6GHz and Intel Graphics iGPU with 24EUs. It is designed for all kinds of light office needs, and allows you to enjoy stable and smooth operation even in multitasking, eliminating lags and crashes that used to hinder your work efficiency.
+
+Product Structure
+
+Specifications
+CPU
+
+Intel® Twin Lake N150
+Processor 4C/4T
+Max Turbo Frequency 3.6GHz
+6 MB L3 Smart Cache
+
+GPU
+
+Intel® UHD Graphics 24EUs
+
+Memory
+
+SO-DIMM DDR4 Slot
+Max 16GB
+
+Storage
+
+Dual M.2 2280 PCle3.0 SSD Slots
+Max 8TB
+Ships with a SATA III SSD
+
+Cooling System
+
+MSC 2.0 – Cooling System
+Silent Fan+Heat Fins & Heat Pipe+Heat Sink
+
+LAN
+
+Dual LAN 2.5G
+
+Dual Display
+
+HDMI(Max 4K 60Hz) *2
+
+Color
+
+Navy Blue
+
+Dimensions & Weight
+
+126*126*39mm(Without Rubber Feet)
+490g
+
+Wireless Network
+
+2.4G & 5G Dual-band WiFi 6(Intel AX101)
+Bluetooth 5.2
+
+Ethernet Adapter (LAN 2.5Gbps)
+
+Chipset: Intel I226-V
+Interface: PCIe
+Data Rate: 10/100/1000/2500 Mbps
+
+Adapter
+
+Input: 100-240V~, 50/60Hz, 1.9A
+Output: 12V/4A
+
+Operating System
+
+Windows 11 Home
+
+Warranty & Service
+
+Three-year Warranty
+
+Additional Function
+
+AUTO POWER ON WOL
+
+USER'S MANUAL
+
+ EQ14 User's Manual
+
+ Download
+What's In The Box
+1. EQ14 N150
+2. User's Manual
+3. HDMI Cable
+4. Power Adapter (Optional:US/EU/UK/AU/JP)
+Customer Reviews
+ 4.72 out of 5
+Based on 18 reviews
+ 
+ 16
+ 
+ 1
+ 
+ 0
+ 
+ 0
+ 
+ 1
+03/24/2026
+Barrett Clark 
+Amaze
+
+I moved some docker projects and postgres databases from a Synology NAS to this. The Synology drives are mounted as additional disks. The thing works like a dream and is SO performant. I love it!
+
+>> Beelink replied:
+
+Thank you for your amazing feedback! We’re thrilled to hear your setup is running smoothly and delivering such great performance 😊
+
+It’s great to know it works well for your Docker projects and databases. Thanks again for your support!
+
+03/24/2026
+Ron Bright 
+Unwanted product
+
+It is not what I expected.
+
+>> Beelink replied:
+
+Thank you for your feedback, and we’re sorry to hear that the product did not meet your expectations.
+
+If you need any assistance or would like to explore return or exchange options, please feel free to contact our support team at support-pc@bee-link.com
+😊
+
+Thanks for your understanding.
+
+06/19/2025
+michael glockle 
+more than happy
+
+from order, shipping, delivery, setup and installation till operations 200% satisfied - tyx so much
+
+05/19/2025
+Maksim 
+Amazing product and customer service
+
+Everything as described. Computer comes with activated Windows 11. Packing is decent, shipping packing is poor, but the product box is durable. Ubuntu installed with no issues. internal PSU makes the computer installation really nice and clean on the shelve. I'm 150% satisfied. Haven't run any tests, home other reviews will reveal that part.
+
+>> Beelink replied:
+
+We are delighted to hear that you are satisfied with our products and service, Thank you for your support of Beelink. If you have any questions or need futher assistance, pls do not hesitate to reach out. Thanks.
+
+05/03/2025
+Rabtok 
+Perfect
+
+Using this one to replace a 20 year old PC that ran a cafe till.
+
+Surprisingly fast and enough USB ports to meet the required peripherals.
+
+Liked it so much bought two more to replace standard office PC's with one more to follow later.
+
+>> Beelink replied:
+
+We are delighted to hear that you are satisfied with our products and service, Thank you for your support of Beelink. If you have any questions or need futher assistance, pls do not hesitate to reach out. Thanks.
+
+123
+World Wide Free Shipping
+Get Beelink products delivered worldwide at no extra cost.
+24/7 Customer Service
+Our customer service team is available 24/7 for seamless assistance.
+Return & Exchange
+Flexible Return and Exchange policy ensures a satisfying shopping experience.
+Security Payments
+Shop with confidence, knowing your payments are safeguarded.
+Subscribe
+
+Be The First To Receive Beelink Latest News And Exclusive Deals! Subscribe Now.
+
+Submit
+I agree to Beelink's Terms & Conditions and Privacy Policy.
+Shop
+AI PC
+MINI PC
+Accessories
+New Arrivals
+Product Comparison
+Info
+About Us
+Repair Registration
+Download Center
+Contact Us
+FAQ
+Service Policy
+Shipping Policy
+Warranty Policy
+Return Policy
+Privacy Policy
+Terms & Conditions
+Contact Us
+
+Service about bee-link.com orders:
+orders@bee-link.com
+
+Wholesale & OEM Service :
+wholesale@bee-link.com
+
+Influencer & media collaboration:
+beelink@bee-link.com
+
+After-sales service：
+support-pc@bee-link.com
+
+
+© 2026 Beelink, Inc. All Rights Reserved.

@@ -1,0 +1,9 @@
+# Fake-camera server for tests and the proxy spike: accept any path (court1, court2, …) over RTSP only.
+rtsp: yes
+rtmp: no
+hls: no
+webrtc: no
+srt: no
+moq: no
+paths:
+  all_others:
