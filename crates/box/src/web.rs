@@ -17,6 +17,7 @@ use tower_http::set_header::SetResponseHeaderLayer;
 #[derive(Clone)]
 pub struct AppState {
     pub db: Db,
+    pub recorders: crate::recorder::Recorders,
 }
 
 // ------------------------------------------------------------------ errors
@@ -57,9 +58,9 @@ impl IntoResponse for AppError {
     }
 }
 
-type Page = Result<Response, AppError>;
+pub type Page = Result<Response, AppError>;
 
-fn html<T: Template>(t: T) -> Page {
+pub fn html<T: Template>(t: T) -> Page {
     Ok(Html(t.render()?).into_response())
 }
 
@@ -107,7 +108,12 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/setup", get(setup_form).post(setup_submit))
         .route("/console/signin", get(signin_form).post(signin_submit))
         .route("/console/signout", post(signout))
-        .route("/console", get(home))
+        .route("/console", get(crate::courts::home))
+        .route("/console/courts", get(crate::courts::list).post(crate::courts::create))
+        .route("/console/courts/new", get(crate::courts::new_form))
+        .route("/console/courts/{id}", get(crate::courts::edit).post(crate::courts::update))
+        .route("/console/courts/{id}/delete", get(crate::courts::delete_confirm).post(crate::courts::delete))
+        .route("/console/courts/{id}/preview.jpg", get(crate::courts::preview))
         .route("/console/staff", get(staff_list).post(staff_create))
         .route("/console/staff/new", get(staff_new))
         .route("/console/staff/{id}", get(staff_edit).post(staff_update))
@@ -194,7 +200,7 @@ pub struct Shell {
     pub is_owner: bool,
 }
 
-fn shell(db: &Db, staff: &Staff, section: &'static str) -> Result<Shell, AppError> {
+pub fn shell(db: &Db, staff: &Staff, section: &'static str) -> Result<Shell, AppError> {
     Ok(Shell { venue: db::venue_name(&db.conn())?.unwrap_or_default(), user: staff.display_name.clone(), section, is_owner: staff.is_owner })
 }
 
@@ -354,30 +360,6 @@ async fn signout(State(app): State<AppState>, headers: HeaderMap) -> Page {
         app.db.conn().execute("DELETE FROM staff_session WHERE token_hash = ?1", [auth::sha256_hex(&token)])?;
     }
     Ok(([(header::SET_COOKIE, auth::clear_cookie())], Redirect::to("/console/signin?out=1")).into_response())
-}
-
-// ------------------------------------------------------------------ home
-
-pub struct CourtRow {
-    pub name: String,
-    pub code: String,
-    pub camera_set: bool,
-}
-
-#[derive(Template)]
-#[template(path = "home.html")]
-struct HomePage {
-    shell: Shell,
-    courts: Vec<CourtRow>,
-}
-
-async fn home(State(app): State<AppState>, staff: Staff) -> Page {
-    let courts = {
-        let conn = app.db.conn();
-        let mut st = conn.prepare("SELECT name, code, camera_url IS NOT NULL FROM court ORDER BY position, id")?;
-        st.query_map([], |r| Ok(CourtRow { name: r.get(0)?, code: r.get(1)?, camera_set: r.get(2)? }))?.collect::<Result<Vec<_>, _>>()?
-    };
-    html(HomePage { shell: shell(&app.db, &staff, "home")?, courts })
 }
 
 // ------------------------------------------------------------------ staff management (FR-29)

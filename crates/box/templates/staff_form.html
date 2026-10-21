@@ -21,7 +21,7 @@
   <h2>Access</h2>
   {% if active %}
   <form method="post" action="/console/staff/{{ i }}/reset" class="row"><button class="btn" type="submit">Reset password</button><span class="fine">Shows a new temporary password; the old one stops working.</span></form>
-  <form method="post" action="/console/staff/{{ i }}/deactivate" class="row" style="margin-top: 8px"><button class="btn btn-danger" type="submit">Deactivate {{ display_name }}</button><span class="fine">Ends their access on every box at once.</span></form>
+  <form method="post" action="/console/staff/{{ i }}/deactivate" class="row spaced"><button class="btn btn-danger" type="submit">Deactivate {{ display_name }}</button><span class="fine">Ends their access on every box at once.</span></form>
   {% else %}
   <form method="post" action="/console/staff/{{ i }}/reactivate"><button class="btn" type="submit">Reactivate {{ display_name }}</button></form>
   {% endif %}

@@ -1,0 +1,22 @@
+{% extends "console.html" %}
+{% block title %}Courts{% endblock %}
+{% block main %}
+<div class="console-top"><h1>Courts</h1><a class="btn btn-primary" href="/console/courts/new">Add court</a></div>
+{% if let Some(m) = notice %}<div class="notice notice-ok" role="status">{{ m }}</div>{% endif %}
+{% if courts.is_empty() %}
+<section class="panel"><h2>No courts yet</h2><p>Add each court and the camera that watches it. You can print the court signs once a court exists.</p></section>
+{% else %}
+<div class="table-wrap" role="region" aria-labelledby="courts-caption" tabindex="0">
+<table>
+  <caption id="courts-caption">{{ courts.len() }} courts</caption>
+  <thead><tr><th scope="col">Court</th><th scope="col">Recording</th><th scope="col">Court code</th><th scope="col"><span class="skip">Actions</span></th></tr></thead>
+  <tbody>
+  {% for c in courts %}
+  <tr><td>{{ c.name }}</td><td><span class="status {% if c.ok %}status-ok{% else %}status-bad{% endif %}">{{ c.status }}</span></td><td class="num">{{ c.code }}</td>
+    <td><a class="btn" href="/console/courts/{{ c.id }}" aria-label="Edit {{ c.name }}">Edit</a></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}

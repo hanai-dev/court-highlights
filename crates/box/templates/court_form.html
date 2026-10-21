@@ -1,0 +1,29 @@
+{% extends "console.html" %}
+{% block title %}{% if id.is_some() %}Edit {{ name }}{% else %}Add court{% endif %}{% endblock %}
+{% block main %}
+<p><a href="/console/courts">← Courts</a></p>
+<h1>{% if id.is_some() %}Edit {{ name }}{% else %}Add court{% endif %}</h1>
+{% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
+{% if let Some(i) = id %}
+<section class="panel" aria-labelledby="preview-h">
+  <h2 id="preview-h">Camera</h2>
+  <p>Status: <span data-court-status>{{ status }}</span> · Court code <strong class="num">{{ code }}</strong></p>
+  {% if has_camera %}<img src="/console/courts/{{ i }}/preview.jpg" width="640" height="360" alt="Latest still from the {{ name }} camera" class="preview" loading="lazy">{% endif %}
+</section>
+{% endif %}
+<form method="post" action="{% if let Some(i) = id %}/console/courts/{{ i }}{% else %}/console/courts{% endif %}" class="panel">
+  <div class="field"><label for="name">Court name</label><input id="name" name="name" type="text" required maxlength="40" value="{{ name }}"></div>
+  <div class="field">
+    <label for="camera_url">Camera stream address</label>
+    <input id="camera_url" name="camera_url" type="url" maxlength="300" placeholder="rtsp://192.168.1.21:554/stream1" value="{{ camera_url }}" aria-describedby="camera-hint">
+    <p class="hint" id="camera-hint">The camera's RTSP address, from its manual or setup app. Leave empty to add the camera later.</p>
+  </div>
+  <div class="row">
+    <div class="field"><label for="camera_user">Camera username</label><input id="camera_user" name="camera_user" type="text" maxlength="100" autocomplete="off" value="{{ camera_user }}"></div>
+    <div class="field"><label for="camera_password">Camera password</label><input id="camera_password" name="camera_password" type="password" maxlength="100" autocomplete="new-password" aria-describedby="pw-hint">
+      <p class="hint" id="pw-hint">{% if has_password %}Saved. Leave empty to keep it.{% else %}Only if the camera needs one.{% endif %}</p></div>
+  </div>
+  <button class="btn btn-primary" type="submit">Save court</button>
+</form>
+{% if let Some(i) = id %}<p><a class="btn btn-danger" href="/console/courts/{{ i }}/delete">Delete {{ name }}</a></p>{% endif %}
+{% endblock %}

@@ -74,6 +74,15 @@ CREATE TABLE activity (
   item TEXT NOT NULL DEFAULT '',
   detail TEXT NOT NULL DEFAULT ''
 );
+"#, r#"
+CREATE TABLE segment (
+  id INTEGER PRIMARY KEY,
+  court_id INTEGER NOT NULL REFERENCES court(id) ON DELETE CASCADE,
+  start_ms INTEGER NOT NULL,
+  end_ms INTEGER,
+  path TEXT NOT NULL UNIQUE
+);
+CREATE INDEX segment_court_start ON segment (court_id, start_ms);
 "#];
 
 fn migrate(conn: &Connection) -> rusqlite::Result<()> {

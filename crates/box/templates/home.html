@@ -2,6 +2,10 @@
 {% block title %}Courts today{% endblock %}
 {% block main %}
 <div class="console-top"><h1>Courts today</h1></div>
+<section class="panel" aria-labelledby="box-health">
+  <h2 id="box-health">This box</h2>
+  <p>Disk: <span data-disk {% if disk_warning %}class="status status-bad"{% endif %}>{{ disk }}</span>{% if disk_warning %} — the box will clear the oldest unkept game videos at 90 %.{% endif %} · Temperature: <span data-temperature>{{ temperature }}</span> · Version {{ version }}</p>
+</section>
 {% if courts.is_empty() %}
 <section class="panel">
   <h2>No courts yet</h2>
@@ -12,10 +16,12 @@
 <div class="table-wrap" role="region" aria-labelledby="courts-caption" tabindex="0">
 <table>
   <caption id="courts-caption">{{ courts.len() }} courts</caption>
-  <thead><tr><th scope="col">Court</th><th scope="col">Camera</th><th scope="col">Court code</th></tr></thead>
+  <thead><tr><th scope="col">Court</th><th scope="col">Recording</th><th scope="col">Court code</th></tr></thead>
   <tbody>
   {% for c in courts %}
-    <tr><td>{{ c.name }}</td><td>{% if c.camera_set %}<span class="status status-ok">Camera set</span>{% else %}<span class="status status-bad">No camera</span>{% endif %}</td><td class="num">{{ c.code }}</td></tr>
+    <tr data-court="{{ c.name }}"><td>{{ c.name }}</td>
+      <td><span class="status {% if c.ok %}status-ok{% else %}status-bad{% endif %}" data-court-status>{{ c.status }}</span></td>
+      <td class="num">{{ c.code }}</td></tr>
   {% endfor %}
   </tbody>
 </table>

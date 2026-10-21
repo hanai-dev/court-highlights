@@ -46,6 +46,8 @@ input[type=file] { font: 16px var(--font); }
 .btn-primary:hover { background: var(--primary-container); text-decoration: underline; text-underline-offset: 3px; }
 .btn-danger { color: var(--error); border-color: var(--error); }
 .btn[disabled] { color: var(--on-surface-variant); border-color: var(--outline-variant); cursor: not-allowed; }
+.preview { display: block; max-width: 100%; height: auto; border: 2px solid var(--outline); border-radius: var(--radius); }
+.spaced { margin-top: var(--sm); }
 .row { display: flex; gap: var(--sm); flex-wrap: wrap; align-items: center; }
 .notice { border-radius: var(--radius); padding: var(--sm) var(--md); margin-bottom: var(--md); border: 2px solid; }
 .notice-error { background: var(--error-container); color: var(--on-error-container); border-color: var(--error); }

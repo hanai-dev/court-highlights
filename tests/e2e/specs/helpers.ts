@@ -40,6 +40,14 @@ export async function freshBox(): Promise<void> {
   await waitHealthy(`${PLAYER}/healthz`);
 }
 
+export const CAMERA = (n: number): string => `rtsp://rtsp:8554/court${n}`;
+
+/** Fake cameras: MediaMTX plus one publisher per court (cam-1 also sends audio). */
+export async function startCameras(...cams: string[]): Promise<void> {
+  compose('up', '-d', 'rtsp', ...(cams.length ? cams : ['cam-1', 'cam-2']));
+  await new Promise((r) => setTimeout(r, 4000)); // publishers connect and send a first keyframe
+}
+
 /** Restart the box process without touching its data (persistence checks). */
 export async function restartBox(): Promise<void> {
   compose('restart', 'box-a');
@@ -50,11 +58,12 @@ export function boxExec(command: string): string {
   return compose('exec', '-T', 'box-a', 'sh', '-c', command);
 }
 
-export async function completeSetup(page: Page, owner: Owner = OWNER): Promise<void> {
+/** Opening hours default to the whole day so tests pass at any real time of day. */
+export async function completeSetup(page: Page, owner: Owner = OWNER, hours: [string, string] = ['00:00', '23:59']): Promise<void> {
   await page.goto(`${STAFF}/setup`);
   await page.getByLabel('Venue name').fill(owner.venue);
-  await page.getByLabel('Opens').fill('06:00');
-  await page.getByLabel('Closes').fill('23:00');
+  await page.getByLabel('Opens').fill(hours[0]);
+  await page.getByLabel('Closes').fill(hours[1]);
   await page.getByLabel('Your name').fill(owner.name);
   await page.getByLabel('Owner username').fill(owner.username);
   await page.getByLabel('Owner password').fill(owner.password);
@@ -69,8 +78,38 @@ export async function signIn(page: Page, username: string, password: string): Pr
   await page.getByRole('button', { name: 'Sign in' }).click();
 }
 
-/** Test builds only (`--features test-hooks`): move the box clock forward. */
-export async function advanceClock(request: APIRequestContext, ms: number): Promise<void> {
+/** Test builds only (`--features test-hooks`): move the box clock forward; returns the box's new "now". */
+export async function advanceClock(request: APIRequestContext, ms: number): Promise<Date> {
   const res = await request.post(`${STAFF}/__test/clock`, { form: { ms: String(ms) } });
   expect(res.ok()).toBeTruthy();
+  return new Date(await res.text());
+}
+
+/** Milliseconds from the box's "now" until the next hh:mm:ss in Manila (UTC+8). */
+export async function msUntilManila(request: APIRequestContext, hh: number, mm: number, ss = 0): Promise<number> {
+  const now = await advanceClock(request, 0);
+  const manilaNow = new Date(now.getTime() + 8 * 3600_000);
+  const target = new Date(Date.UTC(manilaNow.getUTCFullYear(), manilaNow.getUTCMonth(), manilaNow.getUTCDate(), hh, mm, ss));
+  if (target <= manilaNow) target.setUTCDate(target.getUTCDate() + 1);
+  return target.getTime() - manilaNow.getTime();
+}
+
+export async function addCourt(page: Page, name: string, cameraUrl: string): Promise<void> {
+  await page.goto(`${STAFF}/console/courts/new`);
+  await page.getByLabel('Court name').fill(name);
+  await page.getByLabel('Camera stream address').fill(cameraUrl);
+  await page.getByRole('button', { name: 'Save court' }).click();
+  await expect(page.getByRole('status')).toContainText('Saved');
+}
+
+/** Polls the console home until the court's status text matches. */
+export async function waitCourtStatus(page: Page, court: string, pattern: RegExp, timeoutMs = 20_000): Promise<number> {
+  const started = Date.now();
+  await expect
+    .poll(async () => {
+      await page.goto(`${STAFF}/console`);
+      return (await page.locator(`tr[data-court="${court}"] [data-court-status]`).textContent()) ?? '';
+    }, { timeout: timeoutMs, intervals: [500] })
+    .toMatch(pattern);
+  return Date.now() - started;
 }

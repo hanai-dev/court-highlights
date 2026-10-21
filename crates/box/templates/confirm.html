@@ -1,0 +1,12 @@
+{% extends "console.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block main %}
+<h1>{{ title }}</h1>
+<section class="panel">
+  <p>{{ consequence }}</p>
+  <form method="post" action="{{ action }}" class="row">
+    <button class="btn btn-danger" type="submit">{{ button }}</button>
+    <a class="btn" href="{{ back }}">Keep it</a>
+  </form>
+</section>
+{% endblock %}

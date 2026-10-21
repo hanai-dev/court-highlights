@@ -27,6 +27,21 @@ services:
       - ch-target:/work/target
       - ch-cargo-registry:/usr/local/cargo/registry
 
+  # Fake cameras (test-only tooling): MediaMTX + one FFmpeg publisher per court. Stopping cam-N = unplugging it.
+  rtsp:
+    image: ch-dev:0
+    command: ["mediamtx", "/work/tools/spike/mediamtx.yml"]
+    volumes: ["../:/work"]
+    ports: ["18554:8554"]
+  cam-1: # offers an audio track too: the box must never record it (FR-2)
+    image: ch-dev:0
+    depends_on: [rtsp]
+    command: ["bash", "-c", "until ffmpeg -nostdin -loglevel error -re -f lavfi -i testsrc2=size=1920x1080:rate=15 -re -f lavfi -i sine=frequency=440 -c:v libx264 -preset ultrafast -tune zerolatency -b:v 3M -g 30 -c:a aac -f rtsp rtsp://rtsp:8554/court1; do sleep 1; done"]
+  cam-2: &cam
+    image: ch-dev:0
+    depends_on: [rtsp]
+    command: ["bash", "-c", "until ffmpeg -nostdin -loglevel error -re -f lavfi -i testsrc2=size=1920x1080:rate=15 -c:v libx264 -preset ultrafast -tune zerolatency -b:v 3M -g 30 -f rtsp rtsp://rtsp:8554/court2; do sleep 1; done"]
+
   box-a:
     <<: *box
     environment: { CH_DATA_DIR: /data, CH_HTTP_ADDR: "0.0.0.0:80", CH_HTTPS_ADDR: "0.0.0.0:443", CH_BOX_NAME: box-a }

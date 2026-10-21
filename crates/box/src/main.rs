@@ -2,7 +2,10 @@
 
 mod auth;
 mod clock;
+mod courts;
 mod db;
+mod media;
+mod recorder;
 mod tls;
 mod web;
 
@@ -25,7 +28,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let https: SocketAddr = env("CH_HTTPS_ADDR", "0.0.0.0:443").parse()?;
     std::fs::create_dir_all(&data_dir)?;
 
-    let state = web::AppState { db: db::Db::open(&data_dir.join("box.db"))? };
+    gstreamer::init()?;
+    let db = db::Db::open(&data_dir.join("box.db"))?;
+    let recorders = recorder::Recorders::new(db.clone(), data_dir.join("footage"));
+    recorders.spawn_supervisor();
+    let state = web::AppState { db, recorders };
     rustls::crypto::ring::default_provider().install_default().map_err(|_| "TLS crypto provider already installed")?;
     let (cert, key) = tls::load_or_create(&data_dir)?;
     let tls = axum_server::tls_rustls::RustlsConfig::from_pem(cert.into_bytes(), key.into_bytes()).await?;
