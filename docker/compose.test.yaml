@@ -92,6 +92,7 @@ services:
       CH_SES_SECRET: ch-test-only-not-a-secret
       CH_MAIL_FROM: videos@test.invalid
       CH_EMAIL_PEPPER: ch-test-only-pepper-not-a-secret-0123456789
+      CH_SECRET_KEY: "0000000000000000000000000000000000000000000000000000000000000001"
     volumes:
       - ../:/work
       - ch-target:/work/target

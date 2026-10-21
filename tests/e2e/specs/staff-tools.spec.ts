@@ -261,8 +261,13 @@ test('library: 50 per page, filters with Clear, no-results state, keep, posting 
   await expect(page.getByRole('status')).toHaveText('Kept for 1 year.');
   await page.goto(`${STAFF}/console/clips?kind=tap&kept=1`);
   const keptRow = page.locator(`tr[data-clip="${id}"]`);
-  const nextYear = new Date(Date.parse((await (await page.request.post(`${STAFF}/__test/clock`, { form: { ms: '0' } })).text())) + 8 * 3600_000);
-  await expect(keptRow).toContainText(`Kept until ${nextYear.getUTCDate()} ${nextYear.toLocaleString('en-GB', { month: 'short', timeZone: 'UTC' })} ${nextYear.getUTCFullYear() + 1}`);
+  // Kept items go at the first 03:00 clean-up at least 1 year after Keep (GV-12), so the date can be a day later.
+  const kept = new Date(Date.parse((await (await page.request.post(`${STAFF}/__test/clock`, { form: { ms: '0' } })).text())) + 8 * 3600_000);
+  const inAYear = new Date(Date.UTC(kept.getUTCFullYear() + 1, kept.getUTCMonth(), kept.getUTCDate(), kept.getUTCHours(), kept.getUTCMinutes()));
+  const cleanup = new Date(Date.UTC(inAYear.getUTCFullYear(), inAYear.getUTCMonth(), inAYear.getUTCDate(), 3));
+  if (cleanup < inAYear) cleanup.setUTCDate(cleanup.getUTCDate() + 1);
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  await expect(keptRow).toContainText(`Kept until ${cleanup.getUTCDate()} ${MONTHS[cleanup.getUTCMonth()]} ${cleanup.getUTCFullYear()}`);
   for (const name of [/^Download Court 4/, /^Download vertical Court 4/]) {
     const [d] = await Promise.all([page.waitForEvent('download'), keptRow.getByRole('link', { name }).click()]);
     expect(d.suggestedFilename()).toMatch(/^court-4-\d{8}-\d{6}-(wide|vertical)\.mp4$/);

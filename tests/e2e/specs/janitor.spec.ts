@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { CAMERA, OWNER, PLAYER, STAFF, addCourt, advanceClock, boxExec, completeSetup, courtCode, freshBox, msUntilManila, signIn, startCameras, waitCourtStatus } from './helpers';
+import { CAMERA, OWNER, PLAYER, STAFF, addCourt, advanceClock, boxExec, completeSetup, compose, courtCode, freshBox, msUntilManila, signIn, startCameras, waitCourtStatus } from './helpers';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -101,6 +101,9 @@ test('disk pressure: a warning from 80 %, and at 90 % the oldest unkept game vid
   await page.waitForTimeout(2_000);
   const newer = await game(page);
   const tap = await clip(page);
+  // Footage grows ~100 kB/s while the camera runs; pause it so the pretend usage levels stay put.
+  compose('stop', 'cam-3');
+  await page.waitForTimeout(8_000);
   const used = (): number => Number(boxExec('du -sb /data | cut -f1').trim());
 
   // 82 %: warning only.
@@ -120,4 +123,5 @@ test('disk pressure: a warning from 80 %, and at 90 % the oldest unkept game vid
   if (left[1]) expect(left[2], 'the clip outlives a game video').toBe(true);
   expect(Number(boxExec('ls /data/footage/court-1 | wc -l').trim()), 'rolling footage is never removed for space').toBeGreaterThanOrEqual(footageBefore);
   await page.request.post(`${STAFF}/__test/disk`, { form: { bytes: '0' } });
+  compose('start', 'cam-3');
 });

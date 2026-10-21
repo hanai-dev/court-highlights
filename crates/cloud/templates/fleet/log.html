@@ -1,0 +1,18 @@
+{% extends "fleet/shell.html" %}
+{% block title %}Fleet log{% endblock %}
+{% block main %}
+<div class="console-top"><h1>Fleet log</h1></div>
+{% if rows.is_empty() %}
+<section class="panel"><p>Nothing logged yet.</p></section>
+{% else %}
+<div class="table-wrap" role="region" aria-labelledby="log-caption" tabindex="0">
+<table>
+  <caption id="log-caption">Latest {{ rows.len() }} entries, newest first</caption>
+  <thead><tr><th scope="col">Time</th><th scope="col">Who</th><th scope="col">Action</th><th scope="col">Item</th><th scope="col">Detail</th></tr></thead>
+  <tbody>
+  {% for r in rows %}<tr><td class="num">{{ r.at }}</td><td>{{ r.actor }}</td><td>{{ r.action }}</td><td>{{ r.item }}</td><td>{{ r.detail }}</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}

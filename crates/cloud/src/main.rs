@@ -2,6 +2,8 @@
 //! is added on the same router.
 
 mod api;
+mod fleet;
+mod fleet_auth;
 mod mail;
 mod player;
 mod store;
@@ -24,6 +26,10 @@ pub struct App {
     pub public_url: String,
     /// Mixed into every stored email hash so a leaked table can't be reversed with a word list.
     pub pepper: String,
+    /// Encrypts fleet users' authenticator secrets (CH_SECRET_KEY, 64 hex characters).
+    pub secret_key: [u8; 32],
+    /// scheme://host[:port] of CH_PUBLIC_URL: fleet writes must come from here.
+    pub origin: String,
 }
 
 #[derive(Debug)]
@@ -120,7 +126,9 @@ async fn security_headers(req: Request, next: Next) -> Response {
     );
     h.insert(header::X_CONTENT_TYPE_OPTIONS, HeaderValue::from_static("nosniff"));
     h.insert(header::X_FRAME_OPTIONS, HeaderValue::from_static("DENY"));
-    h.insert(header::REFERRER_POLICY, HeaderValue::from_static("no-referrer"));
+    // same-origin, not no-referrer: Chrome sends `Origin: null` on form posts under no-referrer, defeating the fleet's
+    // same-origin check; same-origin still never sends the token-bearing /v/ addresses to another site.
+    h.insert(header::REFERRER_POLICY, HeaderValue::from_static("same-origin"));
     h.insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
     res
 }
@@ -141,6 +149,18 @@ fn router(app: App) -> Router {
         .route("/v/{token}", get(player::videos))
         .route("/v/{token}/{item}", get(player::video))
         .route("/never/{token}", get(player::never_form).post(player::never_confirm))
+        .route("/fleet", get(fleet::health))
+        .route("/fleet/signin", get(fleet::signin_form).post(fleet::signin))
+        .route("/fleet/signout", post(fleet::signout))
+        .route("/fleet/account", get(fleet::account).post(fleet::change_password))
+        .route("/fleet/venues", get(fleet::venue_list).post(fleet::venue_add))
+        .route("/fleet/venues/{id}", get(fleet::venue))
+        .route("/fleet/venues/{id}/boxes", post(fleet::register_box))
+        .route("/fleet/venues/{id}/switch", post(fleet::switch))
+        .route("/fleet/boxes/{id}/revoke", post(fleet::revoke_box))
+        .route("/fleet/users", get(fleet::users).post(fleet::user_add))
+        .route("/fleet/log", get(fleet::fleet_log))
+        .layer(middleware::from_fn_with_state(app.clone(), fleet_auth::same_origin))
         .layer(middleware::from_fn(security_headers))
         .with_state(app)
 }
@@ -175,6 +195,24 @@ async fn connect() -> Result<sqlx::PgPool, Box<dyn std::error::Error>> {
     let db = sqlx::postgres::PgPoolOptions::new().max_connections(10).connect(&need("DATABASE_URL")?).await?;
     sqlx::migrate!("./migrations").run(&db).await?;
     Ok(db)
+}
+
+fn secret_key() -> Result<[u8; 32], Box<dyn std::error::Error>> {
+    let hex = need("CH_SECRET_KEY")?;
+    let bytes: Vec<u8> = (0..hex.len())
+        .step_by(2)
+        .map(|i| hex.get(i..i + 2).and_then(|b| u8::from_str_radix(b, 16).ok()))
+        .collect::<Option<_>>()
+        .ok_or("CH_SECRET_KEY must be hex")?;
+    bytes.try_into().map_err(|_| "CH_SECRET_KEY must be 64 hex characters (32 bytes)".into())
+}
+
+/// `ch-cloud create-admin <username>`: the first fleet Admin. Prints a temporary password and the authenticator key.
+async fn create_admin(username: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let db = connect().await?;
+    let c = fleet::create_user(&db, &secret_key()?, username, "admin").await.map_err(|_| "could not create the user (does it exist?)")?;
+    println!("username: {}\ntemporary password: {}\nauthenticator key: {}", c.username, c.password, c.secret);
+    Ok(())
 }
 
 /// `ch-cloud add-box "<venue>" <box name>`: registers a box and prints its key once.
@@ -212,6 +250,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
     rustls::crypto::ring::default_provider().install_default().map_err(|_| "TLS crypto provider already installed")?;
     let args: Vec<String> = std::env::args().collect();
+    if args.get(1).map(String::as_str) == Some("create-admin") {
+        let Some(username) = args.get(2) else { return Err("usage: ch-cloud create-admin <username>".into()) };
+        return create_admin(username).await;
+    }
     if args.get(1).map(String::as_str) == Some("add-box") {
         let (Some(venue), Some(name)) = (args.get(2), args.get(3)) else { return Err("usage: ch-cloud add-box <venue> <box name>".into()) };
         return add_box(venue, name).await;
@@ -226,7 +268,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     store.ensure_bucket().await.map_err(|e| format!("object store unreachable: {e}"))?;
     let ses_endpoint = std::env::var("CH_SES_ENDPOINT").ok().filter(|v| !v.is_empty());
     let mail = mail::Mailer::new(ses_endpoint.as_deref(), &opt("CH_SES_REGION", "ap-southeast-1"), &need("CH_SES_KEY")?, &need("CH_SES_SECRET")?, &need("CH_MAIL_FROM")?);
-    let app = App { db: connect().await?, store, mail, public_url: need("CH_PUBLIC_URL")?.trim_end_matches('/').to_string(), pepper };
+    let public_url = need("CH_PUBLIC_URL")?.trim_end_matches('/').to_string();
+    let origin = public_url.splitn(4, '/').take(3).collect::<Vec<_>>().join("/");
+    let app = App { db: connect().await?, store, mail, public_url, pepper, secret_key: secret_key()?, origin };
     spawn_cleanup(app.clone());
 
     let listener = tokio::net::TcpListener::bind(opt("CH_LISTEN", "0.0.0.0:8080")).await?;

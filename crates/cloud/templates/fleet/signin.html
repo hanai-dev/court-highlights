@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Fleet sign-in{% endblock %}
+{% block body %}
+<main class="narrow">
+  <h1>Fleet console</h1>
+  {% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
+  <form method="post" action="/fleet/signin" class="panel">
+    <div class="field"><label for="username">Username</label><input id="username" name="username" type="text" required autocomplete="username" value="{{ username }}"></div>
+    <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password"></div>
+    <div class="field"><label for="code">Code from your authenticator app</label><input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]{6,7}" required></div>
+    <button class="btn btn-primary" type="submit">Sign in</button>
+  </form>
+</main>
+{% endblock %}

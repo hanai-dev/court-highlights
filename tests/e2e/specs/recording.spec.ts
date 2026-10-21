@@ -86,11 +86,13 @@ test('outside opening hours nothing is recorded; recording starts again at openi
   await startCameras('cam-2');
   await completeSetup(page, undefined, ['06:00', '23:00']);
   await advanceClock(request, await msUntilManila(request, 23, 0, 5));
+  await signIn(page, OWNER.username, OWNER.password); // the jump can outlast the 12-hour sign-in
   await addCourt(page, 'Court 2', CAMERA(2));
   await waitCourtStatus(page, 'Court 2', /^Closed/);
   await new Promise((r) => setTimeout(r, 6000));
   expect(segments(1).length + segments(2).length, 'no footage while closed').toBe(0);
   await advanceClock(request, await msUntilManila(request, 6, 0, 1));
+  await signIn(page, OWNER.username, OWNER.password);
   await waitCourtStatus(page, 'Court 2', /^Recording since/);
 });
 

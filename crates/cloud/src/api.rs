@@ -51,13 +51,14 @@ pub struct State_ {
 
 /// Health report every minute (FR-49); the answer carries the venue's online switch (FR-27).
 pub async fn checkin(State(app): State<App>, auth: BoxAuth, Json(c): Json<Checkin>) -> Result<Json<State_>, ApiError> {
-    sqlx::query("INSERT INTO checkin (box_id, version, disk_pct, temperature_c, courts_recording, courts_total) VALUES ($1, $2, $3, $4, $5, $6)")
+    sqlx::query("INSERT INTO checkin (box_id, at, version, disk_pct, temperature_c, courts_recording, courts_total) VALUES ($1, $7, $2, $3, $4, $5, $6)")
         .bind(auth.box_id)
         .bind(c.version.chars().take(40).collect::<String>())
         .bind(c.disk_pct.clamp(0, 100))
         .bind(c.temperature_c)
         .bind(c.courts_recording.max(0))
         .bind(c.courts_total.max(0))
+        .bind(crate::now())
         .execute(&app.db)
         .await?;
     Ok(Json(State_ { online_on: auth.online }))

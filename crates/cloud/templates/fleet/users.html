@@ -1,0 +1,28 @@
+{% extends "fleet/shell.html" %}
+{% block title %}Users{% endblock %}
+{% block main %}
+<div class="console-top"><h1>Users</h1></div>
+{% if let Some(c) = created %}
+<section class="panel notice-warn" role="status" aria-labelledby="new-h">
+  <h2 id="new-h">{{ c.username }} added</h2>
+  <p>Give these to {{ c.username }} in person. They are shown only now.</p>
+  <p>Temporary password: <strong class="fingerprint" data-temp-password>{{ c.password }}</strong></p>
+  <p>Scan with an authenticator app, or enter the key <strong class="fingerprint" data-totp-secret>{{ c.secret }}</strong>.</p>
+  <div class="sign-qr">{{ c.qr|safe }}</div>
+</section>
+{% endif %}
+<form method="post" action="/fleet/users" class="panel row">
+  <div class="field"><label for="username">Username</label><input id="username" name="username" type="text" required maxlength="40"></div>
+  <div class="field"><label for="role">Role</label><select id="role" name="role"><option value="installer">Installer</option><option value="admin">Admin</option></select></div>
+  <button class="btn btn-primary" type="submit">Add user</button>
+</form>
+<div class="table-wrap" role="region" aria-labelledby="users-caption" tabindex="0">
+<table>
+  <caption id="users-caption">{{ users.len() }} users</caption>
+  <thead><tr><th scope="col">Username</th><th scope="col">Role</th><th scope="col">Status</th></tr></thead>
+  <tbody>
+  {% for u in users %}<tr><td>{{ u.username }}</td><td>{% if u.role == "admin" %}Admin{% else %}Installer{% endif %}</td><td>{% if u.active %}Active{% else %}Deactivated{% endif %}</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

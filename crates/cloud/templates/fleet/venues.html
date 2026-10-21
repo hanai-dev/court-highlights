@@ -1,0 +1,26 @@
+{% extends "fleet/shell.html" %}
+{% block title %}Venues{% endblock %}
+{% block main %}
+<div class="console-top"><h1>Venues</h1></div>
+{% if nav.admin %}
+<form method="post" action="/fleet/venues" class="panel row">
+  <div class="field"><label for="name">Venue name</label><input id="name" name="name" type="text" required maxlength="80"></div>
+  <button class="btn btn-primary" type="submit">Add venue</button>
+</form>
+{% endif %}
+{% if venues.is_empty() %}
+<section class="panel"><h2>No venues yet</h2></section>
+{% else %}
+<div class="table-wrap" role="region" aria-labelledby="venues-caption" tabindex="0">
+<table>
+  <caption id="venues-caption">{{ venues.len() }} venues</caption>
+  <thead><tr><th scope="col">Venue</th><th scope="col">Online features</th><th scope="col">Boxes</th></tr></thead>
+  <tbody>
+  {% for v in venues %}
+  <tr><td><a href="/fleet/venues/{{ v.id }}">{{ v.name }}</a></td><td>{% if v.online %}On{% else %}Off{% endif %}</td><td class="num">{{ v.boxes.len() }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block body %}
+<a class="skip" href="#main">Skip to content</a>
+<div class="console">
+  <nav class="console-nav" aria-label="Fleet console">
+    <div class="venue">Fleet console</div>
+    <a href="/fleet" {% if nav.section == "health" %}aria-current="page"{% endif %}>Box health</a>
+    <a href="/fleet/venues" {% if nav.section == "venues" %}aria-current="page"{% endif %}>Venues</a>
+    {% if nav.admin %}
+    <a href="/fleet/users" {% if nav.section == "users" %}aria-current="page"{% endif %}>Users</a>
+    <a href="/fleet/log" {% if nav.section == "log" %}aria-current="page"{% endif %}>Fleet log</a>
+    {% endif %}
+    <a href="/fleet/account" {% if nav.section == "account" %}aria-current="page"{% endif %}>My account</a>
+    <form method="post" action="/fleet/signout"><button class="btn" type="submit">Sign out {{ nav.user }}</button></form>
+  </nav>
+  <main id="main" class="console-main">
+    {% block main %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

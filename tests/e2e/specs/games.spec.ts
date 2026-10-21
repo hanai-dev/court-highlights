@@ -2,8 +2,8 @@ import { test, expect, type Page } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  CAMERA, OWNER, PLAYER, STAFF, addCourt, advanceClock, boxExec, colourAt, completeSetup, courtCode, freshBox, isMagenta, powerCycle, probe, signIn,
-  startCameras, waitCourtStatus,
+  CAMERA, OWNER, PLAYER, STAFF, addCourt, advanceClock, boxExec, cloudUp, colourAt, completeSetup, connectBox, courtCode, freshBox, isMagenta, powerCycle,
+  probe, signIn, startCameras, waitCourtStatus,
 } from './helpers';
 
 test.describe.configure({ mode: 'serial' });
@@ -35,8 +35,10 @@ async function setJudge(page: Page, on: boolean): Promise<void> {
 
 test('the court page shows its parts in order; Start offers posting permission unticked (FR-17, FR-11)', async ({ page, browser }) => {
   await freshBox();
+  await cloudUp(); // email needs a box registered with the online service (FR-27, FR-48)
   await startCameras('cam-4');
   await completeSetup(page, OWNER, ['00:00', '23:59'], LOGO);
+  await connectBox(page);
   await page.goto(`${STAFF}/console/settings`);
   await page.getByLabel('Logo corner').selectOption('bottom-right');
   await page.getByRole('button', { name: 'Save settings' }).click();
