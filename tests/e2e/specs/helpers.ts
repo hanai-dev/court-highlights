@@ -48,6 +48,42 @@ export async function startCameras(...cams: string[]): Promise<void> {
   await new Promise((r) => setTimeout(r, 4000)); // publishers connect and send a first keyframe
 }
 
+/** Power cut: the box process is killed with no chance to tidy up, then started again. Returns the cut time. */
+export async function powerCycle(): Promise<number> {
+  const cut = Date.now();
+  compose('kill', '-s', 'SIGKILL', 'box-a');
+  compose('start', 'box-a');
+  await waitHealthy(`${PLAYER}/healthz`);
+  return cut;
+}
+
+export interface MediaProbe {
+  width: number;
+  height: number;
+  seconds: number;
+  streams: string[];
+  startsOnKeyframe: boolean;
+}
+
+/** ffprobe a file inside the box. */
+export function probe(file: string): MediaProbe {
+  const j = JSON.parse(boxExec(`ffprobe -v error -show_entries stream=codec_type,width,height:format=duration -of json "${file}"`)) as {
+    streams: { codec_type: string; width?: number; height?: number }[];
+    format: { duration: string };
+  };
+  const video = j.streams.find((s) => s.codec_type === 'video')!;
+  const first = boxExec(`ffprobe -v error -select_streams v -show_entries packet=flags -of csv=p=0 "${file}" | head -1`);
+  return { width: video.width!, height: video.height!, seconds: Number(j.format.duration), streams: j.streams.map((s) => s.codec_type), startsOnKeyframe: first.startsWith('K') };
+}
+
+/** Average RGB of a box in the frame `at` seconds into a file inside the box. */
+export function colourAt(file: string, w: number, h: number, x: number, y: number, at = 1): number[] {
+  const out = boxExec(`ffmpeg -v error -ss ${at} -i "${file}" -frames:v 1 -vf crop=${w}:${h}:${x}:${y},scale=1:1:flags=area -f rawvideo -pix_fmt rgb24 - | od -An -tu1`);
+  return out.trim().split(/\s+/).map(Number);
+}
+
+export const isMagenta = (rgb: number[]): boolean => rgb[0] > 190 && rgb[1] < 70 && rgb[2] > 190;
+
 /** Restart the box process without touching its data (persistence checks). */
 export async function restartBox(): Promise<void> {
   compose('restart', 'box-a');

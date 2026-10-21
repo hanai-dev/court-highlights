@@ -135,6 +135,26 @@ CREATE TABLE hold (
   released_by TEXT
 );
 CREATE INDEX hold_court ON hold (court_id);
+"#, r#"
+ALTER TABLE game ADD COLUMN stop_reason TEXT;
+ALTER TABLE game ADD COLUMN highlights TEXT NOT NULL DEFAULT 'pending';
+ALTER TABLE game ADD COLUMN highlights_ready_by TEXT;
+ALTER TABLE game ADD COLUMN emails_sent_at TEXT;
+CREATE UNIQUE INDEX game_running ON game (court_id) WHERE stopped_at IS NULL;
+ALTER TABLE clip ADD COLUMN rank INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE clip ADD COLUMN email_path TEXT;
+ALTER TABLE clip ADD COLUMN emails_sent_at TEXT;
+CREATE INDEX clip_game ON clip (game_id);
+CREATE TABLE recipient (
+  id INTEGER PRIMARY KEY,
+  game_id INTEGER REFERENCES game(id) ON DELETE CASCADE,
+  clip_id INTEGER REFERENCES clip(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  added_at TEXT NOT NULL,
+  CHECK ((game_id IS NULL) <> (clip_id IS NULL))
+);
+CREATE INDEX recipient_game ON recipient (game_id);
+CREATE INDEX recipient_clip ON recipient (clip_id);
 "#];
 
 fn migrate(conn: &Connection) -> rusqlite::Result<()> {

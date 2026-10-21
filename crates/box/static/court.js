@@ -79,4 +79,20 @@
   });
 
   if (clips.querySelector('[data-clip-state="saving"]')) startPolling();
+
+  // The game area refreshes while its video or highlights are being made.
+  var game = document.querySelector('[data-game]');
+  function refreshGame() {
+    if (!game || !game.hasAttribute('data-game-pending')) return;
+    fetch(game.getAttribute('data-game-url'), { headers: { Accept: 'text/html' }, cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.text() : null; })
+      .then(function (html) {
+        if (html === null) return;
+        game.innerHTML = html;
+        var stillPending = game.querySelector('[data-game-video-saving], [data-highlights-coming]');
+        if (!stillPending) game.removeAttribute('data-game-pending');
+      })
+      .catch(function () { /* the next poll retries */ });
+  }
+  setInterval(refreshGame, 5000);
 })();

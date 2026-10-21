@@ -47,6 +47,11 @@ services:
     depends_on: [rtsp]
     command: ["bash", "-c", "until ffmpeg -nostdin -loglevel error -re -f lavfi -i testsrc2=size=640x360:rate=15 -re -f lavfi -i sine=frequency=440 -c:v libx264 -preset ultrafast -tune zerolatency -b:v 800k -g 15 -c:a aac -f rtsp rtsp://rtsp:8554/court3; do sleep 1; done"]
 
+  cam-4: # rallies and dead time (black) in a 20 s cycle, with audio: the shot judge finds 6 s and 8 s points
+    image: ch-dev:0
+    depends_on: [rtsp]
+    command: ["bash", "-c", "until ffmpeg -nostdin -loglevel error -re -f lavfi -i testsrc2=size=640x360:rate=15 -re -f lavfi -i sine=frequency=330 -vf \"drawbox=c=black:t=fill:enable='lt(mod(t,20),4)+between(mod(t,20),10,12)'\" -c:v libx264 -preset ultrafast -tune zerolatency -b:v 800k -g 15 -c:a aac -f rtsp rtsp://rtsp:8554/court4; do sleep 1; done"]
+
   box-a:
     <<: *box
     environment: { CH_DATA_DIR: /data, CH_HTTP_ADDR: "0.0.0.0:80", CH_HTTPS_ADDR: "0.0.0.0:443", CH_BOX_NAME: box-a, CH_PLAYER_URL: "http://localhost:18080", CH_SUPPORT_PHONE: "0917 555 0100" }

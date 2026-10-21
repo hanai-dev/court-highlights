@@ -41,6 +41,7 @@ struct Slot {
     stop: watch::Sender<bool>,
     status: Arc<Mutex<CourtStatus>>,
     sink: SinkHandle,
+    task: tokio::task::JoinHandle<()>,
 }
 
 type SinkHandle = Arc<Mutex<Option<gst::Element>>>;
@@ -50,11 +51,26 @@ pub struct Recorders {
     db: Db,
     footage: PathBuf,
     slots: Arc<Mutex<HashMap<i64, Slot>>>,
+    stopping: Arc<std::sync::atomic::AtomicBool>,
 }
 
 impl Recorders {
     pub fn new(db: Db, footage: PathBuf) -> Self {
-        Self { db, footage, slots: Arc::default() }
+        Self { db, footage, slots: Arc::default(), stopping: Arc::default() }
+    }
+
+    /// Clean stop (restart, update): every court closes its open fragment so no footage is lost (FR-56).
+    pub async fn stop_all(&self) {
+        self.stopping.store(true, std::sync::atomic::Ordering::Relaxed);
+        let slots: Vec<Slot> = self.slots.lock().unwrap_or_else(|p| p.into_inner()).drain().map(|(_, s)| s).collect();
+        for slot in &slots {
+            let _ = slot.stop.send(true);
+        }
+        for slot in slots {
+            if tokio::time::timeout(Duration::from_secs(8), slot.task).await.is_err() {
+                tracing::warn!("a recorder did not stop within 8 s");
+            }
+        }
     }
 
     /// A fragment still open when the box stopped (power cut, crash) has no index and can't be read: drop it, so
@@ -117,6 +133,9 @@ impl Recorders {
     }
 
     fn reconcile(&self) -> rusqlite::Result<()> {
+        if self.stopping.load(std::sync::atomic::Ordering::Relaxed) {
+            return Ok(());
+        }
         let open = self.hours()?.is_some_and(|h| h.is_open(clock::now()));
         let wanted: HashMap<i64, CameraConfig> = {
             let conn = self.db.conn();
@@ -145,8 +164,8 @@ impl Recorders {
                 let (stop, stopped) = watch::channel(false);
                 let status = Arc::new(Mutex::new(CourtStatus::Starting));
                 let sink: SinkHandle = Arc::default();
-                tokio::spawn(run_court(id, config.clone(), self.db.clone(), self.footage.join(format!("court-{id}")), status.clone(), sink.clone(), stopped));
-                slots.insert(id, Slot { config, stop, status, sink });
+                let task = tokio::spawn(run_court(id, config.clone(), self.db.clone(), self.footage.join(format!("court-{id}")), status.clone(), sink.clone(), stopped));
+                slots.insert(id, Slot { config, stop, status, sink, task });
             }
         }
         Ok(())
@@ -220,11 +239,8 @@ async fn run_court(court: i64, camera: CameraConfig, db: Db, dir: PathBuf, statu
     }
     let mut offline_since: Option<Time> = None;
     loop {
-        let inner_stop = stop.clone();
-        let result = tokio::select! {
-            _ = stop.changed() => break,
-            r = record_once(court, &camera, &db, &dir, &status, &sink, inner_stop) => r,
-        };
+        // record_once watches `stop` itself, so an open fragment is always finished, never dropped mid-write.
+        let result = record_once(court, &camera, &db, &dir, &status, &sink, stop.clone()).await;
         if *stop.borrow() {
             break;
         }
@@ -237,7 +253,10 @@ async fn run_court(court: i64, camera: CameraConfig, db: Db, dir: PathBuf, statu
             Ok(()) => tracing::warn!(court, "camera stream ended"),
             Err(e) => tracing::warn!(court, error = %e, "camera unavailable"),
         }
-        tokio::time::sleep(RETRY_EVERY).await;
+        tokio::select! {
+            _ = stop.changed() => break,
+            _ = tokio::time::sleep(RETRY_EVERY) => {}
+        }
     }
     tracing::info!(court, "recorder stopped");
 }
@@ -248,16 +267,22 @@ async fn record_once(court: i64, camera: &CameraConfig, db: &Db, dir: &Path, sta
     use retina::client::{Credentials, PlayOptions, Session, SessionOptions, SetupOptions, Transport};
     let url = url::Url::parse(&camera.url)?;
     let creds = (!camera.username.is_empty()).then(|| Credentials { username: camera.username.clone(), password: camera.password.clone() });
-    let mut session = Session::describe(url, SessionOptions::default().creds(creds).user_agent("court-highlights".into())).await?;
-    let video = session
-        .streams()
-        .iter()
-        .position(|s| s.media() == "video" && s.encoding_name().eq_ignore_ascii_case("h264"))
-        .ok_or("camera offers no H.264 video stream")?;
-    session
-        .setup(video, SetupOptions::default().transport(Transport::default()).frame_format(retina::codec::FrameFormat::MP4))
-        .await?;
-    let mut frames = session.play(PlayOptions::default()).await?.demuxed()?;
+    let connect = async {
+        let mut session = Session::describe(url, SessionOptions::default().creds(creds).user_agent("court-highlights".into())).await?;
+        let video = session
+            .streams()
+            .iter()
+            .position(|s| s.media() == "video" && s.encoding_name().eq_ignore_ascii_case("h264"))
+            .ok_or("camera offers no H.264 video stream")?;
+        session
+            .setup(video, SetupOptions::default().transport(Transport::default()).frame_format(retina::codec::FrameFormat::MP4))
+            .await?;
+        Ok::<_, BoxError>((video, session.play(PlayOptions::default()).await?.demuxed()?))
+    };
+    let (video, mut frames) = tokio::select! {
+        _ = stop.changed() => return Ok(()),
+        r = connect => r?,
+    };
 
     let mut writer: Option<SegmentWriter> = None;
     loop {
@@ -271,8 +296,10 @@ async fn record_once(court: i64, camera: &CameraConfig, db: &Db, dir: &Path, sta
             Some(retina::codec::ParametersRef::Video(v)) => (v.extra_data().to_vec(), v.pixel_dimensions()),
             _ => continue,
         };
-        if writer.as_ref().is_some_and(|w| w.codec_data != params.0) {
-            writer.take().map(|w| w.finish());
+        if writer.as_ref().is_some_and(|w| w.codec_data != params.0)
+            && let Some(w) = writer.take()
+        {
+            w.finish();
         }
         if writer.is_none() {
             if !frame.is_random_access_point() {
@@ -379,11 +406,14 @@ impl SegmentWriter {
 
     /// Closes the open fragment properly (writes the MP4 index) before the pipeline stops.
     fn finish(self) {
-        let _ = self.src.end_of_stream();
-        if let Some(bus) = self.pipeline.bus() {
-            let _ = bus.timed_pop_filtered(gst::ClockTime::from_seconds(5), &[gst::MessageType::Eos, gst::MessageType::Error]);
-        }
-        let _ = self.pipeline.set_state(gst::State::Null);
+        // Waiting for the index to be written blocks; keep it off the async worker's critical path.
+        tokio::task::block_in_place(|| {
+            let _ = self.src.end_of_stream();
+            if let Some(bus) = self.pipeline.bus() {
+                let _ = bus.timed_pop_filtered(gst::ClockTime::from_seconds(5), &[gst::MessageType::Eos, gst::MessageType::Error]);
+            }
+            let _ = self.pipeline.set_state(gst::State::Null);
+        });
     }
 }
 

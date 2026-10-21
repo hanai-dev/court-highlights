@@ -64,6 +64,13 @@ caption { text-align: left; font-weight: 700; padding: var(--sm) var(--md); }
 th, td { text-align: left; padding: 10px var(--md); border-top: 1px solid var(--outline-variant); vertical-align: middle; }
 thead th { border-top: 0; border-bottom: 2px solid var(--outline); }
 td.num { font-variant-numeric: tabular-nums; }
+.btn-block { width: 100%; min-height: 48px; }
+.last-game { border-top: 1px solid var(--outline-variant); margin-top: var(--md); padding-top: var(--sm); }
+.chips { list-style: none; margin: 0 0 var(--sm); padding: 0; display: flex; flex-wrap: wrap; gap: var(--sm); }
+.chip { display: inline-flex; align-items: center; gap: var(--xs); border: 2px solid var(--outline); border-radius: var(--pill); padding: 2px 4px 2px 12px; background: var(--surface); }
+.chip form { margin: 0; }
+.chip-remove { min-height: 44px; min-width: 44px; padding: 0 var(--sm); border: 0; background: transparent; font: 700 14px var(--font); color: var(--on-surface); text-decoration: underline; cursor: pointer; border-radius: var(--pill); }
+.email-add input[type=email] { flex: 1 1 200px; }
 
 /* Staff console shell */
 .console { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
@@ -114,6 +121,13 @@ td.num { font-variant-numeric: tabular-nums; }
 .clip-failed { color: var(--error); }
 .clip-video { display: block; width: 100%; height: auto; background: var(--primary); border: 2px solid var(--outline); border-radius: var(--radius); }
 .num { font-variant-numeric: tabular-nums; }
+.btn-block { width: 100%; min-height: 48px; }
+.last-game { border-top: 1px solid var(--outline-variant); margin-top: var(--md); padding-top: var(--sm); }
+.chips { list-style: none; margin: 0 0 var(--sm); padding: 0; display: flex; flex-wrap: wrap; gap: var(--sm); }
+.chip { display: inline-flex; align-items: center; gap: var(--xs); border: 2px solid var(--outline); border-radius: var(--pill); padding: 2px 4px 2px 12px; background: var(--surface); }
+.chip form { margin: 0; }
+.chip-remove { min-height: 44px; min-width: 44px; padding: 0 var(--sm); border: 0; background: transparent; font: 700 14px var(--font); color: var(--on-surface); text-decoration: underline; cursor: pointer; border-radius: var(--pill); }
+.email-add input[type=email] { flex: 1 1 200px; }
 
 /* Library, footage, settings, help */
 .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 var(--md); align-items: end; }

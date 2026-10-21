@@ -2,7 +2,7 @@
 //! in; every query is scoped by the court code in the address and the 2-hour court-page window (FR-18).
 
 use crate::courts::time_label;
-use crate::media::{self, Brand, Corner, Cut, Logo, Size};
+use crate::media::{self, Brand, Corner, Cut, Logo, Output, Shape, Size};
 use crate::recorder::CourtStatus;
 use crate::web::{AppError, AppState, Page, html};
 use crate::{clock, db::Db};
@@ -15,9 +15,6 @@ use rusqlite::{OptionalExtension, params};
 use serde::Deserialize;
 use std::path::PathBuf;
 use std::time::Duration;
-
-/// Segments further apart than this are separate recording runs (camera dropped out in between).
-const GAP_MS: i64 = 1_500;
 
 struct Court {
     id: i64,
@@ -38,11 +35,11 @@ fn court_by_code(db: &Db, code: &str) -> Result<Court, AppError> {
         .ok_or(AppError::NotFound)
 }
 
-fn ms(t: Time) -> i64 {
+pub fn ms(t: Time) -> i64 {
     t.timestamp_millis()
 }
 
-fn at(ms: i64) -> Time {
+pub fn at(ms: i64) -> Time {
     chrono::DateTime::from_timestamp_millis(ms).unwrap_or_default().with_timezone(&ch_core::manila())
 }
 
@@ -88,6 +85,62 @@ struct CourtPage {
     status: String,
     clips: Vec<ClipLine>,
     error: Option<&'static str>,
+    panel: crate::games::Panel,
+    judge_on: bool,
+    online: bool,
+    emails: Option<crate::games::EmailBox>,
+    email_error: Option<&'static str>,
+    clip_token: String,
+}
+
+#[derive(Template)]
+#[template(path = "court_game.html")]
+struct GameFragment {
+    code: String,
+    recording: bool,
+    judge_on: bool,
+    panel: crate::games::Panel,
+}
+
+pub fn email_error(code: Option<&str>) -> Option<&'static str> {
+    code.map(|c| match c {
+        "full" => "Up to 8 addresses per game",
+        "invalid" => "Check the email address — it doesn't look complete.",
+        "offline" => "Download your videos here — email isn't available at this venue.",
+        _ => "Start a game first. For a single clip, open it and use Email me this.",
+    })
+}
+
+/// A court as the players' pages see it.
+pub struct PlayerCourt {
+    pub id: i64,
+    pub code: String,
+    pub recording: bool,
+}
+
+pub fn court_for_players(app: &AppState, code: &str) -> Result<PlayerCourt, AppError> {
+    let court = court_by_code(&app.db, code)?;
+    let recording = matches!(court_recording(app, &court), CourtStatus::Recording { .. });
+    Ok(PlayerCourt { id: court.id, code: court.code, recording })
+}
+
+/// A tap clip on this court page, made with no game running and not yet emailed: it gets its own email box (FR-21).
+pub fn clip_for_email(app: &AppState, court: i64, token: &str) -> Result<i64, AppError> {
+    let c = court_by_id(&app.db, court)?;
+    let clip = visible_clip(&app.db, &c, token)?;
+    if clip.kind != "tap" || clip.game.is_some() || clip.emailed {
+        return Err(AppError::NotFound);
+    }
+    Ok(clip.id)
+}
+
+fn court_by_id(db: &Db, id: i64) -> Result<Court, AppError> {
+    db.conn()
+        .query_row("SELECT id, name, code, camera_url IS NOT NULL FROM court WHERE id = ?1", [id], |r| {
+            Ok(Court { id: r.get(0)?, name: r.get(1)?, code: r.get(2)?, has_camera: r.get(3)? })
+        })
+        .optional()?
+        .ok_or(AppError::NotFound)
 }
 
 #[derive(Template)]
@@ -113,6 +166,7 @@ fn court_recording(app: &AppState, court: &Court) -> CourtStatus {
 #[derive(Deserialize)]
 pub struct PageQuery {
     error: Option<String>,
+    email: Option<String>,
 }
 
 pub async fn court_page(State(app): State<AppState>, Path(code): Path<String>, Query(q): Query<PageQuery>) -> Page {
@@ -120,16 +174,31 @@ pub async fn court_page(State(app): State<AppState>, Path(code): Path<String>, Q
     let (venue, has_logo): (String, bool) =
         app.db.conn().query_row("SELECT name, logo IS NOT NULL FROM venue WHERE id = 1", [], |r| Ok((r.get(0)?, r.get(1)?)))?;
     let (recording, status) = player_status(&court_recording(&app, &court));
+    let now = clock::now();
+    let judge_on: bool = app.db.conn().query_row("SELECT judge_on FROM venue WHERE id = 1", [], |r| r.get(0))?;
     html(CourtPage {
         venue,
         has_logo,
-        court: court.name,
-        code: court.code,
         recording,
         status,
-        clips: clip_lines(&app.db, court.id, clock::now())?,
-        error: q.error.is_some().then_some("The camera isn't recording right now, so no clip was saved."),
+        clips: clip_lines(&app.db, court.id, now)?,
+        error: q.error.is_some().then_some("The camera isn't recording right now, so nothing was started or saved."),
+        panel: crate::games::panel(&app, court.id, now)?,
+        judge_on,
+        online: crate::games::online(&app.db)?,
+        emails: crate::games::game_email_box(&app, court.id, now)?,
+        email_error: email_error(q.email.as_deref()),
+        clip_token: String::new(),
+        court: court.name,
+        code: court.code,
     })
+}
+
+pub async fn court_game(State(app): State<AppState>, Path(code): Path<String>) -> Page {
+    let court = court_by_code(&app.db, &code)?;
+    let (recording, _) = player_status(&court_recording(&app, &court));
+    let judge_on: bool = app.db.conn().query_row("SELECT judge_on FROM venue WHERE id = 1", [], |r| r.get(0))?;
+    html(GameFragment { panel: crate::games::panel(&app, court.id, clock::now())?, code: court.code, recording, judge_on })
 }
 
 pub async fn court_clips(State(app): State<AppState>, Path(code): Path<String>) -> Page {
@@ -194,7 +263,8 @@ fn record_tap(db: &Db, court: i64, now: Time) -> Result<(i64, i64, bool), AppErr
     }
     let w = ch_core::plan_clips(&[now], settings)[0];
     conn.execute(
-        "INSERT INTO clip (court_id, kind, token, window_start_ms, window_end_ms, last_tap_ms, made_at) VALUES (?1, 'tap', ?2, ?3, ?4, ?5, ?6)",
+        "INSERT INTO clip (court_id, game_id, kind, token, window_start_ms, window_end_ms, last_tap_ms, made_at)
+         VALUES (?1, (SELECT id FROM game WHERE court_id = ?1 AND stopped_at IS NULL), 'tap', ?2, ?3, ?4, ?5, ?6)",
         params![court, crate::auth::random_token(), ms(w.start), ms(w.end), ms(now), now.to_rfc3339()],
     )?;
     Ok((conn.last_insert_rowid(), ms(w.end), true))
@@ -249,22 +319,11 @@ async fn cut_when_due(app: &AppState, clip: i64) -> Result<(), AppError> {
         let dir = app.data.join("clips").join(&token);
         std::fs::create_dir_all(&dir).map_err(|e| AppError::Internal(e.to_string()))?;
         let (wide, vertical) = (dir.join("wide.mp4"), dir.join("vertical.mp4"));
-        let brand = brand(app)?;
-        let (w, v, b) = (wide.clone(), vertical.clone(), Window { start: at(start), end: at(end) });
-        let (actual_start, actual_end) = tokio::task::spawn_blocking(move || cut_files(&segments, b, &brand, &w, &v))
-            .await
-            .map_err(|e| AppError::Internal(e.to_string()))??;
-        // A missing thumbnail only costs the picture in the list; the clip itself is still good.
-        let still = wide.to_string_lossy().into_owned();
-        match tokio::task::spawn_blocking(move || media::still_jpeg(&still, 320, 180)).await {
-            Ok(Ok(jpeg)) => {
-                if let Err(e) = std::fs::write(dir.join("thumb.jpg"), jpeg) {
-                    tracing::warn!(clip, error = %e, "could not save clip thumbnail");
-                }
-            }
-            Ok(Err(e)) => tracing::warn!(clip, error = ?e, "could not make clip thumbnail"),
-            Err(e) => tracing::warn!(clip, error = %e, "thumbnail task failed"),
-        }
+        let p = plan(&segments, Window { start: at(start), end: at(end) })?;
+        let (actual_start, actual_end) = (p.start, p.end);
+        let outputs = vec![(Shape::Wide, wide.clone()), (Shape::Vertical, vertical.clone())];
+        render(app, p, outputs).await?;
+        thumbnail(clip, &wide, &dir).await;
         // Compare-and-set on the window: a tap that merged while cutting sends the loop round again.
         let done = app.db.conn().execute(
             "UPDATE clip SET state = 'ready', wide_path = ?1, vertical_path = ?2, window_start_ms = ?3
@@ -278,16 +337,70 @@ async fn cut_when_due(app: &AppState, clip: i64) -> Result<(), AppError> {
     }
 }
 
-struct Seg {
+pub struct Seg {
     path: String,
     start: i64,
     end: i64,
     size: Size,
 }
 
+/// A wall-clock window mapped onto recorded footage. splitmuxsrc plays segments back to back, so offsets count
+/// recorded time only: a gap (camera offline) takes no time in the output.
+pub struct Plan {
+    pub segments: Vec<String>,
+    pub from_ms: u64,
+    pub to_ms: u64,
+    pub source: Size,
+    /// The part of the window that has footage, wall clock.
+    pub start: i64,
+    pub end: i64,
+}
+
+/// Limits the window to footage that exists (FR-4, GV-7, GV-8).
+pub fn plan(all: &[Seg], window: Window) -> Result<Plan, AppError> {
+    let none = || AppError::BadRequest("No footage was recorded at that time.".into());
+    let (ws, we) = (ms(window.start), ms(window.end));
+    let run: Vec<&Seg> = all.iter().filter(|s| s.start < we && s.end > ws).collect();
+    let (first, last) = (run.first().ok_or_else(none)?, run.last().ok_or_else(none)?);
+    if first.size.w == 0 || first.size.h == 0 {
+        return Err(AppError::Internal("segment has no frame size".into()));
+    }
+    let recorded = |t: i64| run.iter().map(|s| (t.min(s.end) - s.start).max(0)).sum::<i64>();
+    let (start, end) = (ws.max(first.start), we.min(last.end));
+    if start >= end {
+        return Err(none());
+    }
+    Ok(Plan { segments: run.iter().map(|s| s.path.clone()).collect(), from_ms: recorded(start) as u64, to_ms: recorded(end) as u64, source: first.size, start, end })
+}
+
+/// Encodes a plan into the given shapes with the venue's logos (blocking work off the async threads).
+pub async fn render(app: &AppState, p: Plan, outputs: Vec<(Shape, PathBuf)>) -> Result<(), AppError> {
+    let brand = brand(app)?;
+    tokio::task::spawn_blocking(move || {
+        let outs: Vec<Output> = outputs.iter().map(|(shape, path)| Output { shape: *shape, path }).collect();
+        media::cut(&Cut { segments: p.segments, from_ms: p.from_ms, to_ms: p.to_ms, source: p.source, brand: &brand, outputs: outs })
+    })
+    .await
+    .map_err(|e| AppError::Internal(e.to_string()))?
+}
+
+/// A missing thumbnail only costs the picture in the list; the video itself is still good.
+pub async fn thumbnail(clip: i64, video: &std::path::Path, dir: &std::path::Path) {
+    let still = video.to_string_lossy().into_owned();
+    match tokio::task::spawn_blocking(move || media::still_jpeg(&still, 320, 180)).await {
+        Ok(Ok(jpeg)) => {
+            if let Err(e) = std::fs::write(dir.join("thumb.jpg"), jpeg) {
+                tracing::warn!(clip, error = %e, "could not save clip thumbnail");
+            }
+        }
+        Ok(Err(e)) => tracing::warn!(clip, error = ?e, "could not make clip thumbnail"),
+        Err(e) => tracing::warn!(clip, error = %e, "thumbnail task failed"),
+    }
+}
+
 /// Waits (≤ 15 s) until the footage up to `end` is in closed segment files, then returns the closed segments
 /// overlapping [start, end].
-async fn closed_segments(db: &Db, court: i64, start: i64, end: i64) -> Result<Vec<Seg>, AppError> {
+pub async fn closed_segments(db: &Db, court: i64, start: i64, end: i64) -> Result<Vec<Seg>, AppError> {
     let deadline = std::time::Instant::now() + Duration::from_secs(15);
     loop {
         let (covered, open_before_end): (bool, bool) = db.conn().query_row(
@@ -310,29 +423,6 @@ async fn closed_segments(db: &Db, court: i64, start: i64, end: i64) -> Result<Ve
         Ok(Seg { path: r.get(0)?, start: r.get(1)?, end: r.get(2)?, size: Size { w: r.get(3)?, h: r.get(4)? } })
     })?;
     Ok(rows.collect::<Result<_, _>>()?)
-}
-
-/// Cuts the window from the last continuous run of footage (FR-4: limited to footage that exists).
-fn cut_files(all: &[Seg], window: Window, brand: &Brand, wide: &std::path::Path, vertical: &std::path::Path) -> Result<(i64, i64), AppError> {
-    let none = || AppError::BadRequest("No footage was recorded at that time.".into());
-    let overlapping: Vec<&Seg> = all.iter().filter(|s| s.start < ms(window.end) && s.end > ms(window.start)).collect();
-    let last_gap = overlapping.windows(2).rposition(|p| p[1].start - p[0].end > GAP_MS).map_or(0, |i| i + 1);
-    let run = &overlapping[last_gap..];
-    let (first, last) = (run.first().ok_or_else(none)?, run.last().ok_or_else(none)?);
-    let w = ch_core::clamp_to_footage(window, &[Window { start: at(first.start), end: at(last.end) }]).ok_or_else(none)?;
-    if first.size.w == 0 || first.size.h == 0 {
-        return Err(AppError::Internal("segment has no frame size".into()));
-    }
-    media::cut(&Cut {
-        segments: run.iter().map(|s| s.path.clone()).collect(),
-        from_ms: (ms(w.start) - first.start) as u64,
-        to_ms: (ms(w.end) - first.start) as u64,
-        source: first.size,
-        brand,
-        wide,
-        vertical,
-    })?;
-    Ok((ms(w.start), ms(w.end)))
 }
 
 /// The venue's logos as files the overlay can read; content-addressed so a new upload never races a running cut.
@@ -366,6 +456,9 @@ struct ClipRow {
     failure: String,
     wide: Option<String>,
     vertical: Option<String>,
+    kind: String,
+    game: Option<i64>,
+    emailed: bool,
 }
 
 /// A clip is reachable from a court page only by its court's code, its own token and within 2 h (FR-18).
@@ -376,18 +469,24 @@ fn visible_clip(db: &Db, court: &Court, token: &str) -> Result<ClipRow, AppError
     let row = db
         .conn()
         .query_row(
-            "SELECT id, made_at, state, COALESCE(failure, ''), wide_path, vertical_path FROM clip
+            "SELECT id, made_at, state, COALESCE(failure, ''), wide_path, vertical_path, kind, game_id, emails_sent_at IS NOT NULL FROM clip
              WHERE token = ?1 AND court_id = ?2 AND hidden = 0",
             params![token, court.id],
-            |r| Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?)),
+            |r| {
+                Ok((
+                    (r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?, r.get::<_, String>(3)?),
+                    (r.get::<_, Option<String>>(4)?, r.get::<_, Option<String>>(5)?, r.get::<_, String>(6)?, r.get::<_, Option<i64>>(7)?, r.get::<_, bool>(8)?),
+                ))
+            },
         )
         .optional()?
         .ok_or(AppError::NotFound)?;
-    let made = clock::parse(&row.1).ok_or(AppError::NotFound)?;
+    let ((id, made, state, failure), (wide, vertical, kind, game, emailed)) = row;
+    let made = clock::parse(&made).ok_or(AppError::NotFound)?;
     if !ch_core::on_court_page(made, clock::now()) {
         return Err(AppError::NotFound);
     }
-    Ok(ClipRow { id: row.0, made, state: row.2, failure: row.3, wide: row.4, vertical: row.5 })
+    Ok(ClipRow { id, made, state, failure, wide, vertical, kind, game, emailed })
 }
 
 #[derive(Template)]
@@ -396,21 +495,48 @@ struct ClipPage {
     court: String,
     code: String,
     token: String,
-    time: String,
+    title: String,
     ready: bool,
+    has_vertical: bool,
     failure: String,
+    online: bool,
+    emails: Option<crate::games::EmailBox>,
+    email_error: Option<&'static str>,
+    clip_token: String,
 }
 
-pub async fn clip_page(State(app): State<AppState>, Path((code, token)): Path<(String, String)>) -> Page {
+#[derive(Deserialize)]
+pub struct ClipQuery {
+    email: Option<String>,
+}
+
+pub async fn clip_page(State(app): State<AppState>, Path((code, token)): Path<(String, String)>, Query(q): Query<ClipQuery>) -> Page {
     let court = court_by_code(&app.db, &code)?;
     let clip = visible_clip(&app.db, &court, &token)?;
+    let title = match clip.kind.as_str() {
+        "game" => format!("Game video, {}", time_label(clip.made)),
+        "reel" => "Highlights reel".to_string(),
+        "highlight" => format!("Highlight, {}", time_label(clip.made)),
+        _ => format!("Clip from {}", time_label(clip.made)),
+    };
+    // A clip tapped with no game running has its own email box (FR-21).
+    let emails = if clip.kind == "tap" && clip.game.is_none() && !clip.emailed {
+        Some(crate::games::email_box(&app.db, "clip_id", clip.id)?)
+    } else {
+        None
+    };
     html(ClipPage {
         court: court.name,
         code: court.code,
-        token,
-        time: time_label(clip.made),
+        title,
         ready: clip.state == "ready",
+        has_vertical: clip.vertical.is_some(),
         failure: if clip.state == "failed" { clip.failure } else { String::new() },
+        online: crate::games::online(&app.db)?,
+        emails,
+        email_error: email_error(q.email.as_deref()),
+        clip_token: token.clone(),
+        token,
     })
 }
 
@@ -430,6 +556,7 @@ pub async fn clip_file(
     let (path, shape) = match file.as_str() {
         "wide.mp4" => (clip.wide.ok_or(AppError::NotFound)?, "wide"),
         "vertical.mp4" => (clip.vertical.ok_or(AppError::NotFound)?, "vertical"),
+        "email.mp4" => return Err(AppError::NotFound), // the 720p copy only leaves through the online service
         "thumb.jpg" => (app.data.join("clips").join(&token).join("thumb.jpg").to_string_lossy().into_owned(), "thumb"),
         _ => return Err(AppError::NotFound),
     };
@@ -467,7 +594,25 @@ pub async fn hide(State(app): State<AppState>, Path((code, token)): Path<(String
 
 #[cfg(test)]
 mod tests {
-    use super::slug;
+    use super::*;
+
+    fn seg(start: i64, end: i64) -> Seg {
+        Seg { path: format!("{start}.mp4"), start, end, size: Size { w: 640, h: 360 } }
+    }
+
+    #[test]
+    fn plans_count_recorded_time_across_gaps() {
+        // 0–10 s and 10–20 s, then the camera was off until 30 s, then 30–40 s.
+        let all = [seg(0, 10_000), seg(10_000, 20_000), seg(30_000, 40_000)];
+        let p = plan(&all, Window { start: at(15_000), end: at(35_000) }).unwrap();
+        assert_eq!(p.segments, ["10000.mp4", "30000.mp4"]);
+        assert_eq!((p.from_ms, p.to_ms), (5_000, 15_000)); // 5 s into the first file, 5 s of the gap-free tail
+        assert_eq!((p.start, p.end), (15_000, 35_000));
+        // Clamped to the footage that exists (GV-8).
+        let early = plan(&all, Window { start: at(-25_000), end: at(5_000) }).unwrap();
+        assert_eq!((early.from_ms, early.to_ms, early.start), (0, 5_000, 0));
+        assert!(plan(&all, Window { start: at(20_500), end: at(29_000) }).is_err());
+    }
 
     #[test]
     fn slugs() {

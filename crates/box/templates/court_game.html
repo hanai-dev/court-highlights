@@ -1,0 +1,39 @@
+<h2 id="game-h">Game</h2>
+{% if let Some(r) = panel.running %}
+<p class="status status-ok" data-game-running>Recording since {{ r.since }}</p>
+<p class="fine">It stops by itself at {{ r.stops_at }}. Anyone on this court can stop it.</p>
+<form method="post" action="/c/{{ code }}/game/stop"><button class="btn btn-block" type="submit">Stop game</button></form>
+{% else %}
+<form method="post" action="/c/{{ code }}/game/start">
+  <label class="check"><input type="checkbox" name="may_post" value="1"> The venue may post our highlights on its pages</label>
+  <button class="btn btn-block" type="submit"{% if !recording %} disabled{% endif %}>Start game</button>
+</form>
+<p class="fine">Start, play, then Stop: you get the whole game video{% if judge_on %} and up to 5 highlights{% endif %}.</p>
+{% endif %}
+{% if let Some(g) = panel.last %}
+<div class="last-game" data-last-game>
+  <h3>Last game, {{ g.span }}</h3>
+  {% if let Some(v) = g.video %}
+    {% if v.state == "ready" %}
+    <a class="clip-link" href="/c/{{ code }}/clips/{{ v.token }}" data-game-video><img src="/c/{{ code }}/clips/{{ v.token }}/thumb.jpg" width="160" height="90" alt="" loading="lazy"><span>Game video · <span class="num">{{ v.seconds / 60 }} min {{ v.seconds % 60 }} s</span></span></a>
+    {% else if v.state == "saving" %}
+    <p class="clip-pending" data-game-video-saving>Game video saving…</p>
+    {% else %}
+    <p class="clip-failed">The box couldn't make this game video.</p>
+    {% endif %}
+  {% endif %}
+  {% if g.highlights == "pending" || g.highlights == "running" %}
+  <p class="clip-pending" data-highlights-coming>Highlights coming — about {{ g.minutes_left }} min</p>
+  {% else if g.highlights == "done" %}
+  <h3>Highlights</h3>
+  <ul class="clips" data-highlights>
+    {% if let Some(r) = g.reel %}<li><a class="clip-link" href="/c/{{ code }}/clips/{{ r.token }}" data-reel><img src="/c/{{ code }}/clips/{{ r.token }}/thumb.jpg" width="160" height="90" alt="" loading="lazy"><span>Highlights reel · <span class="num">{{ r.seconds }}</span> s</span></a></li>{% endif %}
+    {% for h in g.singles %}<li><a class="clip-link" href="/c/{{ code }}/clips/{{ h.token }}" data-highlight><img src="/c/{{ code }}/clips/{{ h.token }}/thumb.jpg" width="160" height="90" alt="" loading="lazy"><span>Highlight {{ loop.index }} · <span class="num">{{ h.seconds }}</span> s</span></a></li>{% endfor %}
+  </ul>
+  {% else if g.highlights == "none" %}
+  <p data-no-highlights>No highlights found — the game video is still here.</p>
+  {% else if g.highlights == "failed" %}
+  <p class="clip-failed">Highlights couldn't be made for this game. The game video is still here.</p>
+  {% endif %}
+</div>
+{% endif %}

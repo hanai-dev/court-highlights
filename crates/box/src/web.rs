@@ -33,6 +33,14 @@ pub enum AppError {
     Internal(String),
 }
 
+impl std::fmt::Display for AppError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self:?}")
+    }
+}
+
+impl std::error::Error for AppError {}
+
 impl From<rusqlite::Error> for AppError {
     fn from(e: rusqlite::Error) -> Self {
         Self::Internal(e.to_string())
@@ -87,6 +95,11 @@ pub fn player_router(state: AppState) -> Router {
         .route("/c/{code}", get(crate::clips::court_page))
         .route("/c/{code}/tap", post(crate::clips::tap))
         .route("/c/{code}/clips", get(crate::clips::court_clips))
+        .route("/c/{code}/game", get(crate::clips::court_game))
+        .route("/c/{code}/game/start", post(crate::games::start))
+        .route("/c/{code}/game/stop", post(crate::games::stop))
+        .route("/c/{code}/emails", post(crate::games::add_email))
+        .route("/c/{code}/emails/{id}/remove", post(crate::games::remove_email))
         .route("/c/{code}/clips/{token}", get(crate::clips::clip_page))
         .route("/c/{code}/clips/{token}/hide", post(crate::clips::hide))
         .route("/c/{code}/clips/{token}/{file}", get(crate::clips::clip_file))

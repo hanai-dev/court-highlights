@@ -6,6 +6,8 @@ mod clock;
 mod courts;
 mod db;
 mod footage;
+mod games;
+mod judge;
 mod library;
 mod media;
 mod recorder;
@@ -46,6 +48,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     recorders.spawn_supervisor();
     let state = web::AppState { db, recorders, data: data_dir.clone(), fingerprint: tls::fingerprint(&cert)? };
     clips::resume_saving(&state)?;
+    games::recover(&state)?;
+    games::spawn_watch(state.clone());
     let tls = axum_server::tls_rustls::RustlsConfig::from_pem(cert.into_bytes(), key.into_bytes()).await?;
 
     let (player_handle, staff_handle) = (axum_server::Handle::new(), axum_server::Handle::new());
@@ -57,9 +61,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         s.graceful_shutdown(Some(Duration::from_secs(10)));
     });
     tracing::info!(%http, %https, "court box listening");
+    let recorders = state.recorders.clone();
     let player = axum_server::bind(http).handle(player_handle).serve(web::player_router(state.clone()).into_make_service());
     let staff = axum_server::bind_rustls(https, tls).handle(staff_handle).serve(web::staff_router(state).into_make_service());
     tokio::try_join!(player, staff)?;
+    recorders.stop_all().await;
+    tracing::info!("stopped cleanly");
     Ok(())
 }
 

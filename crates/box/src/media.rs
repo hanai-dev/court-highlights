@@ -44,7 +44,7 @@ fn first_available(names: &[&'static str]) -> Option<&'static str> {
 
 /// One JPEG still from the first frame of an MP4 (camera preview, clip thumbnails).
 pub fn still_jpeg(path: &str, width: u32, height: u32) -> Result<Vec<u8>, AppError> {
-    let decoder = first_available(&["vah264dec", "openh264dec"]).ok_or_else(|| fail("no H.264 decoder"))?;
+    let decoder = h264_decoder()?;
     let p = launch(&format!(
         "filesrc name=src ! qtdemux ! h264parse ! {decoder} ! videoconvert ! videoscale \
          ! video/x-raw,width={width},height={height},pixel-aspect-ratio=1/1 ! jpegenc ! appsink name=sink max-buffers=1 sync=false"
@@ -181,68 +181,162 @@ fn configure_overlays(p: &gst::Pipeline, brand: &Brand, prefix: &str, frame: Siz
     Ok(())
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Shape {
+    /// The camera's frame, at most 1920×1080.
+    Wide,
+    /// The middle 9:16 of the frame.
+    Vertical,
+    /// The camera's frame, at most 1280×720 — the copy of a game video that is emailed (FR-12).
+    Email,
+}
+
+impl Shape {
+    fn size(self, source: Size) -> Size {
+        let (wide, vertical) = output_sizes(source);
+        match self {
+            Self::Wide => wide,
+            Self::Vertical => vertical,
+            Self::Email => {
+                let k = (1280.0 / source.w as f64).min(720.0 / source.h as f64).min(1.0);
+                Size { w: even(source.w as f64 * k), h: even(source.h as f64 * k) }
+            }
+        }
+    }
+}
+
+pub struct Output<'a> {
+    pub shape: Shape,
+    pub path: &'a Path,
+}
+
 pub struct Cut<'a> {
-    /// Contiguous recorded segments, oldest first.
+    /// Recorded segments, oldest first; splitmuxsrc plays them back to back.
     pub segments: Vec<String>,
-    /// Window inside the joined segments, in milliseconds from the start of the first one.
+    /// Window in recorded time from the start of the first segment.
     pub from_ms: u64,
     pub to_ms: u64,
     pub source: Size,
     pub brand: &'a Brand,
-    pub wide: &'a Path,
-    pub vertical: &'a Path,
+    pub outputs: Vec<Output<'a>>,
 }
 
-/// Decodes the window once and encodes both shapes with the logos burned in. No audio track is ever written.
-pub fn cut(job: &Cut) -> Result<(), AppError> {
-    let decoder = first_available(&["vah264dec", "openh264dec"]).ok_or_else(|| fail("no H.264 decoder"))?;
-    let encoder = first_available(&["vah264lpenc", "vah264enc", "openh264enc"]).ok_or_else(|| fail("no H.264 encoder"))?;
-    let (wide, vertical) = output_sizes(job.source);
-    let enc = |name: &str| format!("{encoder} name={name} ! h264parse ! mp4mux faststart=true");
-    let p = launch(&format!(
-        "splitmuxsrc name=src ! h264parse ! {decoder} ! videoconvert ! tee name=t \
-         t. ! queue ! videoscale ! video/x-raw,width={ww},height={wh},pixel-aspect-ratio=1/1 ! {wo}videoconvert ! {we} ! filesink name=wide_out \
-         t. ! queue ! aspectratiocrop aspect-ratio=9/16 ! videoscale ! video/x-raw,width={vw},height={vh},pixel-aspect-ratio=1/1 ! {vo}videoconvert ! {ve} ! filesink name=vertical_out",
-        ww = wide.w,
-        wh = wide.h,
-        vw = vertical.w,
-        vh = vertical.h,
-        wo = overlays(job.brand, "wide_logo"),
-        vo = overlays(job.brand, "vertical_logo"),
-        we = enc("wide_enc"),
-        ve = enc("vertical_enc"),
-    ))?;
-    let files = job.segments.clone();
-    element(&p, "src")?.connect("format-location", false, move |_| Some(files.to_value()));
-    element(&p, "wide_out")?.set_property("location", job.wide.to_string_lossy().as_ref());
-    element(&p, "vertical_out")?.set_property("location", job.vertical.to_string_lossy().as_ref());
-    configure_overlays(&p, job.brand, "wide_logo", wide)?;
-    configure_overlays(&p, job.brand, "vertical_logo", vertical)?;
-    for (name, size) in [("wide_enc", wide), ("vertical_enc", vertical)] {
-        let e = element(&p, name)?;
-        // ≈ 0.1 bit per pixel per frame at 30 fps; the kbit/s vs bit/s split is the elements' own convention.
-        let bps = (size.w as u64 * size.h as u64 * 3).clamp(500_000, 8_000_000);
-        if encoder == "openh264enc" {
-            e.set_property("bitrate", bps as u32);
-            e.set_property_from_str("complexity", "low");
-            e.set_property("multi-thread", 4u32);
-        } else {
-            e.set_property("bitrate", (bps / 1000) as u32);
-        }
-    }
+fn h264_encoder() -> Result<&'static str, AppError> {
+    first_available(&["vah264lpenc", "vah264enc", "openh264enc"]).ok_or_else(|| fail("no H.264 encoder"))
+}
 
+fn h264_decoder() -> Result<&'static str, AppError> {
+    first_available(&["vah264dec", "openh264dec"]).ok_or_else(|| fail("no H.264 decoder"))
+}
+
+/// ≈ 0.1 bit per pixel per frame at 30 fps; the kbit/s vs bit/s split is the elements' own convention.
+fn configure_encoder(e: &gst::Element, encoder: &str, size: Size) {
+    let bps = (size.w as u64 * size.h as u64 * 3).clamp(500_000, 8_000_000);
+    if encoder == "openh264enc" {
+        e.set_property("bitrate", bps as u32);
+        e.set_property_from_str("complexity", "low");
+        e.set_property("multi-thread", 4u32);
+    } else {
+        e.set_property("bitrate", (bps / 1000) as u32);
+    }
+}
+
+fn set_segments(p: &gst::Pipeline, segments: &[String]) -> Result<(), AppError> {
+    let files = segments.to_vec();
+    element(p, "src")?.connect("format-location", false, move |_| Some(files.to_value()));
+    Ok(())
+}
+
+/// Decodes the window once and encodes every requested shape with the logos burned in. No audio track is ever
+/// written.
+pub fn cut(job: &Cut) -> Result<(), AppError> {
+    let (decoder, encoder) = (h264_decoder()?, h264_encoder()?);
+    let branches: String = job
+        .outputs
+        .iter()
+        .enumerate()
+        .map(|(i, o)| {
+            let size = o.shape.size(job.source);
+            let crop = if o.shape == Shape::Vertical { "aspectratiocrop aspect-ratio=9/16 ! " } else { "" };
+            format!(
+                " t. ! queue ! {crop}videoscale ! video/x-raw,width={},height={},pixel-aspect-ratio=1/1 ! {}videoconvert ! {encoder} name=enc{i} ! h264parse ! mp4mux faststart=true ! filesink name=out{i}",
+                size.w,
+                size.h,
+                overlays(job.brand, &format!("logo{i}_")),
+            )
+        })
+        .collect();
+    let p = launch(&format!("splitmuxsrc name=src ! h264parse ! {decoder} ! videoconvert ! tee name=t{branches}"))?;
+    set_segments(&p, &job.segments)?;
+    for (i, o) in job.outputs.iter().enumerate() {
+        let size = o.shape.size(job.source);
+        element(&p, &format!("out{i}"))?.set_property("location", o.path.to_string_lossy().as_ref());
+        configure_overlays(&p, job.brand, &format!("logo{i}_"), size)?;
+        configure_encoder(&element(&p, &format!("enc{i}"))?, encoder, size);
+    }
     trim(&element(&p, "t")?, job.from_ms, job.to_ms)?;
-    // ponytail: a 30 s window at real-time × 4 worst case; tune once the N150 numbers are in (NFR-1).
-    run_to_eos(&p, 120)
+    // ponytail: real-time × 4 worst case for the window; tune once the N150 numbers are in (NFR-1, NFR-3).
+    run_to_eos(&p, (job.to_ms.saturating_sub(job.from_ms) / 250).max(120))
+}
+
+/// Movement over a window, 5 samples a second: mean absolute difference between consecutive 96×54 grey frames
+/// (0–255). Input to the baseline shot judge. Returns (ms from window start, movement).
+pub fn motion_profile(segments: &[String], from_ms: u64, to_ms: u64) -> Result<Vec<(u64, f32)>, AppError> {
+    let decoder = h264_decoder()?;
+    let p = launch(&format!(
+        "splitmuxsrc name=src ! h264parse ! {decoder} ! identity name=gate ! videorate drop-only=true ! video/x-raw,framerate=5/1          ! videoscale ! videoconvert ! video/x-raw,format=GRAY8,width=96,height=54 ! appsink name=sink sync=false max-buffers=64"
+    ))?;
+    set_segments(&p, segments)?;
+    trim(&element(&p, "gate")?, from_ms, to_ms)?;
+    let sink = element(&p, "sink")?.downcast::<gst_app::AppSink>().map_err(|_| fail("no sink"))?;
+    p.set_state(gst::State::Playing).map_err(fail)?;
+    let mut out = Vec::new();
+    let mut previous: Option<Vec<u8>> = None;
+    // Ends at EOS (the trim probe) or if decoding stalls for 30 s.
+    while let Some(sample) = sink.try_pull_sample(gst::ClockTime::from_seconds(30)) {
+        let Some(buffer) = sample.buffer() else { continue };
+        // Running time: 0 at the window start (the trim probe re-bases it); raw PTS starts at 1000 s.
+        let segment = sample.segment().and_then(|s| s.downcast_ref::<gst::ClockTime>().cloned());
+        let Some(at) = segment.zip(buffer.pts()).and_then(|(s, pts)| s.to_running_time(pts)).map(|t| t.mseconds()) else { continue };
+        let frame = buffer.map_readable().map_err(fail)?.as_slice().to_vec();
+        if let Some(prev) = &previous
+            && prev.len() == frame.len()
+        {
+            let diff: u64 = prev.iter().zip(&frame).map(|(a, b)| a.abs_diff(*b) as u64).sum();
+            out.push((at, diff as f32 / frame.len() as f32));
+        }
+        previous = Some(frame);
+    }
+    let ended = p.bus().and_then(|b| b.pop_filtered(&[gst::MessageType::Error]));
+    let _ = p.set_state(gst::State::Null);
+    if let Some(msg) = ended
+        && let gst::MessageView::Error(e) = msg.view()
+    {
+        return Err(fail(e.error()));
+    }
+    Ok(out)
+}
+
+/// Joins already-encoded files of one shape into one, re-encoded so the result is a single clean stream (reels).
+pub fn concat_encode(files: &[PathBuf], size: Size, out: &Path) -> Result<(), AppError> {
+    let (decoder, encoder) = (h264_decoder()?, h264_encoder()?);
+    let p = launch(&format!(
+        "splitmuxsrc name=src ! h264parse ! {decoder} ! videoconvert ! {encoder} name=enc ! h264parse ! mp4mux faststart=true ! filesink name=out"
+    ))?;
+    let names: Vec<String> = files.iter().map(|f| f.to_string_lossy().into_owned()).collect();
+    set_segments(&p, &names)?;
+    configure_encoder(&element(&p, "enc")?, encoder, size);
+    element(&p, "out")?.set_property("location", out.to_string_lossy().as_ref());
+    run_to_eos(&p, 600)
 }
 
 /// Keeps only decoded frames whose running time is in [from, to), re-based to start at 0, then ends the stream. No
 /// seek: a flushing seek after preroll leaves encoders mid-GOP, so the file would not start on a keyframe. Decoding
 /// starts at the first segment's keyframe, at most one segment (10 s) before the window. Running time, not PTS:
 /// splitmuxsrc stamps buffers from 1000 s.
-fn trim(tee: &gst::Element, from_ms: u64, to_ms: u64) -> Result<(), AppError> {
+fn trim(gate: &gst::Element, from_ms: u64, to_ms: u64) -> Result<(), AppError> {
     let (from, to) = (gst::ClockTime::from_mseconds(from_ms), gst::ClockTime::from_mseconds(to_ms));
-    let pad = tee.static_pad("sink").ok_or_else(|| fail("tee has no sink pad"))?;
+    let pad = gate.static_pad("sink").ok_or_else(|| fail("gate has no sink pad"))?;
     let ended = std::sync::atomic::AtomicBool::new(false);
     pad.add_probe(gst::PadProbeType::BUFFER, move |pad, info| {
         let Some(gst::PadProbeData::Buffer(buffer)) = info.data.as_mut() else { return gst::PadProbeReturn::Ok };

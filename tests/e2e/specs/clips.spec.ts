@@ -1,7 +1,7 @@
 import { test, expect, webkit, chromium, devices, type Browser, type Page } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CAMERA, OWNER, PLAYER, addCourt, advanceClock, boxExec, completeSetup, courtCode, freshBox, startCameras, waitCourtStatus } from './helpers';
+import { CAMERA, OWNER, PLAYER, STAFF, addCourt, advanceClock, boxExec, completeSetup, courtCode, freshBox, signIn, startCameras, waitCourtStatus } from './helpers';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -131,7 +131,13 @@ for (const [label, engine, device] of [
   });
 }
 
-test('three taps within 5 s make exactly one clip that ends 5 s after the last tap (FR-5)', async ({ page }) => {
+test('three taps within 5 s make exactly one clip, on the court page and in the library, ending 5 s after the last tap (FR-5)', async ({ page }) => {
+  await signIn(page, OWNER.username, OWNER.password);
+  const libraryCount = async (): Promise<number> => {
+    await page.goto(`${STAFF}/console/clips?kind=tap`);
+    return (await page.locator('[data-total]').count()) ? Number(await page.locator('[data-total]').textContent()) : 0;
+  };
+  const inLibrary = await libraryCount();
   await page.goto(`${PLAYER}/c/${code}`);
   const before = (await readyClips(page)).length;
   const tapButton = page.getByRole('button', { name: 'Clip that' });
@@ -146,6 +152,7 @@ test('three taps within 5 s make exactly one clip that ends 5 s after the last t
   const seconds = probe(clipFiles(token).wide).seconds;
   expect(seconds).toBeGreaterThan(32.5); // 25 s before the first tap + 4 s between taps + 5 s after the last
   expect(seconds).toBeLessThan(35.5);
+  expect(await libraryCount()).toBe(inLibrary + 1);
 });
 
 test('clips are reachable only from their own court page, within 2 h, by their own token (FR-18, SN-1)', async ({ page, request }) => {
