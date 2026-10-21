@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { CAMERA, STAFF, addCourt, advanceClock, boxExec, compose, completeSetup, freshBox, msUntilManila, startCameras, waitCourtStatus } from './helpers';
+import { CAMERA, OWNER, STAFF, addCourt, signIn, advanceClock, boxExec, compose, completeSetup, freshBox, msUntilManila, startCameras, waitCourtStatus } from './helpers';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -51,6 +51,7 @@ test('courts are added with cameras and record by stream copy, without audio (FR
 });
 
 test('an unplugged camera turns its court red within 10 s and recording resumes within 5 s of its return (FR-3)', async ({ page }) => {
+  await signIn(page, OWNER.username, OWNER.password);
   compose('stop', 'cam-2');
   const redAfter = await waitCourtStatus(page, 'Court 2', /^Camera offline since/, 15_000);
   expect(redAfter, 'red within 10 s').toBeLessThanOrEqual(10_000);
@@ -71,6 +72,7 @@ test('an unplugged camera turns its court red within 10 s and recording resumes 
 });
 
 test('the box keeps only the last 4 hours of footage (GV-13)', async ({ page, request }) => {
+  await signIn(page, OWNER.username, OWNER.password);
   await expect.poll(() => segments(1).length, { timeout: 30_000 }).toBeGreaterThanOrEqual(2);
   const before = segments(1).map((s) => s.path);
   await advanceClock(request, 4 * 3600_000 + 60_000);
@@ -93,6 +95,7 @@ test('outside opening hours nothing is recorded; recording starts again at openi
 });
 
 test('a court is deleted only after a confirmation that names it (FR-30)', async ({ page }) => {
+  await signIn(page, OWNER.username, OWNER.password);
   await page.goto(`${STAFF}/console/courts`);
   await page.getByRole('link', { name: 'Edit Court 2' }).click();
   await page.getByRole('link', { name: 'Delete Court 2' }).click();
