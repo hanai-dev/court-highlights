@@ -279,11 +279,11 @@ test('Wipe box: the Owner types the venue name; clips, footage, accounts and log
   await staff.getByLabel(/Type the venue name to confirm/).fill(OWNER.venue);
   await staff.getByRole('button', { name: 'Wipe this box' }).click();
   await expect(staff.getByRole('heading', { name: 'This box is wiped' })).toBeVisible();
-  // The box process ends; its service manager (systemd Restart=always on the box) starts it again.
-  await expect.poll(() => compose('ps', '-a', '--format', '{{.State}}', 'box-a').trim(), { timeout: 30_000 }).toBe('exited');
-  compose('start', 'box-a');
-  await expect.poll(async () => (await fetch(`${PLAYER}/healthz`).catch(() => null))?.ok ?? false, { timeout: 60_000 }).toBe(true);
-
+  // The box process ends and its launcher (systemd on the box) starts it again: a new, empty box at setup.
+  await expect.poll(async () => {
+    const res = await staff.request.get(`${STAFF}/console`, { maxRedirects: 0 }).catch(() => null);
+    return res?.headers()['location'] ?? '';
+  }, { timeout: 60_000, intervals: [2000] }).toBe('/setup');
   await staff.goto(`${STAFF}/console`);
   await expect(staff).toHaveURL(`${STAFF}/setup`);
   const files = boxExec('find /data -type f').trim().split('\n');

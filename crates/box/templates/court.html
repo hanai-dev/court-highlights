@@ -9,7 +9,7 @@
   </header>
   {% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
   <section class="clip-that" aria-label="Clip that">
-    <form method="post" action="/c/{{ code }}/tap" data-tap>
+    <form method="post" action="/c/{{ code }}/tap" data-tap data-after-ms="{{ after_ms }}">
       <button class="btn-clip-that" type="submit" data-clip-that{% if !recording %} disabled{% endif %}>Clip that</button>
     </form>
     <p class="fine">Saves the moment you just played. Tap again within 5 seconds to make it longer.</p>

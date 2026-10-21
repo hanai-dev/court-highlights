@@ -103,7 +103,7 @@ jobs:
         working-directory: tests/e2e
         run: |
           npm ci
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
           set -o pipefail
           npx playwright test 2>&1 | tee test-results-e2e.txt
       - name: Logs hold no player data (SEC-LOGS-NO-PII)

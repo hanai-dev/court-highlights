@@ -15,7 +15,9 @@ const file = (name: string): string => path.join(OUT, name);
 const KEY = '/work/tests/fixtures/release-test.pk8'; // test-only signing key; the boxes trust it via CH_RELEASE_KEY
 
 function makeUpdate(name: string, version: string, payload: string): void {
-  boxExec(`mkdir -p /work/tests/e2e/test-results/updates && /work/target/debug/ch-box make-update ${version} ${payload} ${KEY} /work/tests/e2e/test-results/updates/${name}`);
+  // Made here first so the folder belongs to the test runner, not to the container's root (Linux bind mounts).
+  fs.mkdirSync(OUT, { recursive: true });
+  boxExec(`/work/target/debug/ch-box make-update ${version} ${payload} ${KEY} /work/tests/e2e/test-results/updates/${name}`);
 }
 
 async function boxBack(): Promise<void> {

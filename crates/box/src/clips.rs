@@ -94,6 +94,8 @@ struct CourtPage {
     emails: Option<crate::games::EmailBox>,
     email_error: Option<&'static str>,
     clip_token: String,
+    /// Seconds kept after a tap, in ms: the saving ring starts with it the moment the player taps.
+    after_ms: u32,
 }
 
 #[derive(Template)]
@@ -181,7 +183,8 @@ pub async fn court_page(State(app): State<AppState>, Path(code): Path<String>, Q
         app.db.conn().query_row("SELECT name, logo IS NOT NULL FROM venue WHERE id = 1", [], |r| Ok((r.get(0)?, r.get(1)?)))?;
     let (recording, status) = player_status(&court_recording(&app, &court));
     let now = clock::now();
-    let judge_on: bool = app.db.conn().query_row("SELECT judge_on FROM venue WHERE id = 1", [], |r| r.get(0))?;
+    let (judge_on, after_s): (bool, u32) =
+        app.db.conn().query_row("SELECT judge_on, clip_after_s FROM venue WHERE id = 1", [], |r| Ok((r.get(0)?, r.get(1)?)))?;
     html(CourtPage {
         venue,
         has_logo,
@@ -195,6 +198,7 @@ pub async fn court_page(State(app): State<AppState>, Path(code): Path<String>, Q
         emails: crate::games::game_email_box(&app, court.id, now)?,
         email_error: email_error(q.email.as_deref()),
         clip_token: String::new(),
+        after_ms: after_s * 1000,
         court: court.name,
         code: court.code,
     })

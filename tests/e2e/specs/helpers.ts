@@ -35,7 +35,11 @@ export function saveServiceLogs(): void {
 
 export function compose(...args: string[]): string {
   if (args.includes('down') || args.includes('rm') || args.includes('--force-recreate')) saveServiceLogs();
-  return execFileSync('docker', ['compose', '-f', COMPOSE_FILE, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  const out = execFileSync('docker', ['compose', '-f', COMPOSE_FILE, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  // A started container adds network interfaces; Chromium on Linux then aborts in-flight requests with
+  // ERR_NETWORK_CHANGED. Let the host network settle before the test goes on.
+  if (['up', 'start', 'restart'].some((a) => args.includes(a))) Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 2000);
+  return out;
 }
 
 async function waitHealthy(url: string): Promise<void> {

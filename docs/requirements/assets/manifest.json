@@ -65,8 +65,7 @@
  "motion": [
   {
    "id": "clip-saving-ring",
-   "route": "/c/example-court",
-   "selector": "[data-saving-ring]",
+   "selector": "[data-saving-ring] [data-ring]",
    "trigger": {
     "type": "click",
     "selector": "[data-clip-that]"

@@ -56,13 +56,22 @@
     countdown = setInterval(tick, 1000);
   }
 
+  function hideSaving() {
+    saving.hidden = true;
+    clearInterval(countdown);
+    countdown = null;
+  }
+
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     tapError.hidden = true;
+    // The ring starts at once (a tap keeps the next few seconds); the box's answer then sets the exact time.
+    showSaving(Number(form.getAttribute('data-after-ms')) || 5000);
     fetch(form.action, { method: 'POST', headers: { Accept: 'application/json' } })
       .then(function (r) { return r.json().then(function (body) { return { ok: r.ok, body: body }; }); })
       .then(function (res) {
         if (!res.ok) {
+          hideSaving();
           tapError.textContent = res.body.error || 'No clip was saved. Try again.';
           tapError.hidden = false;
           return;
@@ -73,6 +82,7 @@
         startPolling();
       })
       .catch(function () {
+        hideSaving();
         tapError.textContent = "The court box didn't answer. Check you're on the venue Wi-Fi and tap again.";
         tapError.hidden = false;
       });

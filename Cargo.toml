@@ -17,6 +17,8 @@ serde_json = "1"
 # Debug builds keep line tables only, and none for dependencies: the test target stays a few GB (the build disk is small).
 [profile.dev]
 debug = "line-tables-only"
+# Every byte written lands on the small host disk until WSL restarts; incremental artifacts are hundreds of MB a build.
+incremental = false
 
 [profile.dev.package."*"]
 debug = false
