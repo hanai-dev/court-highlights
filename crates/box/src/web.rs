@@ -98,8 +98,11 @@ fn test_hooks(r: Router<AppState>) -> Router<AppState> {
     struct Advance {
         ms: i64,
     }
-    r.route("/__test/clock", post(|Form(a): Form<Advance>| async move {
+    r.route("/__test/clock", post(|State(app): State<AppState>, Form(a): Form<Advance>| async move {
         crate::clock::advance(a.ms);
+        if a.ms != 0 {
+            app.recorders.split_all();
+        }
         crate::clock::now().to_rfc3339()
     }))
 }

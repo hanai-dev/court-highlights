@@ -254,9 +254,16 @@ async fn cut_when_due(app: &AppState, clip: i64) -> Result<(), AppError> {
         let (actual_start, actual_end) = tokio::task::spawn_blocking(move || cut_files(&segments, b, &brand, &w, &v))
             .await
             .map_err(|e| AppError::Internal(e.to_string()))??;
-        let thumb = media::still_jpeg(&wide.to_string_lossy(), 320, 180).ok();
-        if let Some(jpeg) = thumb {
-            let _ = std::fs::write(dir.join("thumb.jpg"), jpeg);
+        // A missing thumbnail only costs the picture in the list; the clip itself is still good.
+        let still = wide.to_string_lossy().into_owned();
+        match tokio::task::spawn_blocking(move || media::still_jpeg(&still, 320, 180)).await {
+            Ok(Ok(jpeg)) => {
+                if let Err(e) = std::fs::write(dir.join("thumb.jpg"), jpeg) {
+                    tracing::warn!(clip, error = %e, "could not save clip thumbnail");
+                }
+            }
+            Ok(Err(e)) => tracing::warn!(clip, error = ?e, "could not make clip thumbnail"),
+            Err(e) => tracing::warn!(clip, error = %e, "thumbnail task failed"),
         }
         // Compare-and-set on the window: a tap that merged while cutting sends the loop round again.
         let done = app.db.conn().execute(
@@ -427,11 +434,11 @@ pub async fn clip_file(
         _ => return Err(AppError::NotFound),
     };
     // ServeFile answers Range requests, which iPhone Safari needs to play and save video.
-    let mut res = tower_http::services::ServeFile::new(&path)
-        .try_call(req)
-        .await
-        .map_err(|e| AppError::Internal(e.to_string()))?
-        .into_response();
+    let mut res = match tower_http::services::ServeFile::new(&path).try_call(req).await {
+        Ok(r) => r.into_response(),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Err(AppError::NotFound),
+        Err(e) => return Err(AppError::Internal(e.to_string())),
+    };
     if res.status() == StatusCode::NOT_FOUND {
         return Err(AppError::NotFound);
     }

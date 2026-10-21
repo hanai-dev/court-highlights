@@ -144,6 +144,14 @@ impl Recorders {
     }
 
     /// Closes the court's open fragment at the next keyframe so the newest seconds become readable (clip cutting).
+    /// After a clock correction (FR-38) every court starts a new segment, so no segment spans two timelines.
+    pub fn split_all(&self) {
+        let ids: Vec<i64> = self.slots.lock().unwrap_or_else(|p| p.into_inner()).keys().copied().collect();
+        for id in ids {
+            self.split_now(id);
+        }
+    }
+
     pub fn split_now(&self, court_id: i64) {
         let slots = self.slots.lock().unwrap_or_else(|p| p.into_inner());
         if let Some(sink) = slots.get(&court_id).and_then(|s| s.sink.lock().unwrap_or_else(|p| p.into_inner()).clone()) {
