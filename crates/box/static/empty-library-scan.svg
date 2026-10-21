@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-labelledby="t">
+  <title id="t">A phone scanning the court code on the sign hanging from a net post</title>
+  <g fill="none" stroke="#1b1b1b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- net post and net -->
+    <path d="M120 320 L120 96"/>
+    <path d="M110 320 L130 320"/>
+    <path d="M120 120 L20 132 M120 150 L20 158"/>
+    <path d="M44 129 L44 156 M68 126 L68 153 M92 123 L92 150" stroke-width="2"/>
+    <!-- the court sign on the post -->
+    <rect x="132" y="104" width="112" height="148" rx="4"/>
+    <path d="M120 116 L132 116 M120 236 L132 236"/>
+    <rect x="152" y="124" width="72" height="72" stroke-width="2"/>
+    <rect x="160" y="132" width="20" height="20" stroke-width="2"/>
+    <rect x="196" y="132" width="20" height="20" stroke-width="2"/>
+    <rect x="160" y="168" width="20" height="20" stroke-width="2"/>
+    <path d="M196 170 L204 170 M212 170 L216 170 M196 180 L216 180 M204 188 L216 188" stroke-width="2"/>
+    <path d="M150 214 L226 214 M150 230 L206 230" stroke-width="2"/>
+    <!-- phone held up to the sign -->
+    <rect x="300" y="112" width="96" height="172" rx="12"/>
+    <path d="M336 126 L360 126" stroke-width="2"/>
+    <rect x="312" y="140" width="72" height="104" stroke-width="2"/>
+    <path d="M326 168 L326 156 L338 156 M370 156 L370 168 M370 204 L370 216 L358 216 M326 204 L326 216 L338 216" stroke-width="2"/>
+    <circle cx="348" cy="264" r="8" stroke-width="2"/>
+    <!-- scan beam from phone to code -->
+    <path d="M300 160 L226 128 M300 228 L226 194" stroke-dasharray="6 8" stroke-width="2"/>
+    <!-- hand -->
+    <path d="M330 284 C326 304 330 324 344 340 M392 236 C414 252 420 286 410 340"/>
+    <path d="M396 196 C410 196 416 206 410 216 M396 220 C410 220 416 230 410 240"/>
+  </g>
+</svg>

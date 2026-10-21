@@ -1,0 +1,12 @@
+{% extends "console.html" %}
+{% block title %}The players didn't allow posting{% endblock %}
+{% block main %}
+<h1>The players didn't allow posting</h1>
+<section class="panel">
+  <p>{{ label }} has no permission to be posted on the venue's pages. If you download it for posting anyway, that choice is recorded in the activity log with your name.</p>
+  <div class="row">
+    <a class="btn btn-danger" href="{{ href }}" download>Download for posting anyway</a>
+    <a class="btn" href="/console/clips">Cancel</a>
+  </div>
+</section>
+{% endblock %}

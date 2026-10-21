@@ -57,6 +57,26 @@ impl Recorders {
         Self { db, footage, slots: Arc::default() }
     }
 
+    /// A fragment still open when the box stopped (power cut, crash) has no index and can't be read: drop it, so
+    /// clips never wait for it to close. Returns how many were dropped.
+    // ponytail: up to one 10 s fragment per court is lost on a power cut; crash-safe fragmented MP4 if that matters.
+    pub fn discard_unfinished(&self) -> rusqlite::Result<usize> {
+        let open: Vec<(i64, String)> = {
+            let conn = self.db.conn();
+            let mut st = conn.prepare("SELECT id, path FROM segment WHERE end_ms IS NULL")?;
+            st.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<Result<_, _>>()?
+        };
+        for (id, path) in &open {
+            if let Err(e) = std::fs::remove_file(path)
+                && e.kind() != std::io::ErrorKind::NotFound
+            {
+                tracing::warn!(%path, error = %e, "could not delete unfinished footage");
+            }
+            self.db.conn().execute("DELETE FROM segment WHERE id = ?1", [id])?;
+        }
+        Ok(open.len())
+    }
+
     pub fn footage_dir(&self) -> &Path {
         &self.footage
     }
@@ -159,16 +179,24 @@ impl Recorders {
         }
     }
 
-    /// Rolling footage older than 4 h is deleted unless protected (FR-1, GV-13). Holds are added with FR-32.
+    /// Rolling footage older than 4 h is deleted unless a hold protects it (FR-1, FR-32, GV-13, GV-18).
     fn trim_rolling(&self) -> rusqlite::Result<()> {
         let now = clock::now();
         let cutoff_ms = ch_core::rolling_cutoff(now).timestamp_millis();
-        let doomed: Vec<(i64, String)> = {
+        let old: Vec<(i64, i64, String, i64, i64)> = {
             let conn = self.db.conn();
-            let mut st = conn.prepare("SELECT id, path FROM segment WHERE end_ms IS NOT NULL AND end_ms <= ?1")?;
-            st.query_map([cutoff_ms], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<Result<_, _>>()?
+            let mut st = conn.prepare("SELECT id, court_id, path, start_ms, end_ms FROM segment WHERE end_ms IS NOT NULL AND end_ms <= ?1")?;
+            st.query_map([cutoff_ms], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?)))?.collect::<Result<_, _>>()?
         };
-        for (id, path) in doomed {
+        let mut holds: HashMap<i64, Vec<ch_core::Window>> = HashMap::new();
+        let at = |ms: i64| chrono::DateTime::from_timestamp_millis(ms).unwrap_or_default().with_timezone(&ch_core::manila());
+        for (id, court, path, start, end) in old {
+            if !holds.contains_key(&court) {
+                holds.insert(court, crate::footage::protected(&self.db, court, now)?);
+            }
+            if !ch_core::rolling_deletable(ch_core::Window { start: at(start), end: at(end) }, now, &holds[&court]) {
+                continue;
+            }
             if let Err(e) = std::fs::remove_file(&path)
                 && e.kind() != std::io::ErrorKind::NotFound
             {

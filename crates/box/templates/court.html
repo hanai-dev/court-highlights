@@ -10,11 +10,11 @@
   {% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
   <section class="clip-that" aria-label="Clip that">
     <form method="post" action="/c/{{ code }}/tap" data-tap>
-      <button class="btn-clip-that" type="submit"{% if !recording %} disabled{% endif %}>Clip that</button>
+      <button class="btn-clip-that" type="submit" data-clip-that{% if !recording %} disabled{% endif %}>Clip that</button>
     </form>
     <p class="fine">Saves the moment you just played. Tap again within 5 seconds to make it longer.</p>
     <div class="saving" data-saving role="status" aria-live="polite" hidden>
-      <svg class="ring" viewBox="0 0 48 48" aria-hidden="true"><circle class="ring-track" cx="24" cy="24" r="20"></circle><circle class="ring-fill" cx="24" cy="24" r="20" pathLength="100" data-ring></circle></svg>
+      <svg class="ring" viewBox="0 0 48 48" aria-hidden="true" data-saving-ring><circle class="ring-track" cx="24" cy="24" r="20"></circle><circle class="ring-fill" cx="24" cy="24" r="20" pathLength="100" data-ring></circle></svg>
       <span data-saving-text>Saving…</span>
     </div>
     <div class="notice notice-error" data-tap-error role="alert" hidden></div>
@@ -23,6 +23,7 @@
     <h2 id="clips-h">Clips on this court</h2>
     <div data-clips data-clips-url="/c/{{ code }}/clips">{% include "court_clips.html" %}</div>
   </section>
+  <p class="fine site-foot"><a href="/privacy">Privacy notice</a> · Recorded without sound.</p>
 </main>
 <script src="/static/court.js" defer></script>
 {% endblock %}

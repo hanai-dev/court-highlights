@@ -7,6 +7,9 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.11.0",
-    "@playwright/test": "1.64.0"
+    "@playwright/test": "1.64.0",
+    "@types/pngjs": "^6.0.5",
+    "jsqr": "^1.4.0",
+    "pngjs": "^7.0.0"
   }
 }

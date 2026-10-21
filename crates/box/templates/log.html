@@ -1,0 +1,24 @@
+{% extends "console.html" %}
+{% block title %}Activity log{% endblock %}
+{% block main %}
+<div class="console-top"><h1>Activity log</h1><a class="btn btn-primary" href="/console/log.csv" download>Export CSV</a></div>
+{% if rows.is_empty() %}
+<section class="panel"><h2>Nothing logged yet</h2><p>Sign-ins, keeps, deletions, exports, holds and changes to settings and staff appear here with who did them and when.</p></section>
+{% else %}
+<div class="table-wrap" role="region" aria-labelledby="log-caption" tabindex="0">
+<table>
+  <caption id="log-caption"><span class="num">{{ first }}–{{ last }}</span> of <span class="num">{{ total }}</span> entries, newest first</caption>
+  <thead><tr><th scope="col">Time</th><th scope="col">Who</th><th scope="col">Action</th><th scope="col">Item</th><th scope="col">Detail</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+  <tr><td class="num">{{ r.at }}</td><td>{{ r.who }}</td><td>{{ r.action }}</td><td>{{ r.item }}</td><td>{{ r.detail }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<nav class="row spaced" aria-label="Pages">
+  {% if let Some(p) = prev %}<a class="btn" href="/console/log?page={{ p }}" rel="prev">Newer</a>{% endif %}
+  {% if let Some(n) = next %}<a class="btn" href="/console/log?page={{ n }}" rel="next">Older</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

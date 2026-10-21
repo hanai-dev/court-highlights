@@ -1,0 +1,30 @@
+{% extends "console.html" %}
+{% block title %}Court signs{% endblock %}
+{% block main %}
+<div class="console-top no-print"><h1>Court signs</h1>{% if !signs.is_empty() %}<button class="btn btn-primary" type="button" data-print>Print signs</button>{% endif %}</div>
+{% if signs.is_empty() %}
+<section class="panel"><h2>No courts yet</h2><p>Add courts first; each court gets one sign with its own code.</p></section>
+{% else %}
+<p class="no-print muted">One page per court. Hang each sign on that court's net post.</p>
+{% for s in signs %}
+<article class="sign" aria-label="Sign for {{ s.court }}" data-sign="{{ s.code }}">
+  <header>
+    {% if has_logo %}<img class="venue-logo" src="/console/logo" alt="{{ venue }}">{% else %}<p class="venue">{{ venue }}</p>{% endif %}
+    <h2 class="court">{{ s.court }}</h2>
+  </header>
+  <div class="sign-qr">{{ s.qr|safe }}</div>
+  <p class="sign-code">Court code <strong class="num">{{ s.code }}</strong></p>
+  <p class="sign-url num">{{ s.url }}</p>
+  <ol class="sign-steps">
+    <li>Join the venue Wi-Fi first.</li>
+    <li>Scan the code. Tap Clip that after a great point.</li>
+  </ol>
+  <p><strong>This court is recorded (no sound)</strong> so players can save clips, highlights and game videos.</p>
+  <p>Footage kept 4 hours, clips 3 days.</p>
+  <p>Under 18? Ask a parent first.</p>
+  {% if !contact.is_empty() %}<p>Questions: {{ contact }}</p>{% endif %}
+</article>
+{% endfor %}
+{% endif %}
+<script src="/static/print.js" defer></script>
+{% endblock %}

@@ -451,7 +451,7 @@ pub async fn clip_file(
     Ok(res)
 }
 
-fn slug(s: &str) -> String {
+pub fn slug(s: &str) -> String {
     let out: String = s.chars().map(|c| if c.is_ascii_alphanumeric() { c.to_ascii_lowercase() } else { '-' }).collect();
     out.split('-').filter(|p| !p.is_empty()).collect::<Vec<_>>().join("-")
 }

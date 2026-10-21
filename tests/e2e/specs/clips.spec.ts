@@ -14,13 +14,15 @@ interface Probe {
   height: number;
   seconds: number;
   streams: string[];
+  startsOnKeyframe: boolean;
 }
 
 function probe(file: string): Probe {
   const out = boxExec(`ffprobe -v error -show_entries stream=codec_type,width,height:format=duration -of json "${file}"`);
   const j = JSON.parse(out) as { streams: { codec_type: string; width?: number; height?: number }[]; format: { duration: string } };
   const video = j.streams.find((s) => s.codec_type === 'video')!;
-  return { width: video.width!, height: video.height!, seconds: Number(j.format.duration), streams: j.streams.map((s) => s.codec_type) };
+  const first = boxExec(`ffprobe -v error -select_streams v -show_entries packet=flags -of csv=p=0 "${file}" | head -1`);
+  return { width: video.width!, height: video.height!, seconds: Number(j.format.duration), streams: j.streams.map((s) => s.codec_type), startsOnKeyframe: first.startsWith('K') };
 }
 
 /** Average RGB of a box in the frame 1 s into the file. */
@@ -94,6 +96,7 @@ test('Clip that saves 25 s before to 5 s after the tap, in both shapes, with the
     expect(p.seconds).toBeGreaterThan(28.5);
     expect(p.seconds).toBeLessThan(31.5);
     expect(p.streams, 'no audio track although the camera sends audio').toEqual(['video']);
+    expect(p.startsOnKeyframe, 'plays and seeks from the first frame').toBe(true);
   }
   // Logo top-right (default corner): see media.rs place() — wide 116×46 at 11 px, vertical 130×52 at 11 px.
   expect(magenta(colour(wide, 40, 20, 551, 24)), 'logo burned into the wide clip').toBe(true);

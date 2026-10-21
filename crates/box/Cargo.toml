@@ -8,7 +8,7 @@ description = "Court box: records courts, cuts branded clips, judges highlights,
 
 [features]
 # Test-only hooks (e.g. moving the clock for expiry tests). Never enabled in release images.
-test-hooks = []
+test-hooks = ["rusqlite/trace"]
 
 [dependencies]
 ch-core = { path = "../core" }
@@ -18,6 +18,7 @@ axum-server = { version = "0.8", features = ["tls-rustls-no-provider"] }
 rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
 rcgen = { version = "0.14", default-features = false, features = ["crypto", "ring", "pem"] }
 tower-http = { version = "0.7", features = ["set-header", "fs"] }
+qrcode = { version = "0.14", default-features = false, features = ["svg"] }
 retina = "0.4.21"
 gstreamer = "0.25"
 gstreamer-app = "0.25"

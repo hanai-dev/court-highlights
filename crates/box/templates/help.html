@@ -1,0 +1,29 @@
+{% extends "console.html" %}
+{% block title %}Help{% endblock %}
+{% block main %}
+<div class="console-top"><h1>Help</h1>{% if !phone.is_empty() %}<a class="btn btn-primary" href="tel:{{ phone_link }}">Call support</a>{% endif %}</div>
+<section class="panel" aria-labelledby="support-h">
+  <h2 id="support-h">Support</h2>
+  {% if phone.is_empty() %}
+  <p>Your installer hasn't set a support number on this box yet. Ask them for it.</p>
+  {% else %}
+  <p>Call <strong class="num" data-support-phone>{{ phone }}</strong> — 7 days, about 6 am–11 pm.</p>
+  {% endif %}
+</section>
+<section class="panel" aria-labelledby="how-h">
+  <h2 id="how-h">Common questions</h2>
+  <h3>A court shows "Camera offline"</h3>
+  <p>Check the camera's power and network cable. Recording starts again by itself within seconds of the camera coming back.</p>
+  <h3>Someone asks for footage after an incident</h3>
+  <p>Open Footage, find the court and time, and choose Hold. Held footage is kept for up to 60 days. The box keeps everything else for 4 hours only.</p>
+  <h3>Players want a clip kept longer</h3>
+  <p>Open Clips and choose Keep. Kept clips stay for 1 year.</p>
+  <h3>Signs for the courts</h3>
+  <p>Open <a href="/console/signs">Court signs</a> and print one sign per court for the net posts.</p>
+</section>
+<section class="panel" aria-labelledby="box-h">
+  <h2 id="box-h">This box</h2>
+  <p>Version {{ version }}. Your browser warns once that this console's certificate is the box's own. To check you reached your own box, compare the certificate fingerprint with this one:</p>
+  <p class="num fingerprint" data-fingerprint>{{ fingerprint }}</p>
+</section>
+{% endblock %}

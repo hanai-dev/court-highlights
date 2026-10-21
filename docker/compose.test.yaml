@@ -49,7 +49,7 @@ services:
 
   box-a:
     <<: *box
-    environment: { CH_DATA_DIR: /data, CH_HTTP_ADDR: "0.0.0.0:80", CH_HTTPS_ADDR: "0.0.0.0:443", CH_BOX_NAME: box-a }
+    environment: { CH_DATA_DIR: /data, CH_HTTP_ADDR: "0.0.0.0:80", CH_HTTPS_ADDR: "0.0.0.0:443", CH_BOX_NAME: box-a, CH_PLAYER_URL: "http://localhost:18080", CH_SUPPORT_PHONE: "0917 555 0100" }
     volumes:
       - ../:/work
       - ch-target:/work/target

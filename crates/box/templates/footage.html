@@ -1,0 +1,55 @@
+{% extends "console.html" %}
+{% block title %}Footage{% endblock %}
+{% block main %}
+<div class="console-top"><h1>Footage</h1></div>
+{% if let Some(m) = notice %}<div class="notice notice-ok" role="status">{{ m }}</div>{% endif %}
+<form method="get" action="/console/footage" class="panel filters" aria-label="Find footage">
+  <p class="muted">The box keeps the last 4 hours of each court. Hold footage someone asks for so it isn't overwritten.</p>
+  <div class="field"><label for="court">Court</label>
+    <select id="court" name="court" required><option value="">Choose a court</option>{% for c in courts %}<option value="{{ c.id }}"{% if c.selected %} selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="date">Date</label><input id="date" name="date" type="date" required value="{{ date }}"></div>
+  <div class="field"><label for="from">From</label><input id="from" name="from" type="time" required value="{{ from }}"></div>
+  <div class="field"><label for="to">To</label><input id="to" name="to" type="time" required value="{{ to }}"></div>
+  <div class="row"><button class="btn btn-primary" type="submit">Find footage</button></div>
+</form>
+{% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
+{% if let Some(f) = found %}
+<section class="panel" aria-labelledby="found-h" data-found>
+  {% if f.covered %}
+  <h2 id="found-h">Footage found</h2>
+  <p>{{ f.label }}: <span class="num">{{ f.minutes }}</span> min on the box.</p>
+  <form method="post" action="/console/footage/holds">
+    <input type="hidden" name="court" value="{{ f.court_id }}"><input type="hidden" name="start_ms" value="{{ f.start_ms }}"><input type="hidden" name="end_ms" value="{{ f.end_ms }}">
+    <button class="btn btn-primary" type="submit">Hold footage</button>
+  </form>
+  {% else %}
+  <h2 id="found-h">No footage for that time</h2>
+  <p>{{ f.label }}: nothing is on the box. Footage is kept for 4 hours unless it is held.</p>
+  <form method="post" action="/console/footage/missing">
+    <input type="hidden" name="court" value="{{ f.court_id }}"><input type="hidden" name="start_ms" value="{{ f.start_ms }}"><input type="hidden" name="end_ms" value="{{ f.end_ms }}">
+    <button class="btn" type="submit">Record that it no longer exists</button>
+  </form>
+  {% endif %}
+</section>
+{% endif %}
+<h2>Holds</h2>
+{% if holds.is_empty() %}
+<section class="panel"><p>No footage is held.</p></section>
+{% else %}
+<div class="table-wrap" role="region" aria-labelledby="holds-caption" tabindex="0">
+<table>
+  <caption id="holds-caption">Held footage, newest first</caption>
+  <thead><tr><th scope="col">Footage</th><th scope="col">Held</th><th scope="col">Releases</th><th scope="col"><span class="skip">Actions</span></th></tr></thead>
+  <tbody>
+  {% for h in holds %}
+  <tr data-hold="{{ h.id }}"><td>{{ h.label }}</td><td>{{ h.placed }}</td><td class="num">{% if h.active %}{{ h.releases }}{% else %}Released{% endif %}</td>
+    <td><div class="row">{% if h.active %}
+      <form method="post" action="/console/footage/holds/{{ h.id }}/release"><button class="btn" type="submit" aria-label="Release {{ h.label }}">Release</button></form>
+      {% if shell.is_owner %}<a class="btn" href="/console/footage/holds/{{ h.id }}/export" download aria-label="Export {{ h.label }}">Export MP4</a>{% endif %}
+    {% endif %}</div></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}

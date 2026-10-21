@@ -231,26 +231,50 @@ pub fn cut(job: &Cut) -> Result<(), AppError> {
         }
     }
 
-    p.set_state(gst::State::Paused).map_err(fail)?;
-    let (res, _, _) = p.state(gst::ClockTime::from_seconds(10));
-    if res.is_err() {
-        let _ = p.set_state(gst::State::Null);
-        return Err(fail("clip pipeline did not start"));
-    }
-    let seek = p.seek(
-        1.0,
-        gst::SeekFlags::FLUSH | gst::SeekFlags::ACCURATE,
-        gst::SeekType::Set,
-        gst::ClockTime::from_mseconds(job.from_ms),
-        gst::SeekType::Set,
-        gst::ClockTime::from_mseconds(job.to_ms),
-    );
-    if let Err(e) = seek {
-        let _ = p.set_state(gst::State::Null);
-        return Err(fail(e));
-    }
+    trim(&element(&p, "t")?, job.from_ms, job.to_ms)?;
     // ponytail: a 30 s window at real-time × 4 worst case; tune once the N150 numbers are in (NFR-1).
     run_to_eos(&p, 120)
+}
+
+/// Keeps only decoded frames whose running time is in [from, to), re-based to start at 0, then ends the stream. No
+/// seek: a flushing seek after preroll leaves encoders mid-GOP, so the file would not start on a keyframe. Decoding
+/// starts at the first segment's keyframe, at most one segment (10 s) before the window. Running time, not PTS:
+/// splitmuxsrc stamps buffers from 1000 s.
+fn trim(tee: &gst::Element, from_ms: u64, to_ms: u64) -> Result<(), AppError> {
+    let (from, to) = (gst::ClockTime::from_mseconds(from_ms), gst::ClockTime::from_mseconds(to_ms));
+    let pad = tee.static_pad("sink").ok_or_else(|| fail("tee has no sink pad"))?;
+    let ended = std::sync::atomic::AtomicBool::new(false);
+    pad.add_probe(gst::PadProbeType::BUFFER, move |pad, info| {
+        let Some(gst::PadProbeData::Buffer(buffer)) = info.data.as_mut() else { return gst::PadProbeReturn::Ok };
+        let segment = pad.sticky_event::<gst::event::Segment>(0).and_then(|e| e.segment().downcast_ref::<gst::ClockTime>().cloned());
+        let (Some(segment), Some(pts)) = (segment, buffer.pts()) else { return gst::PadProbeReturn::Drop };
+        let Some(running) = segment.to_running_time(pts) else { return gst::PadProbeReturn::Drop };
+        if running < from {
+            return gst::PadProbeReturn::Drop;
+        }
+        if running >= to || ended.load(std::sync::atomic::Ordering::Relaxed) {
+            if !ended.swap(true, std::sync::atomic::Ordering::Relaxed) {
+                pad.send_event(gst::event::Eos::new());
+            }
+            info.data = None;
+            info.flow_res = Err(gst::FlowError::Eos);
+            return gst::PadProbeReturn::Handled;
+        }
+        let Some(rebased) = segment.position_from_running_time(running - from) else { return gst::PadProbeReturn::Drop };
+        buffer.make_mut().set_pts(rebased);
+        gst::PadProbeReturn::Ok
+    })
+    .ok_or_else(|| fail("could not trim"))?;
+    Ok(())
+}
+
+/// Joins whole segments into one MP4 by stream copy — no re-encode, so it is quick even for hours of footage.
+pub fn export_copy(segments: &[String], out: &Path) -> Result<(), AppError> {
+    let p = launch("splitmuxsrc name=src ! h264parse ! mp4mux faststart=true ! filesink name=out")?;
+    let files = segments.to_vec();
+    element(&p, "src")?.connect("format-location", false, move |_| Some(files.to_value()));
+    element(&p, "out")?.set_property("location", out.to_string_lossy().as_ref());
+    run_to_eos(&p, 600)
 }
 
 #[cfg(test)]

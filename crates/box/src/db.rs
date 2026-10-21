@@ -5,6 +5,10 @@ use rusqlite::{Connection, OptionalExtension, params};
 use std::path::Path;
 use std::sync::{Arc, Mutex, MutexGuard};
 
+/// Statements run since start (test builds only): lets the e2e suite prove a page's query count is bounded.
+#[cfg(feature = "test-hooks")]
+pub static STATEMENTS: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
 // ponytail: one connection behind a mutex; a pool when contention shows up in the load test.
 #[derive(Clone)]
 pub struct Db(Arc<Mutex<Connection>>);
@@ -12,6 +16,10 @@ pub struct Db(Arc<Mutex<Connection>>);
 impl Db {
     pub fn open(path: &Path) -> rusqlite::Result<Self> {
         let conn = Connection::open(path)?;
+        #[cfg(feature = "test-hooks")]
+        conn.trace_v2(rusqlite::trace::TraceEventCodes::SQLITE_TRACE_STMT, Some(|_| {
+            STATEMENTS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        }));
         conn.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;")?;
         migrate(&conn)?;
         Ok(Self(Arc::new(Mutex::new(conn))))
@@ -111,6 +119,22 @@ CREATE TABLE clip (
 CREATE INDEX clip_court_made ON clip (court_id, made_at);
 ALTER TABLE segment ADD COLUMN width INTEGER;
 ALTER TABLE segment ADD COLUMN height INTEGER;
+"#, r#"
+ALTER TABLE venue ADD COLUMN contact TEXT NOT NULL DEFAULT '';
+ALTER TABLE venue ADD COLUMN clock_correction_ms INTEGER NOT NULL DEFAULT 0;
+CREATE INDEX clip_made ON clip (made_at);
+CREATE TABLE hold (
+  id INTEGER PRIMARY KEY,
+  court_id INTEGER NOT NULL REFERENCES court(id) ON DELETE CASCADE,
+  start_ms INTEGER NOT NULL,
+  end_ms INTEGER NOT NULL,
+  placed_at TEXT NOT NULL,
+  placed_by TEXT NOT NULL,
+  release_at TEXT NOT NULL,
+  released_at TEXT,
+  released_by TEXT
+);
+CREATE INDEX hold_court ON hold (court_id);
 "#];
 
 fn migrate(conn: &Connection) -> rusqlite::Result<()> {

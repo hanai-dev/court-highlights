@@ -4,7 +4,7 @@
 use crate::auth::{self, Staff};
 use crate::db::{self, Db};
 use askama::Template;
-use axum::extract::{Form, Multipart, Path, Query, Request, State};
+use axum::extract::{DefaultBodyLimit, Form, Multipart, Path, Query, Request, State};
 use axum::http::{HeaderMap, HeaderValue, Method, StatusCode, header};
 use axum::middleware::{self, Next};
 use axum::response::{Html, IntoResponse, Redirect, Response};
@@ -19,6 +19,8 @@ pub struct AppState {
     pub db: Db,
     pub recorders: crate::recorder::Recorders,
     pub data: std::path::PathBuf,
+    /// SHA-256 of the staff certificate, shown in Help so staff can check they reached their own box (A-124).
+    pub fingerprint: String,
 }
 
 // ------------------------------------------------------------------ errors
@@ -81,6 +83,7 @@ pub fn player_router(state: AppState) -> Router {
         .route("/healthz", get(|| async { "ok" }))
         .route("/static/{file}", get(static_file))
         .route("/logo", get(crate::clips::venue_logo))
+        .route("/privacy", get(crate::venue::privacy))
         .route("/c/{code}", get(crate::clips::court_page))
         .route("/c/{code}/tap", post(crate::clips::tap))
         .route("/c/{code}/clips", get(crate::clips::court_clips))
@@ -98,7 +101,28 @@ fn test_hooks(r: Router<AppState>) -> Router<AppState> {
     struct Advance {
         ms: i64,
     }
-    r.route("/__test/clock", post(|State(app): State<AppState>, Form(a): Form<Advance>| async move {
+    #[derive(Deserialize)]
+    struct Seed {
+        court: i64,
+        n: i64,
+    }
+    r.route("/__test/statements", get(|| async { crate::db::STATEMENTS.load(std::sync::atomic::Ordering::Relaxed).to_string() }))
+    // Library fixtures: ready clip rows without files, one minute apart, cycling through the kinds.
+    .route("/__test/seed-clips", post(|State(app): State<AppState>, Form(s): Form<Seed>| async move {
+        let now = crate::clock::now();
+        let conn = app.db.conn();
+        for i in 0..s.n {
+            let made = now - chrono::Duration::minutes(i);
+            let kind = ["tap", "tap", "highlight", "game"][(i % 4) as usize];
+            conn.execute(
+                "INSERT INTO clip (court_id, kind, token, window_start_ms, window_end_ms, made_at, state) VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'ready')",
+                params![s.court, kind, auth::random_token(), made.timestamp_millis() - 30_000, made.timestamp_millis(), made.to_rfc3339()],
+            )
+            .map_err(|e| AppError::Internal(e.to_string()))?;
+        }
+        Ok::<_, AppError>(s.n.to_string())
+    }))
+    .route("/__test/clock", post(|State(app): State<AppState>, Form(a): Form<Advance>| async move {
         crate::clock::advance(a.ms);
         if a.ms != 0 {
             app.recorders.split_all();
@@ -117,7 +141,7 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/", get(|| async { Redirect::to("/console") }))
         .route("/healthz", get(|| async { "ok" }))
         .route("/static/{file}", get(static_file))
-        .route("/setup", get(setup_form).post(setup_submit))
+        .route("/setup", get(setup_form).post(setup_submit).layer(DefaultBodyLimit::max(UPLOAD_LIMIT)))
         .route("/console/signin", get(signin_form).post(signin_submit))
         .route("/console/signout", post(signout))
         .route("/console", get(crate::courts::home))
@@ -132,6 +156,22 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/console/staff/{id}/reset", post(staff_reset))
         .route("/console/staff/{id}/deactivate", post(staff_deactivate))
         .route("/console/staff/{id}/reactivate", post(staff_reactivate))
+        .route("/console/clips", get(crate::library::library))
+        .route("/console/clips/{id}/keep", post(crate::library::keep))
+        .route("/console/clips/{id}/delete", get(crate::library::delete_confirm).post(crate::library::delete))
+        .route("/console/clips/{id}/{file}", get(crate::library::file))
+        .route("/console/log", get(crate::library::log))
+        .route("/console/log.csv", get(crate::library::log_csv))
+        .route("/console/settings", get(crate::venue::settings).post(crate::venue::save).layer(DefaultBodyLimit::max(UPLOAD_LIMIT)))
+        .route("/console/settings/time", post(crate::venue::correct_time))
+        .route("/console/help", get(crate::venue::help))
+        .route("/console/signs", get(crate::venue::signs))
+        .route("/console/logo", get(crate::clips::venue_logo))
+        .route("/console/footage", get(crate::footage::footage))
+        .route("/console/footage/holds", post(crate::footage::place_hold))
+        .route("/console/footage/missing", post(crate::footage::record_missing))
+        .route("/console/footage/holds/{id}/release", post(crate::footage::release))
+        .route("/console/footage/holds/{id}/export", get(crate::footage::export))
         .route("/console/account", get(account))
         .route("/console/account/password", post(change_password))
         .layer(middleware::from_fn(|req, next| same_origin_writes("https", req, next)))
@@ -192,6 +232,8 @@ async fn static_file(Path(file): Path<String>) -> Response {
         "app.css" => (include_bytes!("../static/app.css"), "text/css; charset=utf-8"),
         "setup-camera-position.svg" => (include_bytes!("../static/setup-camera-position.svg"), "image/svg+xml"),
         "court.js" => (include_bytes!("../static/court.js"), "text/javascript; charset=utf-8"),
+        "print.js" => (include_bytes!("../static/print.js"), "text/javascript; charset=utf-8"),
+        "empty-library-scan.svg" => (include_bytes!("../static/empty-library-scan.svg"), "image/svg+xml"),
         _ => return StatusCode::NOT_FOUND.into_response(),
     };
     ([(header::CONTENT_TYPE, mime), (header::CACHE_CONTROL, "public, max-age=3600")], body).into_response()
@@ -240,6 +282,8 @@ async fn setup_form(State(app): State<AppState>) -> Page {
 
 /// Logo files: PNG or JPEG only, checked by content, at most 2 MB (FR-33, v5.0.0-5.2.1, 5.2.2).
 pub const LOGO_MAX_BYTES: usize = 2 * 1024 * 1024;
+/// Forms with logos accept a little more than two logos, so a too-large logo gets a clear message, not a bare 413.
+const UPLOAD_LIMIT: usize = 6 * 1024 * 1024;
 
 pub fn logo_type(bytes: &[u8]) -> Option<&'static str> {
     if bytes.starts_with(b"\x89PNG\r\n\x1a\n") {

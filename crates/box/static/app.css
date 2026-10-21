@@ -115,6 +115,37 @@ td.num { font-variant-numeric: tabular-nums; }
 .clip-video { display: block; width: 100%; height: auto; background: var(--primary); border: 2px solid var(--outline); border-radius: var(--radius); }
 .num { font-variant-numeric: tabular-nums; }
 
+/* Library, footage, settings, help */
+.filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 var(--md); align-items: end; }
+.filters .row, .filters .muted { grid-column: 1 / -1; }
+.checks { display: grid; gap: var(--xs); }
+label.check { display: flex; gap: var(--sm); align-items: center; font-weight: 400; font-size: 16px; min-height: 44px; margin: 0; }
+label.check input { width: 22px; height: 22px; accent-color: var(--primary); }
+textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
+img.thumb { display: block; border: 1px solid var(--outline-variant); border-radius: var(--radius); background: var(--surface-container); }
+.empty { text-align: center; }
+.empty .illustration { max-width: 360px; margin: 0 auto var(--md); }
+.fingerprint { word-break: break-all; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+.prose { white-space: pre-line; }
+h3 { font-size: 16px; font-weight: 700; margin: var(--md) 0 var(--xs); }
+.site-foot { margin-top: var(--lg); }
+
+/* Court signs: one per printed page */
+.sign { background: var(--surface); border: 3px solid var(--outline); border-radius: var(--radius); padding: var(--lg); margin-bottom: var(--lg); max-width: 640px; }
+.sign header { display: grid; gap: var(--sm); border-bottom: 3px solid var(--outline); padding-bottom: var(--md); margin-bottom: var(--md); }
+.sign .court { font-size: 40px; font-weight: 800; text-transform: uppercase; margin: 0; }
+.sign-qr svg { display: block; width: 240px; height: 240px; }
+.sign-code { font-size: 22px; margin: var(--sm) 0 0; }
+.sign-url { font-size: 14px; color: var(--on-surface-variant); }
+.sign-steps { font-size: 18px; font-weight: 700; padding-left: 1.4em; }
+@media print {
+  .console-nav, .no-print, .skip { display: none !important; }
+  .console { display: block; }
+  .console-main { padding: 0; max-width: none; }
+  body { background: #fff; }
+  .sign { break-after: page; border: 0; margin: 0; max-width: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
   .ring-fill, .ring-fill.filling { stroke-dashoffset: 0; }
