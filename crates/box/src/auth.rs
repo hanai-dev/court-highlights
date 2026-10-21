@@ -25,8 +25,8 @@ pub fn hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{b:02x}")).collect()
 }
 
-pub fn sha256_hex(s: &str) -> String {
-    hex(&Sha256::digest(s.as_bytes()))
+pub fn sha256_hex(s: impl AsRef<[u8]>) -> String {
+    hex(&Sha256::digest(s.as_ref()))
 }
 
 pub fn hash_password(password: &str) -> String {

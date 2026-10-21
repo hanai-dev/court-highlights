@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Clip from {{ time }}{% endblock %}
+{% block body %}
+<main class="narrow">
+  <p><a href="/c/{{ code }}">← Back to {{ court }}</a></p>
+  <h1>Clip from {{ time }}</h1>
+  {% if ready %}
+  <video class="clip-video" controls playsinline preload="metadata" poster="/c/{{ code }}/clips/{{ token }}/thumb.jpg" src="/c/{{ code }}/clips/{{ token }}/wide.mp4"></video>
+  <div class="row spaced">
+    <a class="btn btn-primary" href="/c/{{ code }}/clips/{{ token }}/wide.mp4?download=1" download>Download</a>
+    <a class="btn" href="/c/{{ code }}/clips/{{ token }}/vertical.mp4?download=1" download>Download vertical 9:16</a>
+  </div>
+  {% else if !failure.is_empty() %}
+  <div class="notice notice-error" role="alert">{{ failure }}</div>
+  {% else %}
+  <p role="status">Saving… open this clip again in a few seconds.</p>
+  {% endif %}
+  <form method="post" action="/c/{{ code }}/clips/{{ token }}/hide" class="spaced">
+    <button class="btn" type="submit">Hide from this page</button>
+    <p class="fine">Hidden clips are never sent to anyone.</p>
+  </form>
+</main>
+{% endblock %}

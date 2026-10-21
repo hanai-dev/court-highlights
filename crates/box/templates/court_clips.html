@@ -1,0 +1,17 @@
+{% if clips.is_empty() %}
+<p class="muted">No clips from the last 2 hours. Tap Clip that right after a great point.</p>
+{% else %}
+<ul class="clips">
+{% for c in clips %}
+  <li data-clip-state="{{ c.state }}">
+  {% if c.state == "ready" %}
+    <a class="clip-link" href="/c/{{ code }}/clips/{{ c.token }}"><img src="/c/{{ code }}/clips/{{ c.token }}/thumb.jpg" width="160" height="90" alt="" loading="lazy"><span>{{ c.time }} · <span class="num">{{ c.seconds }}</span> s</span></a>
+  {% else if c.state == "saving" %}
+    <p class="clip-pending">{{ c.time }} · Saving…</p>
+  {% else %}
+    <p class="clip-failed">{{ c.time }} · {{ c.failure }}</p>
+  {% endif %}
+  </li>
+{% endfor %}
+</ul>
+{% endif %}

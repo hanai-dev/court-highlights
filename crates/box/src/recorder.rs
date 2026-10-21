@@ -40,7 +40,10 @@ struct Slot {
     config: CameraConfig,
     stop: watch::Sender<bool>,
     status: Arc<Mutex<CourtStatus>>,
+    sink: SinkHandle,
 }
+
+type SinkHandle = Arc<Mutex<Option<gst::Element>>>;
 
 #[derive(Clone)]
 pub struct Recorders {
@@ -121,8 +124,9 @@ impl Recorders {
                 }
                 let (stop, stopped) = watch::channel(false);
                 let status = Arc::new(Mutex::new(CourtStatus::Starting));
-                tokio::spawn(run_court(id, config.clone(), self.db.clone(), self.footage.join(format!("court-{id}")), status.clone(), stopped));
-                slots.insert(id, Slot { config, stop, status });
+                let sink: SinkHandle = Arc::default();
+                tokio::spawn(run_court(id, config.clone(), self.db.clone(), self.footage.join(format!("court-{id}")), status.clone(), sink.clone(), stopped));
+                slots.insert(id, Slot { config, stop, status, sink });
             }
         }
         Ok(())
@@ -136,6 +140,14 @@ impl Recorders {
         match slots.get(&court_id) {
             Some(slot) => slot.status.lock().unwrap_or_else(|p| p.into_inner()).clone(),
             None => CourtStatus::Closed,
+        }
+    }
+
+    /// Closes the court's open fragment at the next keyframe so the newest seconds become readable (clip cutting).
+    pub fn split_now(&self, court_id: i64) {
+        let slots = self.slots.lock().unwrap_or_else(|p| p.into_inner());
+        if let Some(sink) = slots.get(&court_id).and_then(|s| s.sink.lock().unwrap_or_else(|p| p.into_inner()).clone()) {
+            sink.emit_by_name::<()>("split-now", &[]);
         }
     }
 
@@ -165,7 +177,7 @@ fn set(status: &Mutex<CourtStatus>, s: CourtStatus) {
     *status.lock().unwrap_or_else(|p| p.into_inner()) = s;
 }
 
-async fn run_court(court: i64, camera: CameraConfig, db: Db, dir: PathBuf, status: Arc<Mutex<CourtStatus>>, mut stop: watch::Receiver<bool>) {
+async fn run_court(court: i64, camera: CameraConfig, db: Db, dir: PathBuf, status: Arc<Mutex<CourtStatus>>, sink: SinkHandle, mut stop: watch::Receiver<bool>) {
     if let Err(e) = std::fs::create_dir_all(&dir) {
         tracing::error!(court, error = %e, "cannot create footage directory");
         return;
@@ -175,7 +187,7 @@ async fn run_court(court: i64, camera: CameraConfig, db: Db, dir: PathBuf, statu
         let inner_stop = stop.clone();
         let result = tokio::select! {
             _ = stop.changed() => break,
-            r = record_once(court, &camera, &db, &dir, &status, inner_stop) => r,
+            r = record_once(court, &camera, &db, &dir, &status, &sink, inner_stop) => r,
         };
         if *stop.borrow() {
             break;
@@ -196,7 +208,7 @@ async fn run_court(court: i64, camera: CameraConfig, db: Db, dir: PathBuf, statu
 
 type BoxError = Box<dyn std::error::Error + Send + Sync>;
 
-async fn record_once(court: i64, camera: &CameraConfig, db: &Db, dir: &Path, status: &Mutex<CourtStatus>, mut stop: watch::Receiver<bool>) -> Result<(), BoxError> {
+async fn record_once(court: i64, camera: &CameraConfig, db: &Db, dir: &Path, status: &Mutex<CourtStatus>, sink: &SinkHandle, mut stop: watch::Receiver<bool>) -> Result<(), BoxError> {
     use retina::client::{Credentials, PlayOptions, Session, SessionOptions, SetupOptions, Transport};
     let url = url::Url::parse(&camera.url)?;
     let creds = (!camera.username.is_empty()).then(|| Credentials { username: camera.username.clone(), password: camera.password.clone() });
@@ -220,22 +232,25 @@ async fn record_once(court: i64, camera: &CameraConfig, db: &Db, dir: &Path, sta
         let Some(item) = item else { break };
         let retina::codec::CodecItem::VideoFrame(frame) = item? else { continue };
         let params = match frames.streams()[video].parameters() {
-            Some(retina::codec::ParametersRef::Video(v)) => v.extra_data().to_vec(),
+            Some(retina::codec::ParametersRef::Video(v)) => (v.extra_data().to_vec(), v.pixel_dimensions()),
             _ => continue,
         };
-        if writer.as_ref().is_some_and(|w| w.codec_data != params) {
+        if writer.as_ref().is_some_and(|w| w.codec_data != params.0) {
             writer.take().map(|w| w.finish());
         }
         if writer.is_none() {
             if !frame.is_random_access_point() {
                 continue; // a segment must start on a keyframe
             }
-            writer = Some(SegmentWriter::start(court, db.clone(), dir, params, frame.timestamp().elapsed(), frame.timestamp().clock_rate().get())?);
+            let w = SegmentWriter::start(court, db.clone(), dir, params.0, params.1, frame.timestamp().elapsed(), frame.timestamp().clock_rate().get())?;
+            *sink.lock().unwrap_or_else(|p| p.into_inner()) = Some(w.sink.clone());
+            writer = Some(w);
             set(status, CourtStatus::Recording { since: clock::now() });
         }
         let w = writer.as_mut().expect("writer started above");
         w.push(frame.timestamp().elapsed(), frame.is_random_access_point(), frame.into_data())?;
     }
+    *sink.lock().unwrap_or_else(|p| p.into_inner()) = None;
     if let Some(w) = writer {
         w.finish();
     }
@@ -246,19 +261,14 @@ async fn record_once(court: i64, camera: &CameraConfig, db: &Db, dir: &Path, sta
 struct SegmentWriter {
     pipeline: gst::Pipeline,
     src: gst_app::AppSrc,
+    sink: gst::Element,
     codec_data: Vec<u8>,
     first_elapsed: i64,
     clock_rate: u32,
 }
 
-#[derive(Default)]
-struct Fragments {
-    open: Option<String>,
-    ends: HashMap<String, i64>,
-}
-
 impl SegmentWriter {
-    fn start(court: i64, db: Db, dir: &Path, codec_data: Vec<u8>, first_elapsed: i64, clock_rate: u32) -> Result<Self, BoxError> {
+    fn start(court: i64, db: Db, dir: &Path, codec_data: Vec<u8>, (width, height): (u32, u32), first_elapsed: i64, clock_rate: u32) -> Result<Self, BoxError> {
         let pipeline = gst::Pipeline::new();
         let src = gst_app::AppSrc::builder()
             .is_live(true)
@@ -280,37 +290,40 @@ impl SegmentWriter {
         pipeline.add_many([src.upcast_ref(), &parse, &sink])?;
         gst::Element::link_many([src.upcast_ref(), &parse, &sink])?;
 
-        // A fragment opens when its first keyframe arrives live, so the box clock at that moment is its start; it
-        // ends where the next one starts (or when recording stops). Clock corrections (FR-38) apply immediately.
-        let frags: Arc<Mutex<Fragments>> = Arc::default();
-        let (dir, frags_open, db_open) = (dir.to_path_buf(), frags.clone(), db.clone());
-        sink.connect("format-location-full", false, move |_| {
+        // A fragment opens when its first keyframe arrives live, so the box clock at that moment is its start. Its
+        // end is start + its own running-time length, so a clock correction mid-fragment (FR-38) cannot stretch it.
+        let (dir, db_open) = (dir.to_path_buf(), db.clone());
+        sink.clone().connect("format-location-full", false, move |_| {
             let start_ms = clock::now().timestamp_millis();
             let path = dir.join(format!("{start_ms}.mp4")).to_string_lossy().to_string();
-            let mut f = frags_open.lock().unwrap_or_else(|p| p.into_inner());
-            if let Some(previous) = f.open.replace(path.clone()) {
-                f.ends.insert(previous, start_ms);
-            }
             let _ = db_open.conn().execute(
-                "INSERT OR REPLACE INTO segment (court_id, start_ms, end_ms, path) VALUES (?1, ?2, NULL, ?3)",
-                rusqlite::params![court, start_ms, path],
+                "INSERT OR REPLACE INTO segment (court_id, start_ms, end_ms, path, width, height) VALUES (?1, ?2, NULL, ?3, ?4, ?5)",
+                rusqlite::params![court, start_ms, path, width, height],
             );
             Some(path.to_value())
         });
-        let (bus, frags_bus) = (pipeline.bus().ok_or("pipeline has no bus")?, frags.clone());
+        let bus = pipeline.bus().ok_or("pipeline has no bus")?;
+        let opened_at: Mutex<HashMap<String, u64>> = Mutex::default();
         bus.set_sync_handler(move |_, msg| {
             if let gst::MessageView::Element(e) = msg.view()
                 && let Some(s) = e.structure()
-                && s.name() == "splitmuxsink-fragment-closed"
-                && let Ok(location) = s.get::<String>("location")
+                && let (Ok(location), Ok(running)) = (s.get::<String>("location"), s.get::<u64>("running-time"))
             {
-                let end_ms = frags_bus.lock().unwrap_or_else(|p| p.into_inner()).ends.remove(&location).unwrap_or_else(|| clock::now().timestamp_millis());
-                let _ = db.conn().execute("UPDATE segment SET end_ms = ?1 WHERE path = ?2", rusqlite::params![end_ms, location]);
+                match s.name().as_str() {
+                    "splitmuxsink-fragment-opened" => {
+                        opened_at.lock().unwrap_or_else(|p| p.into_inner()).insert(location, running);
+                    }
+                    "splitmuxsink-fragment-closed" => {
+                        let length_ms = opened_at.lock().unwrap_or_else(|p| p.into_inner()).remove(&location).map_or(0, |o| running.saturating_sub(o) / 1_000_000) as i64;
+                        let _ = db.conn().execute("UPDATE segment SET end_ms = start_ms + ?1 WHERE path = ?2", rusqlite::params![length_ms, location]);
+                    }
+                    _ => {}
+                }
             }
             gst::BusSyncReply::Pass
         });
         pipeline.set_state(gst::State::Playing)?;
-        Ok(Self { pipeline, src, codec_data, first_elapsed, clock_rate })
+        Ok(Self { pipeline, src, sink, codec_data, first_elapsed, clock_rate })
     }
 
     fn push(&mut self, elapsed: i64, keyframe: bool, data: Vec<u8>) -> Result<(), BoxError> {

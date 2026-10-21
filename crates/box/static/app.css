@@ -88,6 +88,34 @@ td.num { font-variant-numeric: tabular-nums; }
 .sign-head .court { font-size: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; margin: 0; }
 .illustration { display: block; width: 100%; height: auto; margin: var(--sm) 0 var(--md); }
 
+/* Court page (players, phone first) */
+.court-page .sign-head { display: grid; gap: var(--xs); }
+.venue-logo { display: block; max-height: 48px; max-width: 60%; width: auto; height: auto; }
+.court-page .venue { font-weight: 700; margin: 0; }
+.court-page .status { margin: 0; font-weight: 700; }
+.clip-that { margin-bottom: var(--lg); }
+.btn-clip-that { display: block; width: 100%; min-height: 96px; padding: var(--lg) var(--md); font: 800 30px/1.1 var(--font);
+  color: var(--on-primary-container); background: var(--primary-container); border: 3px solid var(--outline); border-radius: var(--radius);
+  cursor: pointer; margin-bottom: var(--sm); }
+.btn-clip-that:active { background: var(--surface-container); }
+.btn-clip-that[disabled] { background: var(--surface-container); color: var(--on-surface-variant); border-color: var(--outline-variant); cursor: not-allowed; }
+.saving { display: flex; align-items: center; gap: var(--md); padding: var(--sm) 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.saving[hidden], [hidden] { display: none; }
+.ring { width: 48px; height: 48px; transform: rotate(-90deg); flex: none; }
+.ring circle { fill: none; stroke-width: 6; }
+.ring-track { stroke: var(--surface-container); }
+.ring-fill { stroke: var(--outline); stroke-dasharray: 100; stroke-dashoffset: 100; }
+.ring-fill.filling { animation: ring-fill linear forwards; }
+@keyframes ring-fill { to { stroke-dashoffset: 0; } }
+.clips { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sm); }
+.clips p { margin: 0; padding: var(--sm) 0; }
+.clip-link { display: flex; align-items: center; gap: var(--md); min-height: 48px; font-weight: 700; color: var(--on-surface); }
+.clip-link img { border: 2px solid var(--outline); border-radius: var(--radius); background: var(--surface-container); }
+.clip-failed { color: var(--error); }
+.clip-video { display: block; width: 100%; height: auto; background: var(--primary); border: 2px solid var(--outline); border-radius: var(--radius); }
+.num { font-variant-numeric: tabular-nums; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
+  .ring-fill, .ring-fill.filling { stroke-dashoffset: 0; }
 }

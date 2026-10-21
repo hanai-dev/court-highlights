@@ -59,9 +59,10 @@ export function boxExec(command: string): string {
 }
 
 /** Opening hours default to the whole day so tests pass at any real time of day. */
-export async function completeSetup(page: Page, owner: Owner = OWNER, hours: [string, string] = ['00:00', '23:59']): Promise<void> {
+export async function completeSetup(page: Page, owner: Owner = OWNER, hours: [string, string] = ['00:00', '23:59'], logo?: string): Promise<void> {
   await page.goto(`${STAFF}/setup`);
   await page.getByLabel('Venue name').fill(owner.venue);
+  if (logo) await page.getByLabel(/Venue logo/).setInputFiles(logo);
   await page.getByLabel('Opens').fill(hours[0]);
   await page.getByLabel('Closes').fill(hours[1]);
   await page.getByLabel('Your name').fill(owner.name);
@@ -100,6 +101,12 @@ export async function addCourt(page: Page, name: string, cameraUrl: string): Pro
   await page.getByLabel('Camera stream address').fill(cameraUrl);
   await page.getByRole('button', { name: 'Save court' }).click();
   await expect(page.getByRole('status')).toContainText('Saved');
+}
+
+/** The court code shown on the console home. */
+export async function courtCode(page: Page, court: string): Promise<string> {
+  await page.goto(`${STAFF}/console`);
+  return ((await page.locator(`tr[data-court="${court}"] td.num`).textContent()) ?? '').trim();
 }
 
 /** Polls the console home until the court's status text matches. */

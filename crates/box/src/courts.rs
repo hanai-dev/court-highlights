@@ -275,6 +275,6 @@ pub async fn preview(State(app): State<AppState>, staff: Staff, Path(id): Path<i
         .query_row("SELECT path FROM segment WHERE court_id = ?1 AND end_ms IS NOT NULL ORDER BY start_ms DESC LIMIT 1", [id], |r| r.get(0))
         .optional()?;
     let Some(path) = path else { return Err(AppError::NotFound) };
-    let jpeg = tokio::task::spawn_blocking(move || crate::media::still_jpeg(&path)).await.map_err(|e| AppError::Internal(e.to_string()))??;
+    let jpeg = tokio::task::spawn_blocking(move || crate::media::still_jpeg(&path, 640, 360)).await.map_err(|e| AppError::Internal(e.to_string()))??;
     Ok(([(header::CONTENT_TYPE, "image/jpeg"), (header::CACHE_CONTROL, "no-store")], jpeg).into_response())
 }

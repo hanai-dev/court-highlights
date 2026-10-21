@@ -18,6 +18,7 @@ use tower_http::set_header::SetResponseHeaderLayer;
 pub struct AppState {
     pub db: Db,
     pub recorders: crate::recorder::Recorders,
+    pub data: std::path::PathBuf,
 }
 
 // ------------------------------------------------------------------ errors
@@ -79,6 +80,14 @@ pub fn player_router(state: AppState) -> Router {
         .route("/", get(player_home))
         .route("/healthz", get(|| async { "ok" }))
         .route("/static/{file}", get(static_file))
+        .route("/logo", get(crate::clips::venue_logo))
+        .route("/c/{code}", get(crate::clips::court_page))
+        .route("/c/{code}/tap", post(crate::clips::tap))
+        .route("/c/{code}/clips", get(crate::clips::court_clips))
+        .route("/c/{code}/clips/{token}", get(crate::clips::clip_page))
+        .route("/c/{code}/clips/{token}/hide", post(crate::clips::hide))
+        .route("/c/{code}/clips/{token}/{file}", get(crate::clips::clip_file))
+        .layer(middleware::from_fn(|req, next| same_origin_writes("http", req, next)))
         .layer(middleware::from_fn(security_headers))
         .with_state(state)
 }
@@ -122,7 +131,7 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/console/staff/{id}/reactivate", post(staff_reactivate))
         .route("/console/account", get(account))
         .route("/console/account/password", post(change_password))
-        .layer(middleware::from_fn(same_origin_writes))
+        .layer(middleware::from_fn(|req, next| same_origin_writes("https", req, next)))
         .layer(middleware::from_fn(security_headers))
         .layer(SetResponseHeaderLayer::overriding(header::CACHE_CONTROL, HeaderValue::from_static("no-store")))
         .with_state(state)
@@ -144,9 +153,10 @@ async fn security_headers(req: Request, next: Next) -> Response {
     res
 }
 
-/// State-changing staff requests must come from this console's own pages (v5.0.0-3.5.1): a cross-site Origin or a
-/// cross-site fetch is refused before the handler runs. The SameSite=Strict cookie is the second layer.
-async fn same_origin_writes(req: Request, next: Next) -> Response {
+/// State-changing requests must come from this listener's own pages (v5.0.0-3.5.1): a cross-site Origin or a
+/// cross-site fetch is refused before the handler runs. On the staff listener the SameSite=Strict cookie is the
+/// second layer.
+async fn same_origin_writes(scheme: &'static str, req: Request, next: Next) -> Response {
     if req.method() != Method::GET && req.method() != Method::HEAD {
         let headers = req.headers();
         // HTTP/2 carries the host in the URI authority (:authority), HTTP/1.1 in the Host header.
@@ -159,7 +169,7 @@ async fn same_origin_writes(req: Request, next: Next) -> Response {
         let origin_ok = headers
             .get(header::ORIGIN)
             .and_then(|v| v.to_str().ok())
-            .is_none_or(|o| o == format!("https://{host}"));
+            .is_none_or(|o| o == format!("{scheme}://{host}"));
         let site_ok = headers
             .get("sec-fetch-site")
             .and_then(|v| v.to_str().ok())
@@ -178,6 +188,7 @@ async fn static_file(Path(file): Path<String>) -> Response {
     let (body, mime): (&'static [u8], &str) = match file.as_str() {
         "app.css" => (include_bytes!("../static/app.css"), "text/css; charset=utf-8"),
         "setup-camera-position.svg" => (include_bytes!("../static/setup-camera-position.svg"), "image/svg+xml"),
+        "court.js" => (include_bytes!("../static/court.js"), "text/javascript; charset=utf-8"),
         _ => return StatusCode::NOT_FOUND.into_response(),
     };
     ([(header::CONTENT_TYPE, mime), (header::CACHE_CONTROL, "public, max-age=3600")], body).into_response()

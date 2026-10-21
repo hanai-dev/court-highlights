@@ -37,10 +37,15 @@ services:
     image: ch-dev:0
     depends_on: [rtsp]
     command: ["bash", "-c", "until ffmpeg -nostdin -loglevel error -re -f lavfi -i testsrc2=size=1920x1080:rate=15 -re -f lavfi -i sine=frequency=440 -c:v libx264 -preset ultrafast -tune zerolatency -b:v 3M -g 30 -c:a aac -f rtsp rtsp://rtsp:8554/court1; do sleep 1; done"]
-  cam-2: &cam
+  cam-2:
     image: ch-dev:0
     depends_on: [rtsp]
     command: ["bash", "-c", "until ffmpeg -nostdin -loglevel error -re -f lavfi -i testsrc2=size=1920x1080:rate=15 -c:v libx264 -preset ultrafast -tune zerolatency -b:v 3M -g 30 -f rtsp rtsp://rtsp:8554/court2; do sleep 1; done"]
+
+  cam-3: # 640x360 with audio and a 1 s keyframe interval: clip tests stay quick with software encoding
+    image: ch-dev:0
+    depends_on: [rtsp]
+    command: ["bash", "-c", "until ffmpeg -nostdin -loglevel error -re -f lavfi -i testsrc2=size=640x360:rate=15 -re -f lavfi -i sine=frequency=440 -c:v libx264 -preset ultrafast -tune zerolatency -b:v 800k -g 15 -c:a aac -f rtsp rtsp://rtsp:8554/court3; do sleep 1; done"]
 
   box-a:
     <<: *box

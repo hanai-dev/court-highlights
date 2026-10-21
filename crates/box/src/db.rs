@@ -83,6 +83,34 @@ CREATE TABLE segment (
   path TEXT NOT NULL UNIQUE
 );
 CREATE INDEX segment_court_start ON segment (court_id, start_ms);
+"#, r#"
+CREATE TABLE game (
+  id INTEGER PRIMARY KEY,
+  court_id INTEGER NOT NULL REFERENCES court(id) ON DELETE CASCADE,
+  started_at TEXT NOT NULL,
+  stopped_at TEXT,
+  may_post INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE clip (
+  id INTEGER PRIMARY KEY,
+  court_id INTEGER NOT NULL REFERENCES court(id) ON DELETE CASCADE,
+  game_id INTEGER REFERENCES game(id) ON DELETE SET NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('tap', 'highlight', 'reel', 'game')),
+  token TEXT NOT NULL UNIQUE,
+  window_start_ms INTEGER NOT NULL,
+  window_end_ms INTEGER NOT NULL,
+  last_tap_ms INTEGER,
+  made_at TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'saving' CHECK (state IN ('saving', 'ready', 'failed')),
+  failure TEXT,
+  hidden INTEGER NOT NULL DEFAULT 0,
+  kept_at TEXT,
+  wide_path TEXT,
+  vertical_path TEXT
+);
+CREATE INDEX clip_court_made ON clip (court_id, made_at);
+ALTER TABLE segment ADD COLUMN width INTEGER;
+ALTER TABLE segment ADD COLUMN height INTEGER;
 "#];
 
 fn migrate(conn: &Connection) -> rusqlite::Result<()> {
