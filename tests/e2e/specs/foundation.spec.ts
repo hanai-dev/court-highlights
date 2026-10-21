@@ -5,8 +5,8 @@ test.describe.configure({ mode: 'serial' });
 
 async function addStaff(browser: Browser, page: import('@playwright/test').Page, name: string, username: string): Promise<string> {
   await page.goto(`${STAFF}/console/staff/new`);
-  await page.getByLabel('Name').fill(name);
-  await page.getByLabel('Username').fill(username);
+  await page.getByLabel('Name', { exact: true }).fill(name);
+  await page.getByLabel('Username', { exact: true }).fill(username);
   await page.getByRole('button', { name: /Add staff/ }).click();
   const temp = (await page.locator('[data-temp-password]').textContent())?.trim() ?? '';
   expect(temp).toHaveLength(16);
@@ -37,8 +37,9 @@ test('setup refuses weak passwords, then creates the owner with an argon2 hash (
   }
   await completeSetup(page);
   await expect(page.getByRole('heading', { name: 'No courts yet' })).toBeVisible();
-  expect(Number(boxExec('grep -a -c argon2id /data/box.db').trim())).toBeGreaterThan(0);
-  expect(boxExec(`grep -a -c "${OWNER.password}" /data/box.db || true`).trim()).toBe('0');
+  // WAL mode: fresh rows may still live in box.db-wal, so search both files.
+  expect(Number(boxExec('cat /data/box.db /data/box.db-wal 2>/dev/null | grep -a -c argon2id').trim())).toBeGreaterThan(0);
+  expect(boxExec(`cat /data/box.db /data/box.db-wal 2>/dev/null | grep -a -c "${OWNER.password}" || true`).trim()).toBe('0');
 });
 
 test('staff lifecycle: temporary password, forced change, reset, deactivate ends access (FR-29, v5.0.0-6.4.1, 7.4.2)', async ({ browser, page }) => {
