@@ -98,7 +98,8 @@ test('step 3 prints the signs; Back returns to courts; Finish opens the empty li
   await expect(page.getByRole('link', { name: 'Print court signs' })).toHaveAttribute('href', '/console/signs');
   await page.getByRole('link', { name: 'Finish setup' }).click();
   await expect(page).toHaveURL(`${STAFF}/console/clips`);
-  await expect(page.getByRole('heading', { name: 'No clips yet — players tap Clip that on the court page' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'No clips yet' })).toBeVisible();
+  await expect(page.getByText('Players tap Clip that on the court page.')).toBeVisible();
   const drawing = page.locator('[data-illustration="scan-code"]');
   await expect(drawing).toHaveAttribute('alt', 'Line drawing of a phone scanning the court code on a net post');
   expect(await drawing.evaluate((i: HTMLImageElement) => i.naturalWidth)).toBeGreaterThan(0);

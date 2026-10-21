@@ -12,6 +12,8 @@ pub struct WizardCourt {
     pub name: String,
     pub code: String,
     pub has_camera: bool,
+    /// The camera has sent at least one stretch of footage, so a preview can be cut.
+    pub has_picture: bool,
 }
 
 #[derive(Template)]
@@ -25,7 +27,11 @@ struct CourtsStep {
 fn local_courts(app: &AppState) -> rusqlite::Result<Vec<WizardCourt>> {
     let conn = app.db.conn();
     let mut st = conn.prepare("SELECT id, name, code, camera_url IS NOT NULL FROM court WHERE deleted = 0 AND box = ?1 ORDER BY position, id")?;
-    st.query_map([&app.box_name], |r| Ok(WizardCourt { id: r.get(0)?, name: r.get(1)?, code: r.get(2)?, has_camera: r.get(3)? }))?.collect()
+    st.query_map([&app.box_name], |r| {
+        let id = r.get(0)?;
+        Ok(WizardCourt { id, name: r.get(1)?, code: r.get(2)?, has_camera: r.get(3)?, has_picture: crate::courts::has_picture(&conn, id)? })
+    })?
+    .collect()
 }
 
 /// Step 2 shown again with a form problem (courts::create calls this for wizard posts).

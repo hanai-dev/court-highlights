@@ -16,7 +16,7 @@
     <li class="panel" data-court="{{ c.name }}">
       <h2>{{ c.name }}</h2>
       <p class="fine">Court code <span class="num">{{ c.code }}</span></p>
-      {% if c.has_camera %}<img src="/console/courts/{{ c.id }}/preview.jpg" width="320" height="180" alt="Latest still from the {{ c.name }} camera" class="preview">{% else %}<p class="muted">No camera yet.</p>{% endif %}
+      {% if c.has_picture %}<img src="/console/courts/{{ c.id }}/preview.jpg" width="320" height="180" alt="Latest still from the {{ c.name }} camera" class="preview">{% else if c.has_camera %}<p class="muted" data-no-picture>Waiting for the camera's first picture.</p>{% else %}<p class="muted">No camera yet.</p>{% endif %}
     </li>
     {% endfor %}
   </ul>

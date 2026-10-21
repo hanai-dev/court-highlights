@@ -27,8 +27,8 @@
   {% else %}
   <section class="panel empty">
     <img src="/static/empty-library-scan.svg" width="480" height="360" alt="Line drawing of a phone scanning the court code on a net post" data-illustration="scan-code" class="illustration">
-    <h2>No clips yet — players tap Clip that on the court page</h2>
-    <p>Clips, highlights and game videos appear here as soon as they are ready.</p>
+    <h2>No clips yet</h2>
+    <p>Players tap <strong>Clip that</strong> on the court page. Clips, highlights and game videos appear here as soon as they are ready.</p>
   </section>
   {% endif %}
 {% else %}
@@ -57,9 +57,9 @@
   </tbody>
 </table>
 </div>
-<nav class="row spaced" aria-label="Pages">
+<div class="row spaced" role="navigation" aria-label="Pages">
   {% if let Some(p) = prev %}<a class="btn" href="/console/clips?{{ p }}" rel="prev">Previous 50</a>{% endif %}
   {% if let Some(n) = next %}<a class="btn" href="/console/clips?{{ n }}" rel="next">Next 50</a>{% endif %}
-</nav>
+</div>
 {% endif %}
 {% endblock %}

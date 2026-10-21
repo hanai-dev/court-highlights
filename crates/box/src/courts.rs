@@ -207,6 +207,7 @@ struct CourtForm {
     id: Option<i64>,
     code: String,
     has_camera: bool,
+    has_picture: bool,
     status: String,
     f: CourtFields,
 }
@@ -218,6 +219,7 @@ pub async fn new_form(State(app): State<AppState>, staff: Staff) -> Page {
         id: None,
         code: String::new(),
         has_camera: false,
+        has_picture: false,
         status: String::new(),
         f: CourtFields::blank().await,
     })
@@ -303,7 +305,15 @@ pub async fn create(State(app): State<AppState>, staff: Staff, Form(input): Form
         return if wizard {
             crate::wizard::courts_page(&app, &staff, f)
         } else {
-            invalid(CourtForm { shell: shell(&app.db, &staff, "courts")?, id: None, code: String::new(), has_camera: false, status: String::new(), f })
+            invalid(CourtForm {
+                shell: shell(&app.db, &staff, "courts")?,
+                id: None,
+                code: String::new(),
+                has_camera: false,
+                has_picture: false,
+                status: String::new(),
+                f,
+            })
         };
     }
     let url = address.unwrap_or_default();
@@ -338,6 +348,7 @@ pub async fn edit(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>
         .ok_or(AppError::NotFound)?;
     // Only the box that records the court can show its camera.
     let has_camera = row.2.is_some() && row.5 == app.box_name;
+    let has_picture = has_camera && has_picture(&app.db.conn(), id)?;
     let (_, status) = crate::courts::status_label(&app.recorders.status(id, has_camera));
     let f = CourtFields {
         name: row.0,
@@ -348,7 +359,7 @@ pub async fn edit(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>
         chosen: String::new(),
         errors: Vec::new(),
     };
-    html(CourtForm { shell: shell(&app.db, &staff, "courts")?, id: Some(id), code: row.1, has_camera, status, f })
+    html(CourtForm { shell: shell(&app.db, &staff, "courts")?, id: Some(id), code: row.1, has_camera, has_picture, status, f })
 }
 
 pub async fn update(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>, Form(input): Form<CourtInput>) -> Page {
@@ -357,7 +368,15 @@ pub async fn update(State(app): State<AppState>, staff: Staff, Path(id): Path<i6
     if !errors.is_empty() {
         let code: String = app.db.conn().query_row("SELECT code FROM court WHERE id = ?1", [id], |r| r.get(0)).optional()?.ok_or(AppError::NotFound)?;
         let f = refill(input, Vec::new(), errors, false);
-        return invalid(CourtForm { shell: shell(&app.db, &staff, "courts")?, id: Some(id), code, has_camera: false, status: String::new(), f });
+        return invalid(CourtForm {
+            shell: shell(&app.db, &staff, "courts")?,
+            id: Some(id),
+            code,
+            has_camera: false,
+            has_picture: false,
+            status: String::new(),
+            f,
+        });
     }
     let url = input.camera_url.trim();
     let conn = app.db.conn();
@@ -421,6 +440,11 @@ pub async fn delete(State(app): State<AppState>, staff: Staff, Path(id): Path<i6
 }
 
 /// A still from the court's newest finished segment, for the setup preview (FR-30).
+/// Whether a preview can be cut: the court has a finished stretch of footage.
+pub fn has_picture(conn: &rusqlite::Connection, court_id: i64) -> rusqlite::Result<bool> {
+    conn.query_row("SELECT EXISTS (SELECT 1 FROM segment WHERE court_id = ?1 AND end_ms IS NOT NULL)", [court_id], |r| r.get(0))
+}
+
 pub async fn preview(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>) -> Result<Response, AppError> {
     staff.require_owner()?;
     let path: Option<String> = app

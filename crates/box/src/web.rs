@@ -170,20 +170,28 @@ fn test_hooks(r: Router<AppState>) -> Router<AppState> {
         n: i64,
     }
     r.route("/__test/statements", get(|| async { crate::db::STATEMENTS.load(std::sync::atomic::Ordering::Relaxed).to_string() }))
-        // Library fixtures: ready clip rows without files, one minute apart, cycling through the kinds.
+        // Library fixtures: ready clip rows with a thumbnail but no video files, one minute apart, cycling through the kinds.
         .route(
             "/__test/seed-clips",
             post(|State(app): State<AppState>, Form(s): Form<Seed>| async move {
+                use base64::Engine;
+                // A plain 96 × 54 JPEG, the thumbnail size (made with ffmpeg from a flat colour).
+                let thumb = base64::engine::general_purpose::STANDARD
+                    .decode("/9j/4AAQSkZJRgABAgAAAQABAAD//gAQTGF2YzYyLjExLjEwMAD/2wBDAAgQEBMQExYWFhYWFhoYGhsbGxoaGhobGxsdHR0iIiIdHR0bGx0dICAiIiUmJSMjIiMmJigoKDAwLi44ODpFRVP/xABNAAEBAAAAAAAAAAAAAAAAAAAABwEBAQEAAAAAAAAAAAAAAAAAAAIDEAEAAAAAAAAAAAAAAAAAAAAAEQEAAAAAAAAAAAAAAAAAAAAA/8AAEQgANgBgAwEiAAIRAAMRAP/aAAwDAQACEQMRAD8AqgDBYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/2Q==")
+                    .map_err(|e| AppError::Internal(e.to_string()))?;
                 let now = crate::clock::now();
                 let conn = app.db.conn();
                 for i in 0..s.n {
                     let made = now - chrono::Duration::minutes(i);
                     let kind = ["tap", "tap", "highlight", "game"][(i % 4) as usize];
+                    let token = auth::random_token();
                     conn.execute(
                         "INSERT INTO clip (court_id, kind, token, window_start_ms, window_end_ms, made_at, state) VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'ready')",
-                        params![s.court, kind, auth::random_token(), made.timestamp_millis() - 30_000, made.timestamp_millis(), made.to_rfc3339()],
+                        params![s.court, kind, token, made.timestamp_millis() - 30_000, made.timestamp_millis(), made.to_rfc3339()],
                     )
                     .map_err(|e| AppError::Internal(e.to_string()))?;
+                    let dir = app.data.join("clips").join(&token);
+                    std::fs::create_dir_all(&dir).and_then(|_| std::fs::write(dir.join("thumb.jpg"), &thumb)).map_err(|e| AppError::Internal(e.to_string()))?;
                 }
                 Ok::<_, AppError>(s.n.to_string())
             }),

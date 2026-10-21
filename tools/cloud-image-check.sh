@@ -23,7 +23,8 @@ echo "image $(docker image inspect "$IMAGE" --format '{{.Id}}') size $(docker im
 
 # Run it read-only, as the platform would, against the test stack's database, store and mail stand-ins.
 docker rm -f ch-cloud-image-check >/dev/null 2>&1
-docker run -d --name ch-cloud-image-check --read-only --network ch-test_default \
+# Restarted on failure like the platform does: the object store may still be starting.
+docker run -d --name ch-cloud-image-check --read-only --restart on-failure --network ch-test_default \
   -e DATABASE_URL=postgres://postgres:ch-test-only@db/ch -e CH_PUBLIC_URL=http://localhost:18091 \
   -e CH_S3_ENDPOINT=http://s3:8333 -e CH_S3_BUCKET=clips -e CH_S3_KEY=ch-test-access -e CH_S3_SECRET=ch-test-only-not-a-secret \
   -e CH_SES_ENDPOINT=http://ses:8025 -e CH_SES_KEY=ch-test-access -e CH_SES_SECRET=ch-test-only-not-a-secret -e CH_MAIL_FROM=videos@test.invalid \

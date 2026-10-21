@@ -34,7 +34,8 @@ test('first use: the library explains how clips arrive; signs and help work (FR-
   await startCameras('cam-3');
   await completeSetup(page, OWNER, ['00:00', '23:59'], LOGO);
   await page.goto(`${STAFF}/console/clips`);
-  await expect(page.getByRole('heading', { name: 'No clips yet — players tap Clip that on the court page' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'No clips yet' })).toBeVisible();
+  await expect(page.getByText('Players tap Clip that on the court page.')).toBeVisible();
   await expect(page.locator('[data-illustration="scan-code"]')).toBeVisible();
 
   await page.goto(`${STAFF}/console/help`);

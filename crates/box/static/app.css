@@ -14,6 +14,8 @@
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--background); color: var(--on-surface); font: 400 16px/1.5 var(--font); }
+img, video { max-width: 100%; height: auto; }
+input, select, textarea { max-width: 100%; }
 ::selection { background: var(--selection); color: var(--on-primary-container); }
 a { color: var(--primary); text-underline-offset: 2px; }
 h1, h2, h3 { margin: 0 0 var(--sm); line-height: 1.2; }
@@ -60,6 +62,7 @@ input[type=file] { font: 16px var(--font); }
 
 /* Tables */
 .table-wrap { overflow-x: auto; border: 2px solid var(--outline); border-radius: var(--radius); background: var(--surface); }
+.panel > .table-wrap { border: 0; border-radius: 0; background: none; } /* the panel is already the card */
 table { width: 100%; border-collapse: collapse; font-size: 15px; }
 caption { text-align: left; font-weight: 700; padding: var(--sm) var(--md); }
 th, td { text-align: left; padding: 10px var(--md); border-top: 1px solid var(--outline-variant); vertical-align: middle; }
@@ -86,16 +89,17 @@ fieldset.field legend { font: 700 14px/1.25 var(--font); padding: 0 var(--xs); }
 .email-add input[type=email] { flex: 1 1 200px; }
 
 /* Staff console shell */
-.console { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.console { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100vh; }
 .console-nav { background: var(--surface); border-right: 2px solid var(--outline); padding: var(--md) var(--sm); }
 .console-nav .venue { font-weight: 800; padding: 0 var(--sm) var(--md); }
 .console-nav a { display: block; padding: 10px var(--sm); border-radius: var(--radius); color: var(--on-surface); text-decoration: none; font-weight: 700; }
 .console-nav a[aria-current=page] { background: var(--selection); }
 .console-nav form { margin-top: var(--lg); padding: 0 var(--sm); }
 .console-main { padding: var(--lg); max-width: 1100px; }
+.console-main p { max-width: 72ch; }
 .console-top { display: flex; gap: var(--md); flex-wrap: wrap; align-items: baseline; margin-bottom: var(--md); }
 @media (max-width: 767px) {
-  .console { grid-template-columns: 1fr; }
+  .console { grid-template-columns: minmax(0, 1fr); }
   .console-nav { border-right: 0; border-bottom: 2px solid var(--outline); display: flex; flex-wrap: wrap; gap: var(--xs); }
   .console-nav .venue { width: 100%; padding-bottom: var(--sm); }
   .console-nav form { margin: 0; }

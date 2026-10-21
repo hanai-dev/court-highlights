@@ -8,7 +8,7 @@
 <section class="panel" aria-labelledby="preview-h">
   <h2 id="preview-h">Camera</h2>
   <p>Status: <span data-court-status>{{ status }}</span> · Court code <strong class="num">{{ code }}</strong></p>
-  {% if has_camera %}<img src="/console/courts/{{ i }}/preview.jpg" width="640" height="360" alt="Latest still from the {{ f.name }} camera" class="preview" loading="lazy">{% endif %}
+  {% if has_picture %}<img src="/console/courts/{{ i }}/preview.jpg" width="640" height="360" alt="Latest still from the {{ f.name }} camera" class="preview" loading="lazy">{% else if has_camera %}<p class="muted" data-no-picture>Waiting for the camera's first picture.</p>{% endif %}
 </section>
 {% endif %}
 <form method="post" action="{% if let Some(i) = id %}/console/courts/{{ i }}{% else %}/console/courts{% endif %}" class="panel" novalidate>

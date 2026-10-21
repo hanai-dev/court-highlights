@@ -9,7 +9,7 @@
     {% for c in f.found %}
     <label class="check"><input type="radio" name="found" value="{{ c.xaddr }}"{% if c.xaddr == f.chosen %} checked{% endif %}> {{ c.name }} <span class="fine">{{ c.host }}</span></label>
     {% endfor %}
-    <label class="check"><input type="radio" name="found" value=""{% if f.chosen.is_empty() %} checked{% endif %}> None of these — enter its address below</label>
+    <label class="check"><input type="radio" name="found" value=""{% if f.chosen.is_empty() %} checked{% endif %}> None of these: enter its address below</label>
     {% if let Some(e) = f.err("found") %}<p class="field-error" id="found-error">{{ e }}</p>{% endif %}
   </fieldset>
   {% else %}

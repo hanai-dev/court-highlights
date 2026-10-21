@@ -25,11 +25,18 @@ async function seriousViolations(page: Page): Promise<string[]> {
     .map((v) => `${v.id} (${v.impact}): ${v.nodes.map((n) => n.target.join(' ')).slice(0, 3).join(', ')}`);
 }
 
+/** Every route loads with no console or page errors and nothing serious for axe. (The design scan's own console
+ * check is skipped: its text-spacing probe injects a style our CSP refuses, by design.) */
 async function axeRoutes(page: Page, base: string, routes: string[]): Promise<void> {
+  const errors: string[] = [];
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  page.on('pageerror', (e) => errors.push(e.message));
   for (const route of routes) {
+    errors.length = 0;
     const res = await page.goto(`${base}${route}`);
     expect(res?.ok(), `${base}${route} loads`).toBe(true);
     expect(await seriousViolations(page), `${base}${route}`).toEqual([]);
+    expect(errors, `${base}${route} console`).toEqual([]);
   }
 }
 

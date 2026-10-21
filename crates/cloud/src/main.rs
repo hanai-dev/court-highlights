@@ -340,7 +340,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         &need("CH_S3_KEY")?,
         &need("CH_S3_SECRET")?,
     );
-    store.ensure_bucket().await.map_err(|e| format!("object store unreachable: {e}"))?;
+    // The whole cause chain ("dispatch failure" alone says nothing), never a credential.
+    store.ensure_bucket().await.map_err(|e| format!("object store unreachable: {}", aws_sdk_s3::error::DisplayErrorContext(&*e)))?;
     let ses_endpoint = std::env::var("CH_SES_ENDPOINT").ok().filter(|v| !v.is_empty());
     let mail = mail::Mailer::new(
         ses_endpoint.as_deref(),
