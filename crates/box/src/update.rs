@@ -7,9 +7,9 @@
 //! Ed25519 over `ch-update:<version>:<sha256>`; boxes trust the key in `CH_RELEASE_KEY` (64 hex characters).
 
 use crate::auth::Staff;
+use crate::db;
 use crate::recorder::CourtStatus;
 use crate::web::{AppError, AppState, Page, Shell, html, shell};
-use crate::db;
 use askama::Template;
 use axum::extract::{Multipart, State};
 use base64::Engine;

@@ -37,7 +37,9 @@ jobs:
         run: >-
           docker compose -p ch-test -f docker/compose.test.yaml --profile build run --rm builder sh -c
           "cargo fmt --all --check
+          && cargo fmt --manifest-path crates/cloud/Cargo.toml --check
           && cargo clippy -p ch-box -p ch-core --features test-hooks -- -D warnings
+          && cargo clippy --manifest-path crates/cloud/Cargo.toml --features test-hooks -- -D warnings
           && cargo test -p ch-box -p ch-core --features test-hooks
           && cargo build -p ch-box --features test-hooks
           && cargo build --manifest-path crates/cloud/Cargo.toml --features test-hooks
