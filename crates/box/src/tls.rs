@@ -20,9 +20,13 @@ pub fn load_or_create(dir: &Path) -> std::io::Result<(String, String)> {
 /// "AB:CD:…" SHA-256 of the certificate as browsers show it.
 pub fn fingerprint(cert_pem: &str) -> std::io::Result<String> {
     use rustls::pki_types::{CertificateDer, pem::PemObject};
-    use sha2::{Digest, Sha256};
     let der = CertificateDer::from_pem_slice(cert_pem.as_bytes()).map_err(std::io::Error::other)?;
-    Ok(Sha256::digest(der.as_ref()).iter().map(|b| format!("{b:02X}")).collect::<Vec<_>>().join(":"))
+    Ok(fingerprint_der(&der))
+}
+
+pub fn fingerprint_der(der: &[u8]) -> String {
+    use sha2::{Digest, Sha256};
+    Sha256::digest(der).iter().map(|b| format!("{b:02X}")).collect::<Vec<_>>().join(":")
 }
 
 #[cfg(unix)]

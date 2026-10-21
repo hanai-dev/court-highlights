@@ -3,7 +3,7 @@
 {% block body %}
 <main class="narrow">
   <header class="sign-head"><p class="court">{{ venue }}</p><p class="muted">Staff console</p></header>
-  {% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
+  {% if let Some(e) = error %}<div class="error-summary" role="alert" tabindex="-1" autofocus data-error-summary><h2>Not signed in</h2><p>{{ e }}</p></div>{% endif %}
   {% if signed_out %}<div class="notice notice-ok" role="status">You are signed out.</div>{% endif %}
   {% if restored %}<div class="notice notice-ok" role="status">Settings restored. Sign in with your usual account.</div>{% endif %}
   <form method="post" action="/console/signin" class="panel">

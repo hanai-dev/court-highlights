@@ -2,8 +2,8 @@
 //! sessions, and the ch-core lockout rule persisted per account.
 
 use crate::{clock, db::Db, web::AppError};
-use argon2::password_hash::{PasswordHasher, PasswordVerifier};
 use argon2::Argon2;
+use argon2::password_hash::{PasswordHasher, PasswordVerifier};
 use axum::extract::FromRequestParts;
 use axum::http::{header, request::Parts};
 use axum::response::{IntoResponse, Redirect, Response};
@@ -78,15 +78,16 @@ pub fn sign_in(db: &Db, username: &str, password: &str) -> rusqlite::Result<Sign
     Ok(SignInOutcome::Ok { token, must_change })
 }
 
+/// id, password hash, failures, locked until, active, must change, temporary password expiry.
+type StaffLogin = (i64, String, i64, Option<String>, bool, bool, Option<String>);
+
 /// Checks a password under the lockout rule without opening a session; refusals are logged (v5.0.0-16.3.1).
 pub fn verify(db: &Db, username: &str, password: &str) -> rusqlite::Result<Option<(i64, bool)>> {
     let conn = db.conn();
-    let row: Option<(i64, String, i64, Option<String>, bool, bool, Option<String>)> = conn
-        .query_row(
-            "SELECT id, password_hash, failures, locked_until, active, must_change, temp_expires_at FROM staff WHERE username = ?1",
-            [username],
-            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?)),
-        )
+    let row: Option<StaffLogin> = conn
+        .query_row("SELECT id, password_hash, failures, locked_until, active, must_change, temp_expires_at FROM staff WHERE username = ?1", [username], |r| {
+            Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?))
+        })
         .optional()?;
     let now = clock::now();
     let Some((id, hash, failures, locked_until, active, must_change, temp_expires)) = row else {

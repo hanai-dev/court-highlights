@@ -50,9 +50,7 @@ pub struct Panel {
 impl Panel {
     /// The game area still has something saving: the page keeps refreshing it.
     pub fn pending(&self) -> bool {
-        self.last.as_ref().is_some_and(|g| {
-            g.video.as_ref().is_none_or(|v| v.state == "saving") || matches!(g.highlights.as_str(), "pending" | "running")
-        })
+        self.last.as_ref().is_some_and(|g| g.video.as_ref().is_none_or(|v| v.state == "saving") || matches!(g.highlights.as_str(), "pending" | "running"))
     }
 }
 
@@ -308,10 +306,10 @@ fn spawn_jobs(app: AppState, game: i64) {
         let Ok(_permit) = HEAVY.acquire().await else { return };
         if let Err(e) = game_video(&app, game).await {
             tracing::error!(game, error = ?e, "game video failed");
-            let _ = app.db.conn().execute(
-                "UPDATE clip SET state = 'failed', failure = 'The box could not make this game video.' WHERE game_id = ?1 AND kind = 'game'",
-                [game],
-            );
+            let _ = app
+                .db
+                .conn()
+                .execute("UPDATE clip SET state = 'failed', failure = 'The box could not make this game video.' WHERE game_id = ?1 AND kind = 'game'", [game]);
         }
         if let Err(e) = highlights(&app, game).await {
             tracing::error!(game, error = ?e, "highlights failed");
@@ -391,7 +389,14 @@ async fn highlights(app: &AppState, game: i64) -> Result<(), AppError> {
         let dir = app.data.join("clips").join(&token);
         std::fs::create_dir_all(&dir).map_err(|e| AppError::Internal(e.to_string()))?;
         let (wide, vertical) = (dir.join("wide.mp4"), dir.join("vertical.mp4"));
-        let part = crate::clips::Plan { segments: p.segments.clone(), from_ms: from + a, to_ms: from + b, source: p.source, start: start + a as i64, end: start + b as i64 };
+        let part = crate::clips::Plan {
+            segments: p.segments.clone(),
+            from_ms: from + a,
+            to_ms: from + b,
+            source: p.source,
+            start: start + a as i64,
+            end: start + b as i64,
+        };
         render(app, part, vec![(Shape::Wide, wide.clone()), (Shape::Vertical, vertical.clone())]).await?;
         let id = insert_ready(&app.db, court, game, "highlight", &token, rank as i64 + 1, start + a as i64, start + b as i64, &wide, &vertical)?;
         thumbnail(id, &wide, &dir).await;
@@ -419,7 +424,18 @@ async fn highlights(app: &AppState, game: i64) -> Result<(), AppError> {
 }
 
 #[allow(clippy::too_many_arguments)]
-fn insert_ready(db: &Db, court: i64, game: i64, kind: &str, token: &str, rank: i64, start: i64, end: i64, wide: &std::path::Path, vertical: &std::path::Path) -> rusqlite::Result<i64> {
+fn insert_ready(
+    db: &Db,
+    court: i64,
+    game: i64,
+    kind: &str,
+    token: &str,
+    rank: i64,
+    start: i64,
+    end: i64,
+    wide: &std::path::Path,
+    vertical: &std::path::Path,
+) -> rusqlite::Result<i64> {
     let conn = db.conn();
     conn.execute(
         "INSERT INTO clip (court_id, game_id, kind, token, rank, window_start_ms, window_end_ms, made_at, state, wide_path, vertical_path)
@@ -440,7 +456,13 @@ pub struct EmailForm {
 /// Plain shape check; delivery problems surface as bounces, handled by the online service (FR-25).
 pub fn valid_email(e: &str) -> bool {
     let Some((user, domain)) = e.split_once('@') else { return false };
-    e.len() <= 254 && !user.is_empty() && domain.contains('.') && !domain.starts_with('.') && !domain.ends_with('.') && !e.chars().any(|c| c.is_whitespace() || c == '<' || c == '>' || c == '"') && !domain.contains('@')
+    e.len() <= 254
+        && !user.is_empty()
+        && domain.contains('.')
+        && !domain.starts_with('.')
+        && !domain.ends_with('.')
+        && !e.chars().any(|c| c.is_whitespace() || c == '<' || c == '>' || c == '"')
+        && !domain.contains('@')
 }
 
 pub async fn add_email(State(app): State<AppState>, Path(code): Path<String>, Form(f): Form<EmailForm>) -> Page {
@@ -467,10 +489,7 @@ pub async fn add_email(State(app): State<AppState>, Path(code): Path<String>, Fo
     if let Some(p) = problem {
         return Ok(Redirect::to(&format!("{back}?email={p}#emails")).into_response());
     }
-    app.db.conn().execute(
-        &format!("INSERT INTO recipient ({column}, email, added_at) VALUES (?1, ?2, ?3)"),
-        params![id, email, clock::now().to_rfc3339()],
-    )?;
+    app.db.conn().execute(&format!("INSERT INTO recipient ({column}, email, added_at) VALUES (?1, ?2, ?3)"), params![id, email, clock::now().to_rfc3339()])?;
     Ok(Redirect::to(&format!("{back}#emails")).into_response())
 }
 

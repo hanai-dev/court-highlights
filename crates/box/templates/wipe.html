@@ -1,0 +1,22 @@
+{% extends "console.html" %}
+{% block title %}Wipe this box{% endblock %}
+{% block main %}
+<p><a href="/console/settings">← Settings</a></p>
+<h1>Wipe this box</h1>
+{% include "error_summary.html" %}
+<section class="panel">
+  <p>Wiping erases everything on this box: all footage, clips, games, staff accounts, the activity log and every setting. The box leaves the fleet and starts again as a new box. This can't be undone.</p>
+  <p>To set up another box later with the same courts and staff, <a href="/console/settings#backup">export a settings backup</a> first.</p>
+  <form method="post" action="/console/settings/wipe" novalidate>
+    <div class="field">
+      <label for="confirm">Type the venue name to confirm: <strong>{{ venue }}</strong></label>
+      <input id="confirm" name="confirm" type="text" autocomplete="off" required{% if f.err("confirm").is_some() %} aria-invalid="true" aria-describedby="confirm-error"{% endif %}>
+      {% if let Some(e) = f.err("confirm") %}<p class="field-error" id="confirm-error">{{ e }}</p>{% endif %}
+    </div>
+    <div class="row">
+      <button class="btn btn-danger" type="submit">Wipe this box</button>
+      <a class="btn" href="/console/settings">Keep everything</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

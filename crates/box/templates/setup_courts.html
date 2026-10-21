@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Set up courts{% endblock %}
+{% block body %}
+<main class="narrow">
+  <ol class="steps" aria-label="Setup steps">
+    <li>Owner and venue</li>
+    <li aria-current="step">Courts and cameras</li>
+    <li>Court signs</li>
+  </ol>
+  <h1>2 of 3 · Courts and cameras</h1>
+  <p class="muted">{{ venue }}: add each court this box records and the camera that watches it. The preview shows what the camera sees once it is recording.</p>
+  {% include "error_summary.html" %}
+  {% if !courts.is_empty() %}
+  <ul class="clips" aria-label="Courts added">
+    {% for c in courts %}
+    <li class="panel" data-court="{{ c.name }}">
+      <h2>{{ c.name }}</h2>
+      <p class="fine">Court code <span class="num">{{ c.code }}</span></p>
+      {% if c.has_camera %}<img src="/console/courts/{{ c.id }}/preview.jpg" width="320" height="180" alt="Latest still from the {{ c.name }} camera" class="preview">{% else %}<p class="muted">No camera yet.</p>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <form method="post" action="/console/courts" class="panel" novalidate>
+    <h2>Add a court</h2>
+    <input type="hidden" name="next" value="setup">
+{% include "court_fields.html" %}
+    <button class="btn" type="submit">Add court</button>
+  </form>
+  <div class="row spaced">
+    <a class="btn" href="/console/settings">← Back: owner and venue</a>
+    <a class="btn btn-primary" href="/setup/signs">Continue to court signs</a>
+  </div>
+</main>
+{% endblock %}

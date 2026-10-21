@@ -44,7 +44,7 @@
     <td class="num">{{ r.when }}{% if r.hidden %}<br><span class="fine">Hidden by players</span>{% endif %}</td>
     <td>{{ r.kind }}</td>
     <td class="num">{{ r.length }}</td>
-    <td>{% if let Some(k) = r.kept %}Kept until {{ k }}{% else %}<form method="post" action="{{ r.base }}/keep"><button class="btn" type="submit" aria-label="Keep {{ r.court }} {{ r.when }}">Keep</button></form>{% endif %}</td>
+    <td>{% if let Some(k) = r.kept %}Kept until {{ k }}{% else %}<form method="post" action="{{ r.base }}/keep"><input type="hidden" name="back" value="{{ here }}"><button class="btn" type="submit" aria-label="Keep {{ r.court }} {{ r.when }}">Keep</button></form>{% endif %}</td>
     <td>{% if r.may_post %}Yes{% else %}No{% endif %}</td>
     <td><div class="row">
       <a class="btn" href="{{ r.base }}/wide.mp4" download aria-label="Download {{ r.court }} {{ r.when }}">Download</a>

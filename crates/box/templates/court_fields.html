@@ -1,0 +1,29 @@
+  <div class="field">
+    <label for="name">Court name</label>
+    <input id="name" name="name" type="text" required maxlength="40" value="{{ f.name }}"{% if let Some(e) = f.err("name") %} aria-invalid="true" aria-describedby="name-error"{% endif %}>
+    {% if let Some(e) = f.err("name") %}<p class="field-error" id="name-error">{{ e }}</p>{% endif %}
+  </div>
+  {% if !f.found.is_empty() %}
+  <fieldset class="field" id="found"{% if let Some(e) = f.err("found") %} aria-describedby="found-error"{% endif %}>
+    <legend>Camera found on this network</legend>
+    {% for c in f.found %}
+    <label class="check"><input type="radio" name="found" value="{{ c.xaddr }}"{% if c.xaddr == f.chosen %} checked{% endif %}> {{ c.name }} <span class="fine">{{ c.host }}</span></label>
+    {% endfor %}
+    <label class="check"><input type="radio" name="found" value=""{% if f.chosen.is_empty() %} checked{% endif %}> None of these — enter its address below</label>
+    {% if let Some(e) = f.err("found") %}<p class="field-error" id="found-error">{{ e }}</p>{% endif %}
+  </fieldset>
+  {% else %}
+  <p class="hint" data-no-cameras-found>No cameras answered on this network. Enter the camera's address below, or check its power and cable and reload this page.</p>
+  {% endif %}
+  <div class="field">
+    <label for="camera_url">Camera stream address</label>
+    <input id="camera_url" name="camera_url" type="url" maxlength="300" placeholder="rtsp://192.168.1.21:554/stream1" value="{{ f.camera_url }}" aria-describedby="camera-hint{% if f.err("camera_url").is_some() %} camera_url-error{% endif %}"{% if f.err("camera_url").is_some() %} aria-invalid="true"{% endif %}>
+    <p class="hint" id="camera-hint">Only for a camera not found above: its RTSP address, from its manual or setup app. Leave empty to add the camera later.</p>
+    {% if let Some(e) = f.err("camera_url") %}<p class="field-error" id="camera_url-error">{{ e }}</p>{% endif %}
+  </div>
+  <div class="row">
+    <div class="field"><label for="camera_user">Camera username</label><input id="camera_user" name="camera_user" type="text" maxlength="100" autocomplete="off" value="{{ f.camera_user }}"{% if f.err("camera_user").is_some() %} aria-invalid="true" aria-describedby="camera_user-error"{% endif %}>
+      {% if let Some(e) = f.err("camera_user") %}<p class="field-error" id="camera_user-error">{{ e }}</p>{% endif %}</div>
+    <div class="field"><label for="camera_password">Camera password</label><input id="camera_password" name="camera_password" type="password" maxlength="100" autocomplete="new-password" aria-describedby="pw-hint">
+      <p class="hint" id="pw-hint">{% if f.has_password %}Saved. Leave empty to keep it.{% else %}As set on the camera. A found camera needs it to share its address.{% endif %}</p></div>
+  </div>

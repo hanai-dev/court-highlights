@@ -17,9 +17,7 @@ fn t(s: &Value) -> Time {
     if let Ok(dt) = DateTime::parse_from_rfc3339(s) {
         return dt;
     }
-    let time = NaiveTime::parse_from_str(s, "%H:%M:%S%.f")
-        .or_else(|_| NaiveTime::parse_from_str(s, "%H:%M"))
-        .unwrap_or_else(|_| panic!("bad time {s}"));
+    let time = NaiveTime::parse_from_str(s, "%H:%M:%S%.f").or_else(|_| NaiveTime::parse_from_str(s, "%H:%M")).unwrap_or_else(|_| panic!("bad time {s}"));
     manila().from_local_datetime(&chrono::NaiveDate::from_ymd_opt(2026, 10, 20).unwrap().and_time(time)).unwrap()
 }
 
@@ -251,11 +249,8 @@ fn gv_20() {
     let day = |d| manila().with_ymd_and_hms(2026, 10, d, 20, 0, 0).unwrap();
     // Fixture sizes (4 % each) on a 100-unit disk; the oracle is the deletion order and the thresholds.
     let names: Vec<&str> = v["input"]["unkept_game_videos"].as_array().unwrap().iter().map(|s| s.as_str().unwrap()).collect();
-    let mut candidates: Vec<Deletable<String>> = names
-        .iter()
-        .enumerate()
-        .map(|(i, n)| Deletable { id: n.to_string(), is_game_video: true, made: day(19 + i as u32), bytes: 4 })
-        .collect();
+    let mut candidates: Vec<Deletable<String>> =
+        names.iter().enumerate().map(|(i, n)| Deletable { id: n.to_string(), is_game_video: true, made: day(19 + i as u32), bytes: 4 }).collect();
     candidates.push(Deletable { id: "older clip".into(), is_game_video: false, made: day(18), bytes: 1 });
     let plan = disk_plan(used_pct, 100, &candidates);
     let expected: Vec<String> = v["expected"]["delete_order"].as_array().unwrap().iter().map(|s| s.as_str().unwrap().to_string()).collect();

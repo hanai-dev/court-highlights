@@ -1,0 +1,82 @@
+# CI on the owner-laptop profile (DEV-ENVIRONMENTS): the same build image, compose stack and Playwright suite as a
+# developer machine, with replayed footage as RTSP cameras. Nothing here reaches a live venue or a deploy target.
+# Fast checks run on every push; the full e2e suite (about an hour) on pull requests and on demand.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      e2e:
+        description: Run the full e2e suite (about an hour)
+        type: boolean
+        default: true
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # gitleaks scans the whole history
+      - name: Build image (Ubuntu 26.04, Rust 1.99, GStreamer)
+        run: docker build -t ch-dev:0 -f docker/dev.Dockerfile docker
+      - name: Cache volumes
+        run: docker volume create ch-target && docker volume create ch-cargo-registry
+      - name: Format, lint, unit tests, build
+        run: >-
+          docker compose -p ch-test -f docker/compose.test.yaml --profile build run --rm builder sh -c
+          "cargo fmt --all --check
+          && cargo clippy -p ch-box -p ch-core --features test-hooks -- -D warnings
+          && cargo test -p ch-box -p ch-core --features test-hooks
+          && cargo build -p ch-box --features test-hooks
+          && cargo build --manifest-path crates/cloud/Cargo.toml --features test-hooks
+          && cargo metadata --format-version 1 --locked > target/box-metadata.json
+          && sh tools/gst-licence-check.sh target/debug/ch-box"
+      - name: Crate licences
+        run: |
+          docker run --rm -v ch-target:/t alpine:3.22 cat /t/box-metadata.json > box-metadata.json
+          node tools/licence-check.cjs box-metadata.json
+      - name: Advisories and leaked credentials
+        run: sh tools/supply-chain-scan.sh .
+      - name: Payload, cost model, support horizon
+        run: node tools/payload-check.cjs && node tools/cost-model.cjs && node tools/horizon-check.cjs
+
+  e2e:
+    needs: checks
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.e2e)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build image and binaries
+        run: |
+          docker build -t ch-dev:0 -f docker/dev.Dockerfile docker
+          docker volume create ch-target && docker volume create ch-cargo-registry
+          docker compose -p ch-test -f docker/compose.test.yaml --profile build run --rm builder
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Playwright
+        working-directory: tests/e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npx playwright test
+      - name: Keep the failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: e2e-test-results
+          path: tests/e2e/test-results
+          retention-days: 14

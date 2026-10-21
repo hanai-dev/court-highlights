@@ -64,6 +64,18 @@ caption { text-align: left; font-weight: 700; padding: var(--sm) var(--md); }
 th, td { text-align: left; padding: 10px var(--md); border-top: 1px solid var(--outline-variant); vertical-align: middle; }
 thead th { border-top: 0; border-bottom: 2px solid var(--outline); }
 td.num { font-variant-numeric: tabular-nums; }
+.error-summary { border: 3px solid var(--error); border-radius: var(--radius); background: var(--surface); padding: var(--md); margin-bottom: var(--md); }
+.error-summary h2 { color: var(--on-error-container); }
+.error-summary ul { margin: 0; padding-left: 1.2em; }
+.error-summary a { color: var(--on-error-container); font-weight: 700; }
+.error-summary:focus { outline: 3px solid var(--outline); outline-offset: 2px; }
+[aria-invalid="true"] { border-color: var(--error); }
+fieldset.field { border: 2px solid var(--outline); border-radius: var(--radius); padding: var(--sm) var(--md); }
+fieldset.field legend { font: 700 14px/1.25 var(--font); padding: 0 var(--xs); }
+.steps { display: flex; gap: var(--sm); list-style: none; padding: 0; margin: 0 0 var(--md); counter-reset: step; flex-wrap: wrap; }
+.steps li { counter-increment: step; font-size: 14px; color: var(--on-surface-variant); }
+.steps li::before { content: counter(step) ". "; }
+.steps li[aria-current="step"] { color: var(--on-surface); font-weight: 700; border-bottom: 3px solid var(--outline); }
 .btn-block { width: 100%; min-height: 48px; }
 .last-game { border-top: 1px solid var(--outline-variant); margin-top: var(--md); padding-top: var(--sm); }
 .chips { list-style: none; margin: 0 0 var(--sm); padding: 0; display: flex; flex-wrap: wrap; gap: var(--sm); }
@@ -121,6 +133,18 @@ td.num { font-variant-numeric: tabular-nums; }
 .clip-failed { color: var(--error); }
 .clip-video { display: block; width: 100%; height: auto; background: var(--primary); border: 2px solid var(--outline); border-radius: var(--radius); }
 .num { font-variant-numeric: tabular-nums; }
+.error-summary { border: 3px solid var(--error); border-radius: var(--radius); background: var(--surface); padding: var(--md); margin-bottom: var(--md); }
+.error-summary h2 { color: var(--on-error-container); }
+.error-summary ul { margin: 0; padding-left: 1.2em; }
+.error-summary a { color: var(--on-error-container); font-weight: 700; }
+.error-summary:focus { outline: 3px solid var(--outline); outline-offset: 2px; }
+[aria-invalid="true"] { border-color: var(--error); }
+fieldset.field { border: 2px solid var(--outline); border-radius: var(--radius); padding: var(--sm) var(--md); }
+fieldset.field legend { font: 700 14px/1.25 var(--font); padding: 0 var(--xs); }
+.steps { display: flex; gap: var(--sm); list-style: none; padding: 0; margin: 0 0 var(--md); counter-reset: step; flex-wrap: wrap; }
+.steps li { counter-increment: step; font-size: 14px; color: var(--on-surface-variant); }
+.steps li::before { content: counter(step) ". "; }
+.steps li[aria-current="step"] { color: var(--on-surface); font-weight: 700; border-bottom: 3px solid var(--outline); }
 .btn-block { width: 100%; min-height: 48px; }
 .last-game { border-top: 1px solid var(--outline-variant); margin-top: var(--md); padding-top: var(--sm); }
 .chips { list-style: none; margin: 0 0 var(--sm); padding: 0; display: flex; flex-wrap: wrap; gap: var(--sm); }

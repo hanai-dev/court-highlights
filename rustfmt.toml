@@ -1,0 +1,3 @@
+# The code keeps one statement per line where it reads well; CI checks `cargo fmt --check` against this.
+max_width = 160
+use_small_heuristics = "Max"

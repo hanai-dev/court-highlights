@@ -44,7 +44,8 @@ pub fn from_env(box_name: &str) -> Result<Option<Venue>, Error> {
         .collect::<Option<_>>()
         .filter(|k: &Vec<u8>| k.len() == 32)
         .ok_or("CH_VENUE_KEY must be 64 hex characters")?;
-    let peers = std::env::var("CH_PEERS").unwrap_or_default().split(',').map(|p| p.trim().trim_end_matches('/').to_string()).filter(|p| !p.is_empty()).collect();
+    let peers =
+        std::env::var("CH_PEERS").unwrap_or_default().split(',').map(|p| p.trim().trim_end_matches('/').to_string()).filter(|p| !p.is_empty()).collect();
     Ok(Some(Venue { auth: derive(&key, "ch-sync-auth"), seal: derive(&key, "ch-sync-seal"), peers, box_name: box_name.into() }))
 }
 
@@ -167,6 +168,9 @@ pub struct CourtRow {
 #[derive(Serialize, Deserialize)]
 pub struct State_ {
     pub box_name: String,
+    /// SHA-256 of this box's TLS certificate: siblings pin their later calls to it (SEC-VENUE-SYNC).
+    #[serde(default)]
+    pub fingerprint: String,
     pub player_url: String,
     pub now_ms: i64,
     pub venue: Option<VenueRow>,
@@ -200,83 +204,84 @@ fn stamp(r: &rusqlite::Row, at: usize) -> rusqlite::Result<Stamp> {
 pub fn local_state(app: &AppState) -> Result<State_, Error> {
     let (v, staff, courts) = {
         let conn = app.db.conn();
-    let v = conn
-        .query_row(
-            "SELECT name, logo, logo_type, logo_corner, sponsor, sponsor_type, open_time, close_time, clip_before_s, clip_after_s,
+        let v = conn
+            .query_row(
+                "SELECT name, logo, logo_type, logo_corner, sponsor, sponsor_type, open_time, close_time, clip_before_s, clip_after_s,
                     upload_cap_kbps, judge_on, privacy_notice, online_on, support_phone, contact, time_leader, version, updated_at, updated_box
              FROM venue WHERE id = 1",
-            [],
-            |r| {
-                Ok(VenueRow {
-                    name: r.get(0)?,
-                    logo: r.get(1)?,
-                    logo_type: r.get(2)?,
-                    logo_corner: r.get(3)?,
-                    sponsor: r.get(4)?,
-                    sponsor_type: r.get(5)?,
-                    open_time: r.get(6)?,
-                    close_time: r.get(7)?,
-                    clip_before_s: r.get(8)?,
-                    clip_after_s: r.get(9)?,
-                    upload_cap_kbps: r.get(10)?,
-                    judge_on: r.get(11)?,
-                    privacy_notice: r.get(12)?,
-                    online_on: r.get(13)?,
-                    support_phone: r.get(14)?,
-                    contact: r.get(15)?,
-                    time_leader: r.get(16)?,
-                    stamp: stamp(r, 17)?,
-                })
-            },
-        )
-        .optional()?;
-    let mut st = conn.prepare(
-        "SELECT username, display_name, role, password_hash, must_change, temp_expires_at, active, failures, locked_until, sessions_after, created_at,
+                [],
+                |r| {
+                    Ok(VenueRow {
+                        name: r.get(0)?,
+                        logo: r.get(1)?,
+                        logo_type: r.get(2)?,
+                        logo_corner: r.get(3)?,
+                        sponsor: r.get(4)?,
+                        sponsor_type: r.get(5)?,
+                        open_time: r.get(6)?,
+                        close_time: r.get(7)?,
+                        clip_before_s: r.get(8)?,
+                        clip_after_s: r.get(9)?,
+                        upload_cap_kbps: r.get(10)?,
+                        judge_on: r.get(11)?,
+                        privacy_notice: r.get(12)?,
+                        online_on: r.get(13)?,
+                        support_phone: r.get(14)?,
+                        contact: r.get(15)?,
+                        time_leader: r.get(16)?,
+                        stamp: stamp(r, 17)?,
+                    })
+                },
+            )
+            .optional()?;
+        let mut st = conn.prepare(
+            "SELECT username, display_name, role, password_hash, must_change, temp_expires_at, active, failures, locked_until, sessions_after, created_at,
                 version, updated_at, updated_box FROM staff",
-    )?;
-    let staff = st
-        .query_map([], |r| {
-            Ok(StaffRow {
-                username: r.get(0)?,
-                display_name: r.get(1)?,
-                role: r.get(2)?,
-                password_hash: r.get(3)?,
-                must_change: r.get(4)?,
-                temp_expires_at: r.get(5)?,
-                active: r.get(6)?,
-                failures: r.get(7)?,
-                locked_until: r.get(8)?,
-                sessions_after: r.get(9)?,
-                created_at: r.get(10)?,
-                stamp: stamp(r, 11)?,
-            })
-        })?
-        .collect::<Result<Vec<_>, _>>()?;
-    let mut st = conn.prepare(
-        "SELECT code, name, position, box, camera_url, camera_user, camera_password, deleted, created_at, version, updated_at, updated_box FROM court",
-    )?;
-    let courts = st
-        .query_map([], |r| {
-            Ok(CourtRow {
-                code: r.get(0)?,
-                name: r.get(1)?,
-                position: r.get(2)?,
-                hosted_by: r.get(3)?,
-                camera_url: r.get(4)?,
-                camera_user: r.get(5)?,
-                camera_password: r.get(6)?,
-                deleted: r.get(7)?,
-                created_at: r.get(8)?,
-                stamp: stamp(r, 9)?,
-            })
-        })?
-        .collect::<Result<Vec<_>, _>>()?;
+        )?;
+        let staff = st
+            .query_map([], |r| {
+                Ok(StaffRow {
+                    username: r.get(0)?,
+                    display_name: r.get(1)?,
+                    role: r.get(2)?,
+                    password_hash: r.get(3)?,
+                    must_change: r.get(4)?,
+                    temp_expires_at: r.get(5)?,
+                    active: r.get(6)?,
+                    failures: r.get(7)?,
+                    locked_until: r.get(8)?,
+                    sessions_after: r.get(9)?,
+                    created_at: r.get(10)?,
+                    stamp: stamp(r, 11)?,
+                })
+            })?
+            .collect::<Result<Vec<_>, _>>()?;
+        let mut st = conn.prepare(
+            "SELECT code, name, position, box, camera_url, camera_user, camera_password, deleted, created_at, version, updated_at, updated_box FROM court",
+        )?;
+        let courts = st
+            .query_map([], |r| {
+                Ok(CourtRow {
+                    code: r.get(0)?,
+                    name: r.get(1)?,
+                    position: r.get(2)?,
+                    hosted_by: r.get(3)?,
+                    camera_url: r.get(4)?,
+                    camera_user: r.get(5)?,
+                    camera_password: r.get(6)?,
+                    deleted: r.get(7)?,
+                    created_at: r.get(8)?,
+                    stamp: stamp(r, 9)?,
+                })
+            })?
+            .collect::<Result<Vec<_>, _>>()?;
 
         (v, staff, courts)
     };
     let (live, health) = crate::courts::local_live(app)?;
     Ok(State_ {
         box_name: app.box_name.clone(),
+        fingerprint: app.fingerprint.clone(),
         player_url: crate::venue::player_base_env().unwrap_or_default(),
         now_ms: clock::now().timestamp_millis(),
         venue: v,
@@ -307,16 +312,34 @@ pub fn merge(db: &Db, remote: &State_) -> rusqlite::Result<usize> {
                    support_phone = excluded.support_phone, contact = excluded.contact, time_leader = excluded.time_leader,
                    version = excluded.version, updated_at = excluded.updated_at, updated_box = excluded.updated_box",
                 params![
-                    v.name, v.logo, v.logo_type, v.logo_corner, v.sponsor, v.sponsor_type, v.open_time, v.close_time, v.clip_before_s, v.clip_after_s,
-                    v.upload_cap_kbps, v.judge_on, v.privacy_notice, v.online_on, v.support_phone, v.contact, v.time_leader,
-                    v.stamp.version, v.stamp.updated_at, v.stamp.updated_box
+                    v.name,
+                    v.logo,
+                    v.logo_type,
+                    v.logo_corner,
+                    v.sponsor,
+                    v.sponsor_type,
+                    v.open_time,
+                    v.close_time,
+                    v.clip_before_s,
+                    v.clip_after_s,
+                    v.upload_cap_kbps,
+                    v.judge_on,
+                    v.privacy_notice,
+                    v.online_on,
+                    v.support_phone,
+                    v.contact,
+                    v.time_leader,
+                    v.stamp.version,
+                    v.stamp.updated_at,
+                    v.stamp.updated_box
                 ],
             )?;
             applied += 1;
         }
     }
     for s in &remote.staff {
-        let local: Option<Stamp> = tx.query_row("SELECT version, updated_at, updated_box FROM staff WHERE username = ?1", [&s.username], |r| stamp(r, 0)).optional()?;
+        let local: Option<Stamp> =
+            tx.query_row("SELECT version, updated_at, updated_box FROM staff WHERE username = ?1", [&s.username], |r| stamp(r, 0)).optional()?;
         if local.as_ref().is_none_or(|l| s.stamp.newer_than(l)) {
             tx.execute(
                 "INSERT INTO staff (username, display_name, role, password_hash, must_change, temp_expires_at, active, failures, locked_until, sessions_after,
@@ -327,8 +350,20 @@ pub fn merge(db: &Db, remote: &State_) -> rusqlite::Result<usize> {
                    locked_until = excluded.locked_until, sessions_after = excluded.sessions_after,
                    version = excluded.version, updated_at = excluded.updated_at, updated_box = excluded.updated_box",
                 params![
-                    s.username, s.display_name, s.role, s.password_hash, s.must_change, s.temp_expires_at, s.active, s.failures, s.locked_until,
-                    s.sessions_after, s.created_at, s.stamp.version, s.stamp.updated_at, s.stamp.updated_box
+                    s.username,
+                    s.display_name,
+                    s.role,
+                    s.password_hash,
+                    s.must_change,
+                    s.temp_expires_at,
+                    s.active,
+                    s.failures,
+                    s.locked_until,
+                    s.sessions_after,
+                    s.created_at,
+                    s.stamp.version,
+                    s.stamp.updated_at,
+                    s.stamp.updated_box
                 ],
             )?;
             applied += 1;
@@ -344,8 +379,18 @@ pub fn merge(db: &Db, remote: &State_) -> rusqlite::Result<usize> {
                    camera_user = excluded.camera_user, camera_password = excluded.camera_password, deleted = excluded.deleted,
                    version = excluded.version, updated_at = excluded.updated_at, updated_box = excluded.updated_box",
                 params![
-                    c.code, c.name, c.position, c.hosted_by, c.camera_url, c.camera_user, c.camera_password, c.deleted, c.created_at,
-                    c.stamp.version, c.stamp.updated_at, c.stamp.updated_box
+                    c.code,
+                    c.name,
+                    c.position,
+                    c.hosted_by,
+                    c.camera_url,
+                    c.camera_user,
+                    c.camera_password,
+                    c.deleted,
+                    c.created_at,
+                    c.stamp.version,
+                    c.stamp.updated_at,
+                    c.stamp.updated_box
                 ],
             )?;
             applied += 1;
@@ -398,7 +443,7 @@ pub fn spawn(app: AppState) {
     let Some(venue) = app.venue.clone() else { return };
     let every = std::env::var("CH_SYNC_SECS").ok().and_then(|s| s.parse().ok()).unwrap_or(15);
     tokio::spawn(async move {
-        let http = reqwest::Client::builder().timeout(Duration::from_secs(10)).build().expect("http client");
+        let http = crate::remote::state_client();
         loop {
             for peer in &venue.peers {
                 if let Err(e) = pull(&app, &venue, &http, peer).await {
@@ -418,6 +463,7 @@ async fn pull(app: &AppState, venue: &Venue, http: &reqwest::Client, peer: &str)
     let rtt_ms = sent.elapsed().as_millis() as i64;
     let plain = venue.open(&body).ok_or("answer not sealed with this venue's key")?;
     let state: State_ = serde_json::from_slice(&plain)?;
+    crate::remote::pin(peer, &state.fingerprint);
     let applied = merge(&app.db, &state)?;
     if applied > 0 {
         tracing::info!(peer = %state.box_name, applied, "venue sync applied changes");

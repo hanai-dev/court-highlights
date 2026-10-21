@@ -1,7 +1,7 @@
 //! Venue settings, time correction, help, court signs and the privacy notice (FR-33, FR-37, FR-38, FR-39, FR-57).
 
 use crate::auth::Staff;
-use crate::web::{AppError, AppState, LOGO_MAX_BYTES, Page, Shell, html, logo_type, shell};
+use crate::web::{AppError, AppState, FormErrors, LOGO_MAX_BYTES, Page, Shell, html, logo_type, shell};
 use crate::{clock, db};
 use askama::Template;
 use axum::extract::{Form, Multipart, Query, State};
@@ -73,7 +73,7 @@ struct SettingsPage {
     now: String,
     now_input: String,
     saved: Option<&'static str>,
-    error: Option<String>,
+    f: FormErrors,
 }
 
 #[derive(Deserialize)]
@@ -81,10 +81,11 @@ pub struct SavedQuery {
     saved: Option<String>,
 }
 
-fn page(app: &AppState, staff: &Staff, v: Venue, saved: Option<&'static str>, error: Option<String>) -> Page {
+fn page(app: &AppState, staff: &Staff, v: Venue, saved: Option<&'static str>, f: FormErrors) -> Page {
     let now = clock::now();
     let notice_draft = v.notice.trim().is_empty();
     let v = Venue { notice: if notice_draft { NOTICE_TEMPLATE.into() } else { v.notice }, ..v };
+    let failed = !f.is_empty();
     let mut res = html(SettingsPage {
         shell: shell(&app.db, staff, "settings")?,
         cloud_status: cloud_status(app)?,
@@ -93,9 +94,9 @@ fn page(app: &AppState, staff: &Staff, v: Venue, saved: Option<&'static str>, er
         now: now.format("%-d %b %Y, %-I:%M:%S %P").to_string(),
         now_input: now.format("%Y-%m-%dT%H:%M").to_string(),
         saved,
-        error: error.clone(),
+        f,
     })?;
-    if error.is_some() {
+    if failed {
         *res.status_mut() = StatusCode::UNPROCESSABLE_ENTITY;
     }
     Ok(res)
@@ -108,7 +109,7 @@ pub async fn settings(State(app): State<AppState>, staff: Staff, Query(q): Query
         "online" => "Box key saved. The box connects within a minute.",
         _ => "Settings saved.",
     });
-    page(&app, &staff, load(&app)?, saved, None)
+    page(&app, &staff, load(&app)?, saved, FormErrors::default())
 }
 
 struct Upload {
@@ -163,25 +164,36 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
         _ => Err("Clip lengths must be whole seconds.".to_string()),
     };
     let checked = (check_logo(logo, "logo"), check_logo(sponsor, "sponsor logo"));
-    let problem = if v.name.is_empty() || v.name.len() > 80 {
-        Some("Give the venue a name (up to 80 characters).".to_string())
-    } else if !["top-left", "top-right", "bottom-left", "bottom-right"].contains(&v.corner.as_str()) {
-        Some("Choose a corner for the logo.".to_string())
-    } else if !matches!(times, (Ok(o), Ok(c)) if o < c) {
-        Some("Opening time must be before closing time on the same day.".to_string())
-    } else if let Err(e) = &lengths {
-        Some(e.clone())
-    } else if !cap.parse::<u32>().is_ok_and(|c| (1..=1000).contains(&c)) {
-        Some("Upload cap must be between 1 and 1000 Mbit/s.".to_string())
-    } else if v.notice.len() > 20_000 || v.contact.len() > 120 {
-        Some("The privacy notice or venue contact is too long.".to_string())
-    } else if let (Err(e), _) | (_, Err(e)) = &checked {
-        Some(e.clone())
-    } else {
-        None
-    };
-    if let Some(e) = problem {
-        return page(&app, &staff, v, None, Some(e));
+    let mut f = FormErrors::default();
+    if v.name.is_empty() || v.name.len() > 80 {
+        f.add("venue", "Give the venue a name (up to 80 characters).");
+    }
+    if v.contact.len() > 120 {
+        f.add("contact", "The venue contact is too long (up to 120 characters).");
+    }
+    if !matches!(times, (Ok(o), Ok(c)) if o < c) {
+        f.add("open", "Opening time must be before closing time on the same day.");
+    }
+    if let Err(e) = &checked.0 {
+        f.add("logo", e.clone());
+    }
+    if !["top-left", "top-right", "bottom-left", "bottom-right"].contains(&v.corner.as_str()) {
+        f.add("corner", "Choose a corner for the logo.");
+    }
+    if let Err(e) = &checked.1 {
+        f.add("sponsor", e.clone());
+    }
+    if let Err(e) = &lengths {
+        f.add("before", e.clone());
+    }
+    if !cap.parse::<u32>().is_ok_and(|c| (1..=1000).contains(&c)) {
+        f.add("cap", "Upload cap must be between 1 and 1000 Mbit/s.");
+    }
+    if v.notice.len() > 20_000 {
+        f.add("notice", "The privacy notice is too long (up to 20,000 characters).");
+    }
+    if !f.is_empty() {
+        return page(&app, &staff, v, None, f);
     }
     let (Ok(logo), Ok(sponsor), Ok(lengths)) = (checked.0, checked.1, lengths) else { unreachable!("checked above") };
     v.before = lengths.before_s;

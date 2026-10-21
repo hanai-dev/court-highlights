@@ -48,6 +48,17 @@ impl Client {
     }
 }
 
+/// Wipe box (FR-55): tells the online service this box is leaving. Not registered, or a key already revoked:
+/// nothing to do.
+pub async fn leave(app: &AppState) -> Result<(), Error> {
+    let Some(c) = Client::new(app)? else { return Ok(()) };
+    let res = c.http.delete(format!("{}/api/v1/box", c.base)).bearer_auth(&c.key).timeout(Duration::from_secs(30)).send().await?;
+    match res.status() {
+        s if s.is_success() || s == reqwest::StatusCode::UNAUTHORIZED => Ok(()),
+        s => Err(format!("online service answered {s}").into()),
+    }
+}
+
 pub fn spawn(app: AppState) {
     let every = std::env::var("CH_CHECKIN_SECS").ok().and_then(|s| s.parse().ok()).unwrap_or(60);
     let a = app.clone();
@@ -78,7 +89,8 @@ async fn checkin(app: &AppState) -> Result<(), Error> {
     let Some(c) = Client::new(app)? else { return Ok(()) };
     let courts: Vec<(i64, bool)> = {
         let conn = app.db.conn();
-        let mut st = conn.prepare("SELECT id, camera_url IS NOT NULL FROM court WHERE deleted = 0 AND box = (SELECT value FROM box_config WHERE name = 'box_name')")?;
+        let mut st =
+            conn.prepare("SELECT id, camera_url IS NOT NULL FROM court WHERE deleted = 0 AND box = (SELECT value FROM box_config WHERE name = 'box_name')")?;
         st.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<Result<_, _>>()?
     };
     let recording = courts.iter().filter(|(id, cam)| matches!(app.recorders.status(*id, *cam), CourtStatus::Recording { .. })).count();
@@ -151,7 +163,14 @@ fn load_groups(app: &AppState) -> Result<Vec<Group>, Error> {
     let games: Vec<(i64, String, String, String)> = st.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?.collect::<Result<_, _>>()?;
     for (id, started, stopped, court) in games {
         let (Some(s), Some(e)) = (clock::parse(&started), clock::parse(&stopped)) else { continue };
-        groups.push(Group { box_ref: format!("game-{id}"), title: span_title(&court, s, Some(e)), owner: ("game_id", id), stopped: e, items: Vec::new(), recipients: Vec::new() });
+        groups.push(Group {
+            box_ref: format!("game-{id}"),
+            title: span_title(&court, s, Some(e)),
+            owner: ("game_id", id),
+            stopped: e,
+            items: Vec::new(),
+            recipients: Vec::new(),
+        });
     }
     // Email-me-this clips (FR-21).
     let mut st = conn.prepare(
@@ -162,7 +181,14 @@ fn load_groups(app: &AppState) -> Result<Vec<Group>, Error> {
     let clips: Vec<(i64, String, String)> = st.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<Result<_, _>>()?;
     for (id, made, court) in clips {
         let Some(m) = clock::parse(&made) else { continue };
-        groups.push(Group { box_ref: format!("clip-{id}"), title: span_title(&court, m, None), owner: ("clip_id", id), stopped: m, items: Vec::new(), recipients: Vec::new() });
+        groups.push(Group {
+            box_ref: format!("clip-{id}"),
+            title: span_title(&court, m, None),
+            owner: ("clip_id", id),
+            stopped: m,
+            items: Vec::new(),
+            recipients: Vec::new(),
+        });
     }
     for (i, g) in groups.iter_mut().enumerate() {
         let filter = if g.owner.0 == "game_id" { "k.game_id = ?1" } else { "k.id = ?1" };
@@ -171,7 +197,16 @@ fn load_groups(app: &AppState) -> Result<Vec<Group>, Error> {
              FROM clip k JOIN court c ON c.id = k.court_id WHERE {filter} AND k.state = 'ready' AND k.hidden = 0 ORDER BY k.rank, k.made_at"
         ))?;
         g.items = st
-            .query_map([g.owner.1], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?, r.get::<_, String>(3)?, r.get::<_, Option<String>>(4)?, r.get::<_, Option<i64>>(5)?)))?
+            .query_map([g.owner.1], |r| {
+                Ok((
+                    r.get::<_, i64>(0)?,
+                    r.get::<_, String>(1)?,
+                    r.get::<_, String>(2)?,
+                    r.get::<_, String>(3)?,
+                    r.get::<_, Option<String>>(4)?,
+                    r.get::<_, Option<i64>>(5)?,
+                ))
+            })?
             .filter_map(|row| {
                 let (clip, kind, court, made, path, cloud) = row.ok()?;
                 Some(Item { clip, kind, court, made: clock::parse(&made)?, path: path?, cloud, group: i })
@@ -209,13 +244,14 @@ async fn send(app: &AppState) -> Result<(), Error> {
     let mut cloud: std::collections::HashMap<i64, i64> = order.iter().filter_map(|i| Some((i.clip, i.cloud?))).collect();
     let mut delivered = vec![false; groups.len()];
     for item in &order {
-        if !cloud.contains_key(&item.clip) {
-            let id = upload(app, &c, item).await?;
-            cloud.insert(item.clip, id);
+        if let std::collections::hash_map::Entry::Vacant(v) = cloud.entry(item.clip) {
+            v.insert(upload(app, &c, item).await?);
         }
         // A group goes out as soon as its last item is up.
         let g = &groups[item.group];
-        if !delivered[item.group] && g.items.iter().filter(|i| ch_core::still_available(ch_core::expires_at(i.made), now).is_ok()).all(|i| cloud.contains_key(&i.clip)) {
+        if !delivered[item.group]
+            && g.items.iter().filter(|i| ch_core::still_available(ch_core::expires_at(i.made), now).is_ok()).all(|i| cloud.contains_key(&i.clip))
+        {
             deliver(app, &c, g, &cloud).await?;
             delivered[item.group] = true;
         }

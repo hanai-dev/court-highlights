@@ -1,9 +1,10 @@
 //! Courts and cameras (FR-30) and the box health shown on the console home (FR-36).
 
 use crate::auth::Staff;
+use crate::discovery::Found;
 use crate::recorder::{CourtStatus, disk_use, temperature_c};
 use crate::sync::{BoxHealth, CourtLive};
-use crate::web::{AppError, AppState, Page, Shell, html, shell};
+use crate::web::{AppError, AppState, FieldError, Page, Shell, field_error, html, invalid, shell};
 use crate::{clock, db};
 use askama::Template;
 use axum::extract::{Form, Path, State};
@@ -111,9 +112,11 @@ fn court_lines(app: &AppState) -> Result<Vec<CourtLine>, AppError> {
                 mine.iter().find(|l| l.code == code).map_or((false, "No camera".into(), String::new()), |l| (l.ok, l.status.clone(), l.last_clip.clone()))
             } else {
                 match peers.iter().find(|p| p.name == hosted_by) {
-                    Some(p) if reachable(p) => {
-                        p.live.iter().find(|l| l.code == code).map_or((false, "No camera".into(), String::new()), |l| (l.ok, l.status.clone(), l.last_clip.clone()))
-                    }
+                    Some(p) if reachable(p) => p
+                        .live
+                        .iter()
+                        .find(|l| l.code == code)
+                        .map_or((false, "No camera".into(), String::new()), |l| (l.ok, l.status.clone(), l.last_clip.clone())),
                     Some(p) => (false, format!("Box unreachable since {}", p.last_ok.map_or_else(String::new, time_label)), String::new()),
                     None => (false, "Box unreachable".into(), String::new()),
                 }
@@ -162,30 +165,62 @@ pub async fn list(State(app): State<AppState>, staff: Staff, axum::extract::Quer
     html(CourtsPage { shell: shell(&app.db, &staff, "courts")?, courts: court_lines(&app)?, notice })
 }
 
+/// The court fields with their errors and the cameras found on the network; shared by the console form and
+/// the setup wizard (templates/court_fields.html).
+pub struct CourtFields {
+    pub name: String,
+    pub camera_url: String,
+    pub camera_user: String,
+    pub has_password: bool,
+    pub found: Vec<Found>,
+    pub chosen: String,
+    pub errors: Vec<FieldError>,
+}
+
+impl CourtFields {
+    pub async fn blank() -> Self {
+        Self {
+            name: String::new(),
+            camera_url: String::new(),
+            camera_user: String::new(),
+            has_password: false,
+            found: find_cameras().await,
+            chosen: String::new(),
+            errors: Vec::new(),
+        }
+    }
+
+    pub fn err(&self, field: &str) -> Option<&str> {
+        field_error(&self.errors, field)
+    }
+}
+
+/// Cameras answering on the venue network (a short wait; the Owner opens this page only while adding courts).
+pub async fn find_cameras() -> Vec<Found> {
+    crate::discovery::probe(std::time::Duration::from_millis(1500)).await
+}
+
 #[derive(Template)]
 #[template(path = "court_form.html")]
 struct CourtForm {
     shell: Shell,
     id: Option<i64>,
-    name: String,
     code: String,
-    camera_url: String,
-    camera_user: String,
-    has_password: bool,
     has_camera: bool,
     status: String,
-    error: Option<String>,
-}
-
-impl CourtForm {
-    fn blank(shell: Shell) -> Self {
-        Self { shell, id: None, name: String::new(), code: String::new(), camera_url: String::new(), camera_user: String::new(), has_password: false, has_camera: false, status: String::new(), error: None }
-    }
+    f: CourtFields,
 }
 
 pub async fn new_form(State(app): State<AppState>, staff: Staff) -> Page {
     staff.require_owner()?;
-    html(CourtForm::blank(shell(&app.db, &staff, "courts")?))
+    html(CourtForm {
+        shell: shell(&app.db, &staff, "courts")?,
+        id: None,
+        code: String::new(),
+        has_camera: false,
+        status: String::new(),
+        f: CourtFields::blank().await,
+    })
 }
 
 #[derive(Deserialize)]
@@ -194,21 +229,54 @@ pub struct CourtInput {
     camera_url: String,
     camera_user: String,
     camera_password: String,
+    /// A camera picked from the ones found on the network (its ONVIF address).
+    #[serde(default)]
+    found: String,
+    /// "setup" when added from the setup wizard.
+    #[serde(default)]
+    next: String,
 }
 
-fn validate(input: &CourtInput) -> Option<&'static str> {
+fn validate(input: &CourtInput) -> Vec<FieldError> {
     let url = input.camera_url.trim();
+    let mut errors = Vec::new();
+    let mut add = |field, message: &str| errors.push(FieldError { field, message: message.into() });
     if input.name.trim().is_empty() || input.name.len() > 40 {
-        Some("Give the court a name (up to 40 characters).")
-    } else if !url.is_empty() && !(url.starts_with("rtsp://") || url.starts_with("rtsps://")) {
-        Some("The camera address starts with rtsp:// — check the camera's manual for its stream address.")
-    } else if !url.is_empty() && url::Url::parse(url).is_err() {
-        Some("That camera address is not valid.")
-    } else if url.len() > 300 || input.camera_user.len() > 100 || input.camera_password.len() > 100 {
-        Some("The camera address, username or password is too long.")
-    } else {
-        None
+        add("name", "Give the court a name (up to 40 characters).");
     }
+    if !url.is_empty() && !(url.starts_with("rtsp://") || url.starts_with("rtsps://")) {
+        add("camera_url", "The camera address starts with rtsp:// — check the camera's manual for its stream address.");
+    } else if !url.is_empty() && url::Url::parse(url).is_err() {
+        add("camera_url", "That camera address is not valid.");
+    } else if url.len() > 300 {
+        add("camera_url", "The camera address is too long.");
+    }
+    if input.camera_user.len() > 100 || input.camera_password.len() > 100 {
+        add("camera_user", "The camera username or password is too long.");
+    }
+    if !input.found.is_empty() && !(input.found.starts_with("http://") || input.found.starts_with("https://")) {
+        add("found", "Pick a camera from the list.");
+    }
+    errors
+}
+
+/// The stream address to store: typed in, or asked from the camera picked from the network.
+async fn camera_address(input: &CourtInput) -> Result<Option<String>, FieldError> {
+    let url = input.camera_url.trim();
+    if !url.is_empty() {
+        return Ok(Some(url.to_string()));
+    }
+    if input.found.is_empty() {
+        return Ok(None);
+    }
+    crate::discovery::stream_uri(&input.found, input.camera_user.trim(), &input.camera_password)
+        .await
+        .map(Some)
+        .map_err(|message| FieldError { field: "found", message })
+}
+
+fn refill(input: CourtInput, found: Vec<Found>, errors: Vec<FieldError>, has_password: bool) -> CourtFields {
+    CourtFields { name: input.name, camera_url: input.camera_url, camera_user: input.camera_user, has_password, found, chosen: input.found, errors }
 }
 
 pub fn court_code() -> String {
@@ -220,10 +288,26 @@ pub fn court_code() -> String {
 
 pub async fn create(State(app): State<AppState>, staff: Staff, Form(input): Form<CourtInput>) -> Page {
     staff.require_owner()?;
-    if let Some(e) = validate(&input) {
-        return html(CourtForm { name: input.name, camera_url: input.camera_url, camera_user: input.camera_user, error: Some(e.into()), ..CourtForm::blank(shell(&app.db, &staff, "courts")?) });
+    let mut errors = validate(&input);
+    let address = if errors.is_empty() {
+        camera_address(&input).await.unwrap_or_else(|e| {
+            errors.push(e);
+            None
+        })
+    } else {
+        None
+    };
+    if !errors.is_empty() {
+        let wizard = input.next == "setup";
+        let f = refill(input, find_cameras().await, errors, false);
+        return if wizard {
+            crate::wizard::courts_page(&app, &staff, f)
+        } else {
+            invalid(CourtForm { shell: shell(&app.db, &staff, "courts")?, id: None, code: String::new(), has_camera: false, status: String::new(), f })
+        };
     }
-    let url = input.camera_url.trim();
+    let url = address.unwrap_or_default();
+    let url = url.as_str();
     let conn = app.db.conn();
     let position: i64 = conn.query_row("SELECT COALESCE(MAX(position), 0) + 1 FROM court", [], |r| r.get(0))?;
     conn.execute(
@@ -239,7 +323,7 @@ pub async fn create(State(app): State<AppState>, staff: Staff, Form(input): Form
         ],
     )?;
     db::log(&conn, Some(staff.id), &staff.username, "added court", input.name.trim(), "")?;
-    Ok(Redirect::to("/console/courts?notice=saved").into_response())
+    Ok(Redirect::to(if input.next == "setup" { "/setup/courts" } else { "/console/courts?notice=saved" }).into_response())
 }
 
 pub async fn edit(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>) -> Page {
@@ -255,24 +339,25 @@ pub async fn edit(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>
     // Only the box that records the court can show its camera.
     let has_camera = row.2.is_some() && row.5 == app.box_name;
     let (_, status) = crate::courts::status_label(&app.recorders.status(id, has_camera));
-    html(CourtForm {
-        shell: shell(&app.db, &staff, "courts")?,
-        id: Some(id),
+    let f = CourtFields {
         name: row.0,
-        code: row.1,
         camera_url: row.2.unwrap_or_default(),
         camera_user: row.3.unwrap_or_default(),
         has_password: row.4.is_some_and(|p| !p.is_empty()),
-        has_camera,
-        status,
-        error: None,
-    })
+        found: Vec::new(),
+        chosen: String::new(),
+        errors: Vec::new(),
+    };
+    html(CourtForm { shell: shell(&app.db, &staff, "courts")?, id: Some(id), code: row.1, has_camera, status, f })
 }
 
 pub async fn update(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>, Form(input): Form<CourtInput>) -> Page {
     staff.require_owner()?;
-    if let Some(e) = validate(&input) {
-        return Err(AppError::BadRequest(e.into()));
+    let errors = validate(&input);
+    if !errors.is_empty() {
+        let code: String = app.db.conn().query_row("SELECT code FROM court WHERE id = ?1", [id], |r| r.get(0)).optional()?.ok_or(AppError::NotFound)?;
+        let f = refill(input, Vec::new(), errors, false);
+        return invalid(CourtForm { shell: shell(&app.db, &staff, "courts")?, id: Some(id), code, has_camera: false, status: String::new(), f });
     }
     let url = input.camera_url.trim();
     let conn = app.db.conn();
@@ -306,7 +391,9 @@ pub async fn delete_confirm(State(app): State<AppState>, staff: Staff, Path(id):
     html(ConfirmPage {
         shell: shell(&app.db, &staff, "courts")?,
         title: format!("Delete {name}?"),
-        consequence: format!("{name} stops recording and its rolling footage is deleted. Its court code stops working, so take down its sign. This can't be undone."),
+        consequence: format!(
+            "{name} stops recording and its rolling footage is deleted. Its court code stops working, so take down its sign. This can't be undone."
+        ),
         action: format!("/console/courts/{id}/delete"),
         button: format!("Delete {name}"),
         back: format!("/console/courts/{id}"),

@@ -5,7 +5,7 @@ use crate::auth::Staff;
 use crate::web::{AppError, AppState, Page, Shell, html, shell};
 use crate::{clock, db};
 use askama::Template;
-use axum::extract::{Path, Query, Request, State};
+use axum::extract::{Form, Path, Query, Request, State};
 use axum::http::{HeaderValue, StatusCode, header};
 use axum::response::{IntoResponse, Redirect, Response};
 use rusqlite::{OptionalExtension, params};
@@ -211,6 +211,8 @@ struct LibraryPage {
     total: i64,
     first: i64,
     last: i64,
+    /// This page's own query (filters and page number), carried by Keep so the list comes back the same.
+    here: String,
     prev: Option<String>,
     next: Option<String>,
     notice: Option<&'static str>,
@@ -276,6 +278,7 @@ pub async fn library(State(app): State<AppState>, staff: Staff, Query(f): Query<
         total,
         first,
         last,
+        here: a.query(a.page),
         prev: (a.page > 1).then(|| a.query(a.page - 1)),
         next: (last < total).then(|| a.query(a.page + 1)),
         notice: f.notice.as_deref().map(|n| match n {
@@ -329,9 +332,24 @@ fn do_keep(app: &AppState, id: i64, actor_id: Option<i64>, actor: &str) -> Resul
     Ok(())
 }
 
-pub async fn keep(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>) -> Page {
+/// The filtered page a Keep was pressed on, so the list stays as the user set it (UX-LIST-ARCHETYPE).
+#[derive(Deserialize)]
+pub struct Back {
+    #[serde(default)]
+    back: String,
+}
+
+impl Back {
+    /// Only the library's own query characters; anything else falls back to the unfiltered list.
+    fn to(&self, notice: &str) -> String {
+        let safe = self.back.bytes().all(|b| b.is_ascii_alphanumeric() || b"=&_-".contains(&b));
+        if safe && !self.back.is_empty() { format!("/console/clips?{}&notice={notice}", self.back) } else { format!("/console/clips?notice={notice}") }
+    }
+}
+
+pub async fn keep(State(app): State<AppState>, staff: Staff, Path(id): Path<i64>, Form(back): Form<Back>) -> Page {
     do_keep(&app, id, Some(staff.id), &staff.username)?;
-    Ok(Redirect::to("/console/clips?notice=kept").into_response())
+    Ok(Redirect::to(&back.to("kept")).into_response())
 }
 
 #[derive(Template)]
@@ -467,10 +485,10 @@ pub struct Meta {
     may_post: bool,
 }
 
-pub async fn peer_keep(State(app): State<AppState>, staff: Staff, Path((name, id)): Path<(String, i64)>) -> Page {
+pub async fn peer_keep(State(app): State<AppState>, staff: Staff, Path((name, id)): Path<(String, i64)>, Form(back): Form<Back>) -> Page {
     let url = sibling(&app, &name)?;
     crate::remote::post(&app, &url, &format!("/sync/clips/{id}/keep?actor={}", crate::remote::enc(&staff.username))).await?;
-    Ok(Redirect::to("/console/clips?notice=kept").into_response())
+    Ok(Redirect::to(&back.to("kept")).into_response())
 }
 
 pub async fn peer_delete_confirm(State(app): State<AppState>, staff: Staff, Path((name, id)): Path<(String, i64)>) -> Page {
@@ -492,13 +510,22 @@ pub async fn peer_delete(State(app): State<AppState>, staff: Staff, Path((name, 
     Ok(Redirect::to("/console/clips?notice=deleted").into_response())
 }
 
-pub async fn peer_file(State(app): State<AppState>, staff: Staff, Path((name, id, file)): Path<(String, i64, String)>, Query(q): Query<FileQuery>) -> Result<Response, AppError> {
+pub async fn peer_file(
+    State(app): State<AppState>,
+    staff: Staff,
+    Path((name, id, file)): Path<(String, i64, String)>,
+    Query(q): Query<FileQuery>,
+) -> Result<Response, AppError> {
     let url = sibling(&app, &name)?;
     let mut path = format!("/sync/clips/{id}/{}", crate::remote::enc(&file));
     if q.posting.is_some() && file.ends_with(".mp4") {
         let m: Meta = crate::remote::get_sealed(&app, &url, &format!("/sync/clips/{id}/meta")).await?;
         if !m.may_post && q.confirm.is_none() {
-            return html(PostingWarning { shell: shell(&app.db, &staff, "clips")?, label: m.label, href: format!("/console/clips/peer/{name}/{id}/{file}?posting=1&confirm=1") });
+            return html(PostingWarning {
+                shell: shell(&app.db, &staff, "clips")?,
+                label: m.label,
+                href: format!("/console/clips/peer/{name}/{id}/{file}?posting=1&confirm=1"),
+            });
         }
         path = format!("{path}?posting=1&actor={}", crate::remote::enc(&staff.username));
     }
@@ -535,7 +562,9 @@ pub async fn sync_clips(State(app): State<AppState>, req: Request) -> Response {
     let Some(venue) = crate::sync::authorized(&app, &req) else { return StatusCode::UNAUTHORIZED.into_response() };
     let Ok(Query(q)) = Query::<SyncList>::try_from_uri(req.uri()) else { return StatusCode::BAD_REQUEST.into_response() };
     let a = Active::from(&q.filters);
-    match local_rows(&app, &a, q.limit.unwrap_or(PAGE_SIZE).clamp(1, 50 * PAGE_SIZE), 0).and_then(|r| serde_json::to_vec(&r).map_err(|e| AppError::Internal(e.to_string()))) {
+    match local_rows(&app, &a, q.limit.unwrap_or(PAGE_SIZE).clamp(1, 50 * PAGE_SIZE), 0)
+        .and_then(|r| serde_json::to_vec(&r).map_err(|e| AppError::Internal(e.to_string())))
+    {
         Ok(body) => venue.seal(&body).into_response(),
         Err(e) => e.into_response(),
     }
@@ -543,7 +572,9 @@ pub async fn sync_clips(State(app): State<AppState>, req: Request) -> Response {
 
 pub async fn sync_meta(State(app): State<AppState>, Path(id): Path<i64>, req: Request) -> Response {
     let Some(venue) = crate::sync::authorized(&app, &req) else { return StatusCode::UNAUTHORIZED.into_response() };
-    match item(&app, id).and_then(|it| serde_json::to_vec(&Meta { label: it.label(), kind: it.kind.clone(), may_post: it.may_post }).map_err(|e| AppError::Internal(e.to_string()))) {
+    match item(&app, id).and_then(|it| {
+        serde_json::to_vec(&Meta { label: it.label(), kind: it.kind.clone(), may_post: it.may_post }).map_err(|e| AppError::Internal(e.to_string()))
+    }) {
         Ok(body) => venue.seal(&body).into_response(),
         Err(e) => e.into_response(),
     }
@@ -628,7 +659,13 @@ fn log_rows(app: &AppState, limit: i64, offset: i64) -> Result<Vec<LogRow>, AppE
     let rows = st
         .query_map(params![limit, offset], |r| {
             let at: String = r.get(0)?;
-            Ok(LogRow { at: clock::parse(&at).map(|t| t.format("%-d %b %Y, %-I:%M:%S %P").to_string()).unwrap_or(at), who: r.get(1)?, action: r.get(2)?, item: r.get(3)?, detail: r.get(4)? })
+            Ok(LogRow {
+                at: clock::parse(&at).map(|t| t.format("%-d %b %Y, %-I:%M:%S %P").to_string()).unwrap_or(at),
+                who: r.get(1)?,
+                action: r.get(2)?,
+                item: r.get(3)?,
+                detail: r.get(4)?,
+            })
         })?
         .collect::<Result<Vec<_>, _>>()?;
     Ok(rows)
@@ -641,7 +678,15 @@ pub async fn log(State(app): State<AppState>, staff: Staff, Query(q): Query<Page
     let rows = log_rows(&app, PAGE_SIZE, (page - 1) * PAGE_SIZE)?;
     let first = if total == 0 { 0 } else { (page - 1) * PAGE_SIZE + 1 };
     let last = (first + rows.len() as i64 - 1).max(0);
-    html(LogPage { shell: shell(&app.db, &staff, "log")?, rows, total, first, last, prev: (page > 1).then_some(page - 1), next: (last < total).then_some(page + 1) })
+    html(LogPage {
+        shell: shell(&app.db, &staff, "log")?,
+        rows,
+        total,
+        first,
+        last,
+        prev: (page > 1).then_some(page - 1),
+        next: (last < total).then_some(page + 1),
+    })
 }
 
 /// A spreadsheet cell: quoted, and text that a spreadsheet would run as a formula is defused (CSV injection).
@@ -658,11 +703,7 @@ pub async fn log_csv(State(app): State<AppState>, staff: Staff) -> Result<Respon
         out += "\r\n";
     }
     db::log(&app.db.conn(), Some(staff.id), &staff.username, "exported activity log", "", "")?;
-    Ok((
-        [(header::CONTENT_TYPE, "text/csv; charset=utf-8"), (header::CONTENT_DISPOSITION, "attachment; filename=\"activity-log.csv\"")],
-        out,
-    )
-        .into_response())
+    Ok(([(header::CONTENT_TYPE, "text/csv; charset=utf-8"), (header::CONTENT_DISPOSITION, "attachment; filename=\"activity-log.csv\"")], out).into_response())
 }
 
 #[cfg(test)]

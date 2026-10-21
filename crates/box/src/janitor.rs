@@ -38,7 +38,16 @@ fn items(app: &AppState, sql_filter: &str, args: &[&dyn ToSql]) -> rusqlite::Res
         "SELECT id, token, court_id, kind, made_at, kept_at, window_start_ms, window_end_ms FROM clip WHERE state != 'saving' AND {sql_filter}"
     ))?;
     st.query_map(args, |r| {
-        Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, i64>(2)?, r.get::<_, String>(3)?, r.get::<_, String>(4)?, r.get::<_, Option<String>>(5)?, r.get::<_, i64>(6)?, r.get::<_, i64>(7)?))
+        Ok((
+            r.get::<_, i64>(0)?,
+            r.get::<_, String>(1)?,
+            r.get::<_, i64>(2)?,
+            r.get::<_, String>(3)?,
+            r.get::<_, String>(4)?,
+            r.get::<_, Option<String>>(5)?,
+            r.get::<_, i64>(6)?,
+            r.get::<_, i64>(7)?,
+        ))
     })?
     .filter_map(|row| match row {
         Ok((id, token, court, kind, made, kept, s, e)) => Some(Ok(Item {

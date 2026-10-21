@@ -6,6 +6,7 @@ mod clips;
 mod clock;
 mod courts;
 mod db;
+mod discovery;
 mod footage;
 mod games;
 mod janitor;
@@ -19,6 +20,8 @@ mod tls;
 mod uplink;
 mod venue;
 mod web;
+mod wipe;
+mod wizard;
 
 use std::net::SocketAddr;
 use std::path::PathBuf;
@@ -30,10 +33,7 @@ fn env(name: &str, default: &str) -> String {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    tracing_subscriber::fmt()
-        .json()
-        .with_env_filter(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()))
-        .init();
+    tracing_subscriber::fmt().json().with_env_filter(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into())).init();
     let data_dir = PathBuf::from(env("CH_DATA_DIR", "/var/lib/court-highlights"));
     let http: SocketAddr = env("CH_HTTP_ADDR", "0.0.0.0:80").parse()?;
     let https: SocketAddr = env("CH_HTTPS_ADDR", "0.0.0.0:443").parse()?;
@@ -61,18 +61,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     janitor::spawn(state.clone());
     uplink::spawn(state.clone());
     sync::spawn(state.clone());
+    let tls = axum_server::tls_rustls::RustlsConfig::from_pem(cert.into_bytes(), key.into_bytes()).await?;
     if state.venue.is_some() {
+        // Box-to-box traffic goes over TLS with the box's own certificate (SEC-VENUE-SYNC).
         let addr: SocketAddr = env("CH_SYNC_ADDR", "0.0.0.0:8444").parse()?;
-        let listener = tokio::net::TcpListener::bind(addr).await?;
-        let router = sync::router(state.clone());
+        let server = axum_server::bind_rustls(addr, tls.clone()).serve(sync::router(state.clone()).into_make_service());
         tokio::spawn(async move {
-            if let Err(e) = axum::serve(listener, router).await {
+            if let Err(e) = server.await {
                 tracing::error!(error = %e, "sync listener stopped");
             }
         });
         tracing::info!(%addr, "venue sync listening");
     }
-    let tls = axum_server::tls_rustls::RustlsConfig::from_pem(cert.into_bytes(), key.into_bytes()).await?;
 
     let (player_handle, staff_handle) = (axum_server::Handle::new(), axum_server::Handle::new());
     let (p, s) = (player_handle.clone(), staff_handle.clone());

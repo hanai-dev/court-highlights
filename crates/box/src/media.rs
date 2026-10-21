@@ -29,9 +29,8 @@ fn run_to_eos(p: &gst::Pipeline, timeout_s: u64) -> Result<(), AppError> {
 
 fn wait_eos(p: &gst::Pipeline, timeout_s: u64) -> Result<(), AppError> {
     let bus = p.bus().ok_or_else(|| fail("no bus"))?;
-    let msg = bus
-        .timed_pop_filtered(gst::ClockTime::from_seconds(timeout_s), &[gst::MessageType::Eos, gst::MessageType::Error])
-        .ok_or_else(|| fail("timed out"))?;
+    let msg =
+        bus.timed_pop_filtered(gst::ClockTime::from_seconds(timeout_s), &[gst::MessageType::Eos, gst::MessageType::Error]).ok_or_else(|| fail("timed out"))?;
     match msg.view() {
         gst::MessageView::Error(e) => Err(fail(format!("{} ({:?})", e.error(), e.debug()))),
         _ => Ok(()),
@@ -158,12 +157,7 @@ fn place(logo: &Logo, frame: Size, corner: Corner) -> (i32, i32, u32, u32) {
 }
 
 fn overlays(brand: &Brand, prefix: &str) -> String {
-    [&brand.logo, &brand.sponsor]
-        .iter()
-        .enumerate()
-        .filter(|(_, l)| l.is_some())
-        .map(|(i, _)| format!("gdkpixbufoverlay name={prefix}{i} ! "))
-        .collect()
+    [&brand.logo, &brand.sponsor].iter().enumerate().filter(|(_, l)| l.is_some()).map(|(i, _)| format!("gdkpixbufoverlay name={prefix}{i} ! ")).collect()
 }
 
 fn configure_overlays(p: &gst::Pipeline, brand: &Brand, prefix: &str, frame: Size) -> Result<(), AppError> {

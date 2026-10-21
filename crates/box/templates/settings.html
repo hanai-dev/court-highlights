@@ -3,42 +3,42 @@
 {% block main %}
 <div class="console-top"><h1>Settings</h1></div>
 {% if let Some(m) = saved %}<div class="notice notice-ok" role="status">{{ m }}</div>{% endif %}
-{% if let Some(e) = error %}<div class="notice notice-error" role="alert">{{ e }}</div>{% endif %}
-<form method="post" action="/console/settings" enctype="multipart/form-data" class="panel">
+{% include "error_summary.html" %}
+<form method="post" action="/console/settings" enctype="multipart/form-data" class="panel" novalidate>
   <h2>Venue</h2>
-  <div class="field"><label for="venue">Venue name</label><input id="venue" name="venue" type="text" required maxlength="80" value="{{ v.name }}"></div>
-  <div class="field"><label for="contact">Venue contact (printed on the court signs)</label><input id="contact" name="contact" type="text" maxlength="120" value="{{ v.contact }}" placeholder="Front desk 0917 123 4567"></div>
+  <div class="field"><label for="venue">Venue name</label><input id="venue" name="venue" type="text" required maxlength="80" value="{{ v.name }}">{% if let Some(e) = f.err("venue") %}<p class="field-error" id="venue-error">{{ e }}</p>{% endif %}</div>
+  <div class="field"><label for="contact">Venue contact (printed on the court signs)</label><input id="contact" name="contact" type="text" maxlength="120" value="{{ v.contact }}" placeholder="Front desk 0917 123 4567">{% if let Some(e) = f.err("contact") %}<p class="field-error" id="contact-error">{{ e }}</p>{% endif %}</div>
   <div class="row">
     <div class="field"><label for="open">Opens</label><input id="open" name="open" type="time" required value="{{ v.open }}"></div>
     <div class="field"><label for="close">Closes</label><input id="close" name="close" type="time" required value="{{ v.close }}"></div>
-  </div>
+  </div>{% if let Some(e) = f.err("open") %}<p class="field-error" id="open-error">{{ e }}</p>{% endif %}
 
   <h2>Logos on videos</h2>
   <div class="field"><label for="logo">Venue logo (PNG or JPEG, up to 2 MB)</label><input id="logo" name="logo" type="file" accept="image/png,image/jpeg" aria-describedby="logo-hint">
-    <p class="hint" id="logo-hint">{% if v.has_logo %}A logo is saved. Choose a file only to replace it.{% else %}No logo yet.{% endif %}</p></div>
+    <p class="hint" id="logo-hint">{% if v.has_logo %}A logo is saved. Choose a file only to replace it.{% else %}No logo yet.{% endif %}</p>{% if let Some(e) = f.err("logo") %}<p class="field-error" id="logo-error">{{ e }}</p>{% endif %}</div>
   <div class="field"><label for="corner">Logo corner</label>
     <select id="corner" name="corner">
       <option value="top-left"{% if v.corner == "top-left" %} selected{% endif %}>Top left</option>
       <option value="top-right"{% if v.corner == "top-right" %} selected{% endif %}>Top right</option>
       <option value="bottom-left"{% if v.corner == "bottom-left" %} selected{% endif %}>Bottom left</option>
       <option value="bottom-right"{% if v.corner == "bottom-right" %} selected{% endif %}>Bottom right</option>
-    </select></div>
+    </select>{% if let Some(e) = f.err("corner") %}<p class="field-error" id="corner-error">{{ e }}</p>{% endif %}</div>
   <div class="field"><label for="sponsor">Sponsor logo (optional, PNG or JPEG, up to 2 MB)</label><input id="sponsor" name="sponsor" type="file" accept="image/png,image/jpeg" aria-describedby="sponsor-hint">
-    <p class="hint" id="sponsor-hint">Shown in the other corner on the same edge.</p>
+    <p class="hint" id="sponsor-hint">Shown in the other corner on the same edge.</p>{% if let Some(e) = f.err("sponsor") %}<p class="field-error" id="sponsor-error">{{ e }}</p>{% endif %}
     {% if v.has_sponsor %}<label class="check"><input type="checkbox" name="remove_sponsor" value="1"> Remove the sponsor logo</label>{% endif %}</div>
 
   <h2>Clips and highlights</h2>
   <div class="row">
     <div class="field"><label for="before">Seconds before the tap</label><input id="before" name="before" type="number" min="10" max="60" required value="{{ v.before }}"></div>
     <div class="field"><label for="after">Seconds after the tap</label><input id="after" name="after" type="number" min="0" max="15" required value="{{ v.after }}"></div>
-  </div>
+  </div>{% if let Some(e) = f.err("before") %}<p class="field-error" id="before-error">{{ e }}</p>{% endif %}
   <label class="check"><input type="checkbox" name="judge_on" value="1"{% if v.judge_on %} checked{% endif %}> Make highlights after each game (shot judge)</label>
   <p class="hint">Off: clips and game videos still work; no highlights are made.</p>
-  <div class="field"><label for="cap">Upload cap for sending videos (Mbit/s)</label><input id="cap" name="cap" type="number" min="1" max="1000" required value="{{ v.cap_mbps }}"></div>
+  <div class="field"><label for="cap">Upload cap for sending videos (Mbit/s)</label><input id="cap" name="cap" type="number" min="1" max="1000" required value="{{ v.cap_mbps }}">{% if let Some(e) = f.err("cap") %}<p class="field-error" id="cap-error">{{ e }}</p>{% endif %}</div>
 
   <h2>Privacy notice</h2>
   <div class="field"><label for="notice">Privacy notice shown to players</label>
-    <textarea id="notice" name="notice" rows="12" maxlength="20000" aria-describedby="notice-hint">{{ v.notice }}</textarea>
+    <textarea id="notice" name="notice" rows="12" maxlength="20000" aria-describedby="notice-hint">{{ v.notice }}</textarea>{% if let Some(e) = f.err("notice") %}<p class="field-error" id="notice-error">{{ e }}</p>{% endif %}
     <p class="hint" id="notice-hint">{% if notice_draft %}This is the starting template. Have your reviewer finalise it, then save.{% else %}Players open it from the court page; it works without internet.{% endif %}</p></div>
   <button class="btn btn-primary" type="submit">Save settings</button>
 </form>
@@ -51,7 +51,7 @@
   <button class="btn" type="submit">Save box key</button>
 </form>
 
-<form method="post" action="/console/settings/backup" enctype="multipart/form-data" class="panel">
+<form method="post" action="/console/settings/backup" enctype="multipart/form-data" class="panel" id="backup">
   <h2>Settings backup</h2>
   <p class="muted">Courts and cameras, logo, hours, settings and staff accounts (passwords only as hashes), in one encrypted file. Keep it somewhere safe: a replacement box at a one-box venue starts from it.</p>
   <div class="field"><label for="backup-passphrase">Backup passphrase</label><input id="backup-passphrase" name="passphrase" type="password" required minlength="12" autocomplete="new-password" aria-describedby="bp-hint">
@@ -66,4 +66,10 @@
     <p class="hint" id="now-hint">Copy the time from a phone that shows the right time.</p></div>
   <button class="btn" type="submit">Correct the time</button>
 </form>
+
+<section class="panel" aria-labelledby="wipe-h">
+  <h2 id="wipe-h">Wipe this box</h2>
+  <p class="muted">For a venue that closes or hands the box on: erases all footage, clips, games, accounts and logs, and takes the box off the fleet.</p>
+  <a class="btn btn-danger" href="/console/settings/wipe">Wipe this box…</a>
+</section>
 {% endblock %}

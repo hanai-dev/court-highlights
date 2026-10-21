@@ -10,8 +10,10 @@ const dir = path.join(root, 'crates/box/static');
 
 let total = 0;
 let ok = true;
-for (const name of fs.readdirSync(dir).sort()) {
-  const bytes = fs.statSync(path.join(dir, name)).size;
+const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
+for (const file of walk(dir).sort()) {
+  const name = path.relative(dir, file).split(path.sep).join('/');
+  const bytes = fs.statSync(file).size;
   total += bytes;
   const over = bytes > maxFileBytes;
   ok &&= !over;

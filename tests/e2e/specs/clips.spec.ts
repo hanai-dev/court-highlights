@@ -141,17 +141,19 @@ test('three taps within 5 s make exactly one clip, on the court page and in the 
   await page.goto(`${PLAYER}/c/${code}`);
   const before = (await readyClips(page)).length;
   const tapButton = page.getByRole('button', { name: 'Clip that' });
+  const first = Date.now();
   await tapButton.click();
   await page.waitForTimeout(2000);
   await tapButton.click();
   await page.waitForTimeout(2000);
   await tapButton.click();
+  const between = (Date.now() - first) / 1000; // about 4 s, plus each click's own latency
   await expect(page.locator('[data-clip-state="saving"]')).toHaveCount(1);
   await expect(page.locator('[data-clip-state="ready"]')).toHaveCount(before + 1, { timeout: 60_000 });
   const [token] = await readyClips(page);
   const seconds = probe(clipFiles(token).wide).seconds;
-  expect(seconds).toBeGreaterThan(32.5); // 25 s before the first tap + 4 s between taps + 5 s after the last
-  expect(seconds).toBeLessThan(35.5);
+  // 25 s before the first tap + the time between taps + 5 s after the last, within a second of frame rounding.
+  expect(Math.abs(seconds - (30 + between))).toBeLessThan(1.0);
   expect(await libraryCount()).toBe(inLibrary + 1);
 });
 

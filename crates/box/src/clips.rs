@@ -209,13 +209,13 @@ pub async fn court_game(State(app): State<AppState>, Path(code): Path<String>) -
 
 /// The court page of a court another box records, on that box (signs printed anywhere still work).
 fn hosted_elsewhere(app: &AppState, code: &str) -> Result<Option<String>, AppError> {
-    let host: Option<String> = app
-        .db
-        .conn()
-        .query_row("SELECT box FROM court WHERE code = ?1 AND deleted = 0", [code.to_ascii_uppercase()], |r| r.get(0))
-        .optional()?;
+    let host: Option<String> =
+        app.db.conn().query_row("SELECT box FROM court WHERE code = ?1 AND deleted = 0", [code.to_ascii_uppercase()], |r| r.get(0)).optional()?;
     let Some(host) = host.filter(|h| *h != app.box_name) else { return Ok(None) };
-    Ok(crate::sync::peers_snapshot(app).into_iter().find(|p| p.name == host && !p.player_url.is_empty()).map(|p| format!("{}/c/{}", p.player_url, code.to_ascii_uppercase())))
+    Ok(crate::sync::peers_snapshot(app)
+        .into_iter()
+        .find(|p| p.name == host && !p.player_url.is_empty())
+        .map(|p| format!("{}/c/{}", p.player_url, code.to_ascii_uppercase())))
 }
 
 pub async fn court_clips(State(app): State<AppState>, Path(code): Path<String>) -> Page {
@@ -387,7 +387,14 @@ pub fn plan(all: &[Seg], window: Window) -> Result<Plan, AppError> {
     if start >= end {
         return Err(none());
     }
-    Ok(Plan { segments: run.iter().map(|s| s.path.clone()).collect(), from_ms: recorded(start) as u64, to_ms: recorded(end) as u64, source: first.size, start, end })
+    Ok(Plan {
+        segments: run.iter().map(|s| s.path.clone()).collect(),
+        from_ms: recorded(start) as u64,
+        to_ms: recorded(end) as u64,
+        source: first.size,
+        start,
+        end,
+    })
 }
 
 /// Encodes a plan into the given shapes with the venue's logos (blocking work off the async threads).
@@ -436,20 +443,18 @@ pub async fn closed_segments(db: &Db, court: i64, start: i64, end: i64) -> Resul
         "SELECT path, start_ms, end_ms, COALESCE(width, 0), COALESCE(height, 0) FROM segment
          WHERE court_id = ?1 AND end_ms IS NOT NULL AND start_ms < ?2 AND end_ms > ?3 ORDER BY start_ms",
     )?;
-    let rows = st.query_map(params![court, end, start], |r| {
-        Ok(Seg { path: r.get(0)?, start: r.get(1)?, end: r.get(2)?, size: Size { w: r.get(3)?, h: r.get(4)? } })
-    })?;
+    let rows =
+        st.query_map(params![court, end, start], |r| Ok(Seg { path: r.get(0)?, start: r.get(1)?, end: r.get(2)?, size: Size { w: r.get(3)?, h: r.get(4)? } }))?;
     Ok(rows.collect::<Result<_, _>>()?)
 }
 
 /// The venue's logos as files the overlay can read; content-addressed so a new upload never races a running cut.
 fn brand(app: &AppState) -> Result<Brand, AppError> {
     type Blob = (Option<Vec<u8>>, Option<String>);
-    let (logo, sponsor, corner): (Blob, Blob, String) = app.db.conn().query_row(
-        "SELECT logo, logo_type, sponsor, sponsor_type, logo_corner FROM venue WHERE id = 1",
-        [],
-        |r| Ok(((r.get(0)?, r.get(1)?), (r.get(2)?, r.get(3)?), r.get(4)?)),
-    )?;
+    let (logo, sponsor, corner): (Blob, Blob, String) =
+        app.db.conn().query_row("SELECT logo, logo_type, sponsor, sponsor_type, logo_corner FROM venue WHERE id = 1", [], |r| {
+            Ok(((r.get(0)?, r.get(1)?), (r.get(2)?, r.get(3)?), r.get(4)?))
+        })?;
     let file = |blob: Blob| -> Result<Option<Logo>, AppError> {
         let (Some(bytes), Some(mime)) = blob else { return Ok(None) };
         let Some((width, height)) = media::image_size(&bytes) else { return Ok(None) };
@@ -537,11 +542,7 @@ pub async fn clip_page(State(app): State<AppState>, Path((code, token)): Path<(S
         _ => format!("Clip from {}", time_label(clip.made)),
     };
     // A clip tapped with no game running has its own email box (FR-21).
-    let emails = if clip.kind == "tap" && clip.game.is_none() && !clip.emailed {
-        Some(crate::games::email_box(&app.db, "clip_id", clip.id)?)
-    } else {
-        None
-    };
+    let emails = if clip.kind == "tap" && clip.game.is_none() && !clip.emailed { Some(crate::games::email_box(&app.db, "clip_id", clip.id)?) } else { None };
     html(ClipPage {
         court: court.name,
         code: court.code,

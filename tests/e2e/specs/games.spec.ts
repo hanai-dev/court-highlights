@@ -34,6 +34,7 @@ async function setJudge(page: Page, on: boolean): Promise<void> {
 }
 
 test('the court page shows its parts in order; Start offers posting permission unticked (FR-17, FR-11)', async ({ page, browser }) => {
+  test.setTimeout(240_000); // a fresh box and a fresh online service from nothing
   await freshBox();
   await cloudUp(); // email needs a box registered with the online service (FR-27, FR-48)
   await startCameras('cam-4');

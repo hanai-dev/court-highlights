@@ -156,18 +156,25 @@ test('"don\'t email me again" blocks that address for every later game; guessed 
   expect((await v.request.get(`${CLOUD}/v/${guessed}`)).status()).toBe(404);
   expect((await v.request.get(`${CLOUD}/never/${guessed}`)).status()).toBe(404);
 
+  // A hard bounce puts dee on the email service's suppression list, which the online service turned on at start.
+  await fetch('http://localhost:18025/bounced', { method: 'POST', body: JSON.stringify({ address: 'dee.bounced@example.com' }) });
+
   await settings(page, {}, false); // no highlights: quicker
   await clearMail();
   const p = await phone(browser);
   await p.getByRole('button', { name: 'Start game' }).click();
   await addEmail(p, 'ana@example.com');
   await addEmail(p, 'ben@example.com');
+  await addEmail(p, 'dee.bounced@example.com');
   await p.waitForTimeout(8_000);
   await p.getByRole('button', { name: 'Stop game' }).click();
   await expect.poll(async () => (await sentMail()).length, { timeout: 180_000, intervals: [3000] }).toBe(1);
   await p.waitForTimeout(5_000);
   const mails = await sentMail();
   expect(mails.map((m) => m.to[0])).toEqual(['ben@example.com']);
+  const suppression = await (await fetch('http://localhost:18025/suppression')).json();
+  expect(suppression.reasons).toEqual(['BOUNCE', 'COMPLAINT']);
+  expect(suppression.dropped).toContain('dee.bounced@example.com');
 });
 
 test('a clip outside a game offers Email me this (FR-21)', async ({ browser }) => {

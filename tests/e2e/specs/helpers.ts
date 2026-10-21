@@ -208,7 +208,7 @@ export async function completeSetup(page: Page, owner: Owner = OWNER, hours: [st
   await page.getByLabel('Owner username').fill(owner.username);
   await page.getByLabel('Owner password').fill(owner.password);
   await page.getByRole('button', { name: 'Continue' }).click();
-  await expect(page).toHaveURL(`${STAFF}/console`);
+  await expect(page).toHaveURL(`${STAFF}/setup/courts`); // the wizard goes on to courts; tests add their own
 }
 
 export async function signIn(page: Page, username: string, password: string): Promise<void> {

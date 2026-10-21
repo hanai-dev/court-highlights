@@ -52,11 +52,7 @@ impl ClipSettings {
     pub const DEFAULT: Self = Self { before_s: 25, after_s: 5 };
 
     pub fn new(before_s: u32, after_s: u32) -> Result<Self, RuleError> {
-        if (10..=60).contains(&before_s) && after_s <= 15 {
-            Ok(Self { before_s, after_s })
-        } else {
-            Err(RuleError::ClipSettings)
-        }
+        if (10..=60).contains(&before_s) && after_s <= 15 { Ok(Self { before_s, after_s }) } else { Err(RuleError::ClipSettings) }
     }
 }
 
@@ -91,10 +87,7 @@ pub fn clamp_to_footage(w: Window, recorded: &[Window]) -> Option<Window> {
             (s < e).then_some(Window { start: s, end: e })
         })
         .collect::<Vec<_>>();
-    Some(Window {
-        start: overlaps.iter().map(|o| o.start).min()?,
-        end: overlaps.iter().map(|o| o.end).max()?,
-    })
+    Some(Window { start: overlaps.iter().map(|o| o.start).min()?, end: overlaps.iter().map(|o| o.end).max()? })
 }
 
 // ---------------------------------------------------------------- opening hours and games (FR-1, FR-10)
@@ -344,9 +337,7 @@ pub fn reel_plan(found: usize) -> ReelPlan {
 
 fn local_at(t: Time, at: NaiveTime) -> Time {
     let tz = manila();
-    tz.from_local_datetime(&t.with_timezone(&tz).date_naive().and_time(at))
-        .single()
-        .expect("fixed offset is unambiguous")
+    tz.from_local_datetime(&t.with_timezone(&tz).date_naive().and_time(at)).single().expect("fixed offset is unambiguous")
 }
 
 #[cfg(test)]

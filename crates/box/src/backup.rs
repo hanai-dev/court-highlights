@@ -78,7 +78,8 @@ pub async fn export(State(app): State<AppState>, staff: Staff, form: Multipart) 
     let body = seal(&passphrase, &plain)?;
     db::log(&app.db.conn(), Some(staff.id), &staff.username, "exported settings backup", "", "")?;
     let name = format!("court-highlights-settings-{}.chbackup", clock::now().format("%Y%m%d"));
-    Ok(([(header::CONTENT_TYPE, "application/octet-stream".to_string()), (header::CONTENT_DISPOSITION, format!("attachment; filename=\"{name}\""))], body).into_response())
+    Ok(([(header::CONTENT_TYPE, "application/octet-stream".to_string()), (header::CONTENT_DISPOSITION, format!("attachment; filename=\"{name}\""))], body)
+        .into_response())
 }
 
 /// A new box takes over from a backup (FR-43): only before any staff account exists on it, so a running box

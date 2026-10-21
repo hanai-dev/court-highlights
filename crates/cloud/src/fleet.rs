@@ -111,7 +111,11 @@ pub async fn change_password(State(app): State<App>, u: FleetUser, headers: Head
         *res.status_mut() = StatusCode::UNPROCESSABLE_ENTITY;
         return Ok(res);
     }
-    sqlx::query("UPDATE fleet_user SET password_hash = $1, must_change = FALSE WHERE id = $2").bind(auth::hash_password(&f.new)).bind(u.id).execute(&app.db).await?;
+    sqlx::query("UPDATE fleet_user SET password_hash = $1, must_change = FALSE WHERE id = $2")
+        .bind(auth::hash_password(&f.new))
+        .bind(u.id)
+        .execute(&app.db)
+        .await?;
     // Every other session of this account ends.
     let keep = auth::cookie_token(&headers).map(|t| hex_sha256(&t)).unwrap_or_default();
     sqlx::query("DELETE FROM fleet_session WHERE user_id = $1 AND token_hash <> $2").bind(u.id).bind(keep).execute(&app.db).await?;
@@ -146,7 +150,7 @@ const MISSED_AFTER_MIN: i64 = 5;
 async fn venues(app: &App, only: Option<i64>) -> Result<Vec<VenueLine>, Denied> {
     let rows = sqlx::query(
         "SELECT v.id, v.name, v.online_on, b.id, b.name, b.revoked_at IS NOT NULL, c.at, c.version, c.disk_pct, c.temperature_c, c.courts_recording, c.courts_total
-         FROM venue v LEFT JOIN box b ON b.venue_id = v.id
+         FROM venue v LEFT JOIN box b ON b.venue_id = v.id AND b.wiped_at IS NULL
          LEFT JOIN LATERAL (SELECT * FROM checkin WHERE box_id = b.id ORDER BY at DESC LIMIT 1) c ON TRUE
          WHERE $1::BIGINT IS NULL OR v.id = $1 ORDER BY v.name, v.id, b.name, b.id",
     )
@@ -347,8 +351,16 @@ pub struct UserForm {
 pub async fn user_add(State(app): State<App>, u: FleetUser, Form(f): Form<UserForm>) -> Page {
     u.admin()?;
     let username = f.username.trim().to_lowercase();
-    if username.is_empty() || username.len() > 40 || !username.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'.' || b == b'-') || !["admin", "installer"].contains(&f.role.as_str()) {
-        return Ok(crate::player::message(StatusCode::BAD_REQUEST, "Check the form", "Usernames use letters, digits, dots and dashes; the role is Admin or Installer."));
+    if username.is_empty()
+        || username.len() > 40
+        || !username.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'.' || b == b'-')
+        || !["admin", "installer"].contains(&f.role.as_str())
+    {
+        return Ok(crate::player::message(
+            StatusCode::BAD_REQUEST,
+            "Check the form",
+            "Usernames use letters, digits, dots and dashes; the role is Admin or Installer.",
+        ));
     }
     let created = create_user(&app.db, &app.secret_key, &username, &f.role).await?;
     log(&app, &u.username, "added fleet user", &username, &f.role).await?;
@@ -365,11 +377,8 @@ pub async fn create_user(db: &sqlx::PgPool, key: &[u8; 32], username: &str, role
         .execute(db)
         .await?;
     let uri = auth::otpauth_uri(username, &secret);
-    let qr = qrcode::QrCode::new(uri.as_bytes())
-        .map_err(|e| Denied::Failed(e.to_string()))?
-        .render::<qrcode::render::svg::Color>()
-        .min_dimensions(200, 200)
-        .build();
+    let qr =
+        qrcode::QrCode::new(uri.as_bytes()).map_err(|e| Denied::Failed(e.to_string()))?.render::<qrcode::render::svg::Color>().min_dimensions(200, 200).build();
     Ok(Created { username: username.into(), password, secret: auth::base32(&secret), qr })
 }
 

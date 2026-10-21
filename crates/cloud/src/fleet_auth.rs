@@ -156,7 +156,10 @@ pub fn base32(bytes: &[u8]) -> String {
 }
 
 pub fn otpauth_uri(username: &str, secret: &[u8]) -> String {
-    format!("otpauth://totp/Court%20Highlights%20fleet:{username}?secret={}&issuer=Court%20Highlights%20fleet&algorithm=SHA1&digits=6&period=30", base32(secret))
+    format!(
+        "otpauth://totp/Court%20Highlights%20fleet:{username}?secret={}&issuer=Court%20Highlights%20fleet&algorithm=SHA1&digits=6&period=30",
+        base32(secret)
+    )
 }
 
 fn cipher(key: &[u8; 32]) -> ChaCha20Poly1305 {
@@ -196,10 +199,12 @@ pub enum Outcome {
 /// Password and code are both required; the same answer for every failure, and 5 failures lock 15 min (FR-47).
 pub async fn sign_in(app: &App, username: &str, password: &str, code: &str) -> Result<Outcome, Denied> {
     let now = crate::now();
-    let row = sqlx::query("SELECT id, password_hash, totp_secret_enc, failures, locked_until, must_change, totp_last_step FROM fleet_user WHERE username = $1 AND active")
-        .bind(username)
-        .fetch_optional(&app.db)
-        .await?;
+    let row = sqlx::query(
+        "SELECT id, password_hash, totp_secret_enc, failures, locked_until, must_change, totp_last_step FROM fleet_user WHERE username = $1 AND active",
+    )
+    .bind(username)
+    .fetch_optional(&app.db)
+    .await?;
     let Some(row) = row else {
         // Same work for unknown names, so timing doesn't reveal which accounts exist.
         let _ = verify_password(password, "$argon2id$v=19$m=19456,t=2,p=1$c29tZXNhbHRzb21lc2FsdA$5W2ICzvvmMCyMLiBcDk0Gi0nnTGsXmYbhHXUHVfiy4c");
@@ -229,8 +234,17 @@ pub async fn sign_in(app: &App, username: &str, password: &str, code: &str) -> R
         return Ok(Outcome::Refused);
     }
     let token = random_token();
-    sqlx::query("UPDATE fleet_user SET failures = 0, locked_until = NULL, totp_last_step = $2 WHERE id = $1").bind(id).bind(step.unwrap_or(0) as i64).execute(&app.db).await?;
-    sqlx::query("INSERT INTO fleet_session (token_hash, user_id, signed_in_at, last_seen_at) VALUES ($1, $2, $3, $3)").bind(hex_sha256(&token)).bind(id).bind(now).execute(&app.db).await?;
+    sqlx::query("UPDATE fleet_user SET failures = 0, locked_until = NULL, totp_last_step = $2 WHERE id = $1")
+        .bind(id)
+        .bind(step.unwrap_or(0) as i64)
+        .execute(&app.db)
+        .await?;
+    sqlx::query("INSERT INTO fleet_session (token_hash, user_id, signed_in_at, last_seen_at) VALUES ($1, $2, $3, $3)")
+        .bind(hex_sha256(&token))
+        .bind(id)
+        .bind(now)
+        .execute(&app.db)
+        .await?;
     crate::fleet::log(app, username, "signed in", "", "").await?;
     Ok(Outcome::In { token, must_change })
 }

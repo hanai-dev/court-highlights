@@ -102,10 +102,10 @@ impl Recorders {
                 if let Err(e) = me.reconcile() {
                     tracing::error!(error = %e, "recorder reconcile failed");
                 }
-                if ticks % 30 == 0 {
-                    if let Err(e) = me.trim_rolling() {
-                        tracing::error!(error = %e, "rolling footage trim failed");
-                    }
+                if ticks.is_multiple_of(30)
+                    && let Err(e) = me.trim_rolling()
+                {
+                    tracing::error!(error = %e, "rolling footage trim failed");
                 }
                 ticks += 1;
                 tokio::time::sleep(Duration::from_secs(2)).await;
@@ -115,16 +115,10 @@ impl Recorders {
 
     fn hours(&self) -> rusqlite::Result<Option<OpeningHours>> {
         let conn = self.db.conn();
-        let row: Option<(String, String)> = rusqlite::OptionalExtension::optional(conn.query_row(
-            "SELECT open_time, close_time FROM venue WHERE id = 1",
-            [],
-            |r| Ok((r.get(0)?, r.get(1)?)),
-        ))?;
+        let row: Option<(String, String)> =
+            rusqlite::OptionalExtension::optional(conn.query_row("SELECT open_time, close_time FROM venue WHERE id = 1", [], |r| Ok((r.get(0)?, r.get(1)?))))?;
         Ok(row.and_then(|(o, c)| {
-            Some(OpeningHours {
-                open: chrono::NaiveTime::parse_from_str(&o, "%H:%M").ok()?,
-                close: chrono::NaiveTime::parse_from_str(&c, "%H:%M").ok()?,
-            })
+            Some(OpeningHours { open: chrono::NaiveTime::parse_from_str(&o, "%H:%M").ok()?, close: chrono::NaiveTime::parse_from_str(&c, "%H:%M").ok()? })
         }))
     }
 
@@ -142,7 +136,11 @@ impl Recorders {
             st.query_map([], |r| {
                 Ok((
                     r.get::<_, i64>(0)?,
-                    CameraConfig { url: r.get(1)?, username: r.get::<_, Option<String>>(2)?.unwrap_or_default(), password: r.get::<_, Option<String>>(3)?.unwrap_or_default() },
+                    CameraConfig {
+                        url: r.get(1)?,
+                        username: r.get::<_, Option<String>>(2)?.unwrap_or_default(),
+                        password: r.get::<_, Option<String>>(3)?.unwrap_or_default(),
+                    },
                 ))
             })?
             .collect::<Result<_, _>>()?
@@ -163,7 +161,15 @@ impl Recorders {
                 let (stop, stopped) = watch::channel(false);
                 let status = Arc::new(Mutex::new(CourtStatus::Starting));
                 let sink: SinkHandle = Arc::default();
-                let task = tokio::spawn(run_court(id, config.clone(), self.db.clone(), self.footage.join(format!("court-{id}")), status.clone(), sink.clone(), stopped));
+                let task = tokio::spawn(run_court(
+                    id,
+                    config.clone(),
+                    self.db.clone(),
+                    self.footage.join(format!("court-{id}")),
+                    status.clone(),
+                    sink.clone(),
+                    stopped,
+                ));
                 slots.insert(id, Slot { config, stop, status, sink, task });
             }
         }
@@ -209,8 +215,8 @@ impl Recorders {
         let mut holds: HashMap<i64, Vec<ch_core::Window>> = HashMap::new();
         let at = |ms: i64| chrono::DateTime::from_timestamp_millis(ms).unwrap_or_default().with_timezone(&ch_core::manila());
         for (id, court, path, start, end) in old {
-            if !holds.contains_key(&court) {
-                holds.insert(court, crate::footage::protected(&self.db, court, now)?);
+            if let std::collections::hash_map::Entry::Vacant(v) = holds.entry(court) {
+                v.insert(crate::footage::protected(&self.db, court, now)?);
             }
             if !ch_core::rolling_deletable(ch_core::Window { start: at(start), end: at(end) }, now, &holds[&court]) {
                 continue;
@@ -262,7 +268,15 @@ async fn run_court(court: i64, camera: CameraConfig, db: Db, dir: PathBuf, statu
 
 type BoxError = Box<dyn std::error::Error + Send + Sync>;
 
-async fn record_once(court: i64, camera: &CameraConfig, db: &Db, dir: &Path, status: &Mutex<CourtStatus>, sink: &SinkHandle, mut stop: watch::Receiver<bool>) -> Result<(), BoxError> {
+async fn record_once(
+    court: i64,
+    camera: &CameraConfig,
+    db: &Db,
+    dir: &Path,
+    status: &Mutex<CourtStatus>,
+    sink: &SinkHandle,
+    mut stop: watch::Receiver<bool>,
+) -> Result<(), BoxError> {
     use retina::client::{Credentials, PlayOptions, Session, SessionOptions, SetupOptions, Transport};
     let url = url::Url::parse(&camera.url)?;
     let creds = (!camera.username.is_empty()).then(|| Credentials { username: camera.username.clone(), password: camera.password.clone() });
@@ -273,9 +287,7 @@ async fn record_once(court: i64, camera: &CameraConfig, db: &Db, dir: &Path, sta
             .iter()
             .position(|s| s.media() == "video" && s.encoding_name().eq_ignore_ascii_case("h264"))
             .ok_or("camera offers no H.264 video stream")?;
-        session
-            .setup(video, SetupOptions::default().transport(Transport::default()).frame_format(retina::codec::FrameFormat::MP4))
-            .await?;
+        session.setup(video, SetupOptions::default().transport(Transport::default()).frame_format(retina::codec::FrameFormat::MP4)).await?;
         Ok::<_, BoxError>((video, session.play(PlayOptions::default()).await?.demuxed()?))
     };
     let (video, mut frames) = tokio::select! {
@@ -376,7 +388,8 @@ impl SegmentWriter {
                         opened_at.lock().unwrap_or_else(|p| p.into_inner()).insert(location, running);
                     }
                     "splitmuxsink-fragment-closed" => {
-                        let length_ms = opened_at.lock().unwrap_or_else(|p| p.into_inner()).remove(&location).map_or(0, |o| running.saturating_sub(o) / 1_000_000) as i64;
+                        let length_ms =
+                            opened_at.lock().unwrap_or_else(|p| p.into_inner()).remove(&location).map_or(0, |o| running.saturating_sub(o) / 1_000_000) as i64;
                         let _ = db.conn().execute("UPDATE segment SET end_ms = start_ms + ?1 WHERE path = ?2", rusqlite::params![length_ms, location]);
                     }
                     _ => {}
@@ -465,8 +478,5 @@ pub fn disk_use(path: &Path) -> Option<DiskUse> {
 
 pub fn temperature_c() -> Option<f64> {
     let zones = std::fs::read_dir("/sys/class/thermal").ok()?;
-    zones
-        .filter_map(|z| std::fs::read_to_string(z.ok()?.path().join("temp")).ok()?.trim().parse::<f64>().ok())
-        .map(|milli| milli / 1000.0)
-        .reduce(f64::max)
+    zones.filter_map(|z| std::fs::read_to_string(z.ok()?.path().join("temp")).ok()?.trim().parse::<f64>().ok()).map(|milli| milli / 1000.0).reduce(f64::max)
 }

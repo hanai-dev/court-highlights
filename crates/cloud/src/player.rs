@@ -2,7 +2,7 @@
 //! the box copy expires (FR-24) or when the clip was hidden or deleted (FR-26).
 
 use crate::mail::Email;
-use crate::{App, ApiError, email_hash, random_token};
+use crate::{ApiError, App, email_hash, random_token};
 use askama::Template;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;

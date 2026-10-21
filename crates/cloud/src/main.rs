@@ -86,10 +86,13 @@ fn test_hooks(r: Router<App>) -> Router<App> {
     struct Advance {
         ms: i64,
     }
-    r.route("/__test/clock", post(|axum::Form(a): axum::Form<Advance>| async move {
-        TEST_OFFSET_MS.fetch_add(a.ms, std::sync::atomic::Ordering::Relaxed);
-        now().to_rfc3339()
-    }))
+    r.route(
+        "/__test/clock",
+        post(|axum::Form(a): axum::Form<Advance>| async move {
+            TEST_OFFSET_MS.fetch_add(a.ms, std::sync::atomic::Ordering::Relaxed);
+            now().to_rfc3339()
+        }),
+    )
 }
 
 #[cfg(not(feature = "test-hooks"))]
@@ -124,10 +127,14 @@ async fn security_headers(req: Request, next: Next) -> Response {
     let h = res.headers_mut();
     h.insert(
         header::CONTENT_SECURITY_POLICY,
-        HeaderValue::from_static("default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"),
+        HeaderValue::from_static(
+            "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+        ),
     );
     h.insert(header::X_CONTENT_TYPE_OPTIONS, HeaderValue::from_static("nosniff"));
     h.insert(header::X_FRAME_OPTIONS, HeaderValue::from_static("DENY"));
+    // Browsers ignore HSTS over plain HTTP, so the service sends it always; TLS is terminated at the platform edge.
+    h.insert(header::STRICT_TRANSPORT_SECURITY, HeaderValue::from_static("max-age=31536000; includeSubDomains"));
     // same-origin, not no-referrer: Chrome sends `Origin: null` on form posts under no-referrer, defeating the fleet's
     // same-origin check; same-origin still never sends the token-bearing /v/ addresses to another site.
     h.insert(header::REFERRER_POLICY, HeaderValue::from_static("same-origin"));
@@ -181,6 +188,7 @@ fn router(app: App) -> Router {
         .route("/api/v1/items/{id}/done", post(api::item_done))
         .route("/api/v1/items/{id}", delete(api::withdraw))
         .route("/api/v1/deliveries", post(api::deliver))
+        .route("/api/v1/box", delete(api::leave))
         .route("/v/{token}", get(player::videos))
         .route("/v/{token}/{item}", get(player::video))
         .route("/never/{token}", get(player::never_form).post(player::never_confirm))
@@ -259,7 +267,12 @@ async fn add_box(venue: &str, name: &str) -> Result<(), Box<dyn std::error::Erro
         None => sqlx::query_scalar("INSERT INTO venue (name) VALUES ($1) RETURNING id").bind(venue).fetch_one(&db).await?,
     };
     let key = random_token();
-    sqlx::query("INSERT INTO box (venue_id, name, key_hash, registered_by) VALUES ($1, $2, $3, 'cli')").bind(venue_id).bind(name).bind(hex_sha256(&key)).execute(&db).await?;
+    sqlx::query("INSERT INTO box (venue_id, name, key_hash, registered_by) VALUES ($1, $2, $3, 'cli')")
+        .bind(venue_id)
+        .bind(name)
+        .bind(hex_sha256(&key))
+        .execute(&db)
+        .await?;
     println!("{key}");
     Ok(())
 }
@@ -302,10 +315,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err("CH_EMAIL_PEPPER must be at least 32 characters".into());
     }
     let s3 = need("CH_S3_ENDPOINT")?;
-    let store = store::Store::new(&s3, &opt("CH_S3_PUBLIC_ENDPOINT", &s3), &opt("CH_S3_REGION", "auto"), &need("CH_S3_BUCKET")?, &need("CH_S3_KEY")?, &need("CH_S3_SECRET")?);
+    let store = store::Store::new(
+        &s3,
+        &opt("CH_S3_PUBLIC_ENDPOINT", &s3),
+        &opt("CH_S3_REGION", "auto"),
+        &need("CH_S3_BUCKET")?,
+        &need("CH_S3_KEY")?,
+        &need("CH_S3_SECRET")?,
+    );
     store.ensure_bucket().await.map_err(|e| format!("object store unreachable: {e}"))?;
     let ses_endpoint = std::env::var("CH_SES_ENDPOINT").ok().filter(|v| !v.is_empty());
-    let mail = mail::Mailer::new(ses_endpoint.as_deref(), &opt("CH_SES_REGION", "ap-southeast-1"), &need("CH_SES_KEY")?, &need("CH_SES_SECRET")?, &need("CH_MAIL_FROM")?);
+    let mail = mail::Mailer::new(
+        ses_endpoint.as_deref(),
+        &opt("CH_SES_REGION", "ap-southeast-1"),
+        &need("CH_SES_KEY")?,
+        &need("CH_SES_SECRET")?,
+        &need("CH_MAIL_FROM")?,
+    );
+    mail.suppress_bounces().await.map_err(|e| format!("email service refused the bounce suppression setting: {e}"))?;
     let public_url = need("CH_PUBLIC_URL")?.trim_end_matches('/').to_string();
     let origin = public_url.splitn(4, '/').take(3).collect::<Vec<_>>().join("/");
     let ready_token = std::env::var("CH_READY_TOKEN").ok().filter(|t| !t.is_empty());
@@ -314,8 +341,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let listener = tokio::net::TcpListener::bind(opt("CH_LISTEN", "0.0.0.0:8080")).await?;
     tracing::info!(addr = %listener.local_addr()?, "online service listening");
-    axum::serve(listener, router(app))
-        .with_graceful_shutdown(shutdown_signal())
-        .await?;
+    axum::serve(listener, router(app)).with_graceful_shutdown(shutdown_signal()).await?;
     Ok(())
 }

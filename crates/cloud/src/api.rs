@@ -1,7 +1,7 @@
 //! Box → service API (HLD §3). Every call carries the box's own key; a revoked key is refused and nothing is stored
 //! (FR-48). Uploads go straight to the object store through presigned URLs.
 
-use crate::{App, ApiError, hex_sha256, random_token};
+use crate::{ApiError, App, hex_sha256, random_token};
 use axum::extract::{FromRequestParts, Path, State};
 use axum::http::{StatusCode, request::Parts};
 use axum::{Json, response::IntoResponse};
@@ -26,11 +26,12 @@ impl FromRequestParts<App> for BoxAuth {
             .and_then(|v| v.strip_prefix("Bearer "))
             .filter(|k| k.len() == 64)
             .ok_or(ApiError::Unauthorized)?;
-        let row = sqlx::query("SELECT b.id, b.venue_id, v.online_on FROM box b JOIN venue v ON v.id = b.venue_id WHERE b.key_hash = $1 AND b.revoked_at IS NULL")
-            .bind(hex_sha256(key))
-            .fetch_optional(&app.db)
-            .await?
-            .ok_or(ApiError::Unauthorized)?;
+        let row =
+            sqlx::query("SELECT b.id, b.venue_id, v.online_on FROM box b JOIN venue v ON v.id = b.venue_id WHERE b.key_hash = $1 AND b.revoked_at IS NULL")
+                .bind(hex_sha256(key))
+                .fetch_optional(&app.db)
+                .await?
+                .ok_or(ApiError::Unauthorized)?;
         Ok(BoxAuth { box_id: row.get(0), venue_id: row.get(1), online: row.get(2) })
     }
 }
@@ -142,6 +143,21 @@ pub async fn withdraw(State(app): State<App>, auth: BoxAuth, Path(id): Path<i64>
     Ok(StatusCode::NO_CONTENT)
 }
 
+/// Wipe box (FR-55): the box is leaving its venue. Its key stops working at once, its health records go, and the
+/// fleet console no longer lists it. Items already sent stay until their own expiry.
+pub async fn leave(State(app): State<App>, auth: BoxAuth) -> Result<StatusCode, ApiError> {
+    let now = crate::now();
+    let name: String = sqlx::query_scalar("UPDATE box SET wiped_at = $1, revoked_at = COALESCE(revoked_at, $1) WHERE id = $2 RETURNING name")
+        .bind(now)
+        .bind(auth.box_id)
+        .fetch_one(&app.db)
+        .await?;
+    sqlx::query("DELETE FROM checkin WHERE box_id = $1").bind(auth.box_id).execute(&app.db).await?;
+    crate::fleet::log(&app, "box", "wiped box", &name, "").await?;
+    tracing::info!(box_id = auth.box_id, "box wiped and left the fleet");
+    Ok(StatusCode::NO_CONTENT)
+}
+
 #[derive(Deserialize)]
 pub struct NewDelivery {
     #[serde(rename = "ref")]
@@ -193,13 +209,15 @@ pub async fn deliver(State(app): State<App>, auth: BoxAuth, Json(d): Json<NewDel
     };
     let (delivery, token): (i64, String) = (row.get(0), row.get(1));
     for (position, item) in d.items.iter().enumerate() {
-        sqlx::query("INSERT INTO delivery_item (delivery_id, item_id, position) SELECT $1, id, $3 FROM item WHERE id = $2 AND box_id = $4 ON CONFLICT DO NOTHING")
-            .bind(delivery)
-            .bind(item)
-            .bind(position as i32)
-            .bind(auth.box_id)
-            .execute(&mut *tx)
-            .await?;
+        sqlx::query(
+            "INSERT INTO delivery_item (delivery_id, item_id, position) SELECT $1, id, $3 FROM item WHERE id = $2 AND box_id = $4 ON CONFLICT DO NOTHING",
+        )
+        .bind(delivery)
+        .bind(item)
+        .bind(position as i32)
+        .bind(auth.box_id)
+        .execute(&mut *tx)
+        .await?;
     }
     tx.commit().await?;
     let (sent, skipped) = crate::player::send_delivery(&app, delivery, &token, &d.recipients).await?;

@@ -4,12 +4,12 @@
 use crate::auth::{self, Staff};
 use crate::db::{self, Db};
 use askama::Template;
+use axum::Router;
 use axum::extract::{DefaultBodyLimit, Form, Multipart, Path, Query, Request, State};
 use axum::http::{HeaderMap, HeaderValue, Method, StatusCode, header};
 use axum::middleware::{self, Next};
 use axum::response::{Html, IntoResponse, Redirect, Response};
 use axum::routing::{get, post};
-use axum::Router;
 use rusqlite::{OptionalExtension, params};
 use serde::Deserialize;
 use tower_http::set_header::SetResponseHeaderLayer;
@@ -66,7 +66,11 @@ impl IntoResponse for AppError {
             Self::BadRequest(m) => (StatusCode::BAD_REQUEST, "Check the form", m),
             Self::Internal(detail) => {
                 tracing::error!(%detail, "request failed");
-                (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong", "The box could not finish that. Try again; if it keeps happening, call support (see Help).".to_string())
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Something went wrong",
+                    "The box could not finish that. Try again; if it keeps happening, call support (see Help).".to_string(),
+                )
             }
         };
         let page = MessagePage { title, message: &message, back: "/console" };
@@ -75,6 +79,43 @@ impl IntoResponse for AppError {
 }
 
 pub type Page = Result<Response, AppError>;
+
+/// A problem with one form field: listed in the error summary and shown under the field (design:states).
+pub struct FieldError {
+    pub field: &'static str,
+    pub message: String,
+}
+
+pub fn field_error<'a>(errors: &'a [FieldError], field: &str) -> Option<&'a str> {
+    errors.iter().find(|e| e.field == field).map(|e| e.message.as_str())
+}
+
+/// A form's problems, for templates/error_summary.html and the per-field messages.
+#[derive(Default)]
+pub struct FormErrors {
+    pub errors: Vec<FieldError>,
+}
+
+impl FormErrors {
+    pub fn add(&mut self, field: &'static str, message: impl Into<String>) {
+        self.errors.push(FieldError { field, message: message.into() });
+    }
+
+    pub fn err(&self, field: &str) -> Option<&str> {
+        field_error(&self.errors, field)
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.errors.is_empty()
+    }
+}
+
+/// A form page re-shown with its problems: 422, so the browser and tests can tell it from a success.
+pub fn invalid<T: Template>(t: T) -> Page {
+    let mut res = html(t)?;
+    *res.status_mut() = StatusCode::UNPROCESSABLE_ENTITY;
+    Ok(res)
+}
 
 pub fn html<T: Template>(t: T) -> Page {
     Ok(Html(t.render()?).into_response())
@@ -129,32 +170,41 @@ fn test_hooks(r: Router<AppState>) -> Router<AppState> {
         n: i64,
     }
     r.route("/__test/statements", get(|| async { crate::db::STATEMENTS.load(std::sync::atomic::Ordering::Relaxed).to_string() }))
-    // Library fixtures: ready clip rows without files, one minute apart, cycling through the kinds.
-    .route("/__test/seed-clips", post(|State(app): State<AppState>, Form(s): Form<Seed>| async move {
-        let now = crate::clock::now();
-        let conn = app.db.conn();
-        for i in 0..s.n {
-            let made = now - chrono::Duration::minutes(i);
-            let kind = ["tap", "tap", "highlight", "game"][(i % 4) as usize];
-            conn.execute(
-                "INSERT INTO clip (court_id, kind, token, window_start_ms, window_end_ms, made_at, state) VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'ready')",
-                params![s.court, kind, auth::random_token(), made.timestamp_millis() - 30_000, made.timestamp_millis(), made.to_rfc3339()],
-            )
-            .map_err(|e| AppError::Internal(e.to_string()))?;
-        }
-        Ok::<_, AppError>(s.n.to_string())
-    }))
-    .route("/__test/disk", post(|Form(d): Form<Disk>| async move {
-        crate::recorder::TEST_DISK_BYTES.store(d.bytes, std::sync::atomic::Ordering::Relaxed);
-        "ok"
-    }))
-    .route("/__test/clock", post(|State(app): State<AppState>, Form(a): Form<Advance>| async move {
-        crate::clock::advance(a.ms);
-        if a.ms != 0 {
-            app.recorders.split_all();
-        }
-        crate::clock::now().to_rfc3339()
-    }))
+        // Library fixtures: ready clip rows without files, one minute apart, cycling through the kinds.
+        .route(
+            "/__test/seed-clips",
+            post(|State(app): State<AppState>, Form(s): Form<Seed>| async move {
+                let now = crate::clock::now();
+                let conn = app.db.conn();
+                for i in 0..s.n {
+                    let made = now - chrono::Duration::minutes(i);
+                    let kind = ["tap", "tap", "highlight", "game"][(i % 4) as usize];
+                    conn.execute(
+                        "INSERT INTO clip (court_id, kind, token, window_start_ms, window_end_ms, made_at, state) VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'ready')",
+                        params![s.court, kind, auth::random_token(), made.timestamp_millis() - 30_000, made.timestamp_millis(), made.to_rfc3339()],
+                    )
+                    .map_err(|e| AppError::Internal(e.to_string()))?;
+                }
+                Ok::<_, AppError>(s.n.to_string())
+            }),
+        )
+        .route(
+            "/__test/disk",
+            post(|Form(d): Form<Disk>| async move {
+                crate::recorder::TEST_DISK_BYTES.store(d.bytes, std::sync::atomic::Ordering::Relaxed);
+                "ok"
+            }),
+        )
+        .route(
+            "/__test/clock",
+            post(|State(app): State<AppState>, Form(a): Form<Advance>| async move {
+                crate::clock::advance(a.ms);
+                if a.ms != 0 {
+                    app.recorders.split_all();
+                }
+                crate::clock::now().to_rfc3339()
+            }),
+        )
 }
 
 #[cfg(not(feature = "test-hooks"))]
@@ -169,6 +219,8 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/static/{file}", get(static_file))
         .route("/setup", get(setup_form).post(setup_submit).layer(DefaultBodyLimit::max(UPLOAD_LIMIT)))
         .route("/setup/restore", post(crate::backup::restore).layer(DefaultBodyLimit::max(UPLOAD_LIMIT)))
+        .route("/setup/courts", get(crate::wizard::courts))
+        .route("/setup/signs", get(crate::wizard::signs))
         .route("/console/signin", get(signin_form).post(signin_submit))
         .route("/console/signout", post(signout))
         .route("/console", get(crate::courts::home))
@@ -196,6 +248,7 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/console/settings/time", post(crate::venue::correct_time))
         .route("/console/settings/online", post(crate::venue::save_online))
         .route("/console/settings/backup", post(crate::backup::export))
+        .route("/console/settings/wipe", get(crate::wipe::form).post(crate::wipe::wipe))
         .route("/console/help", get(crate::venue::help))
         .route("/console/signs", get(crate::venue::signs))
         .route("/console/logo", get(crate::clips::venue_logo))
@@ -235,20 +288,9 @@ async fn same_origin_writes(scheme: &'static str, req: Request, next: Next) -> R
     if req.method() != Method::GET && req.method() != Method::HEAD {
         let headers = req.headers();
         // HTTP/2 carries the host in the URI authority (:authority), HTTP/1.1 in the Host header.
-        let host = req
-            .uri()
-            .authority()
-            .map(|a| a.as_str())
-            .or_else(|| headers.get(header::HOST).and_then(|v| v.to_str().ok()))
-            .unwrap_or("");
-        let origin_ok = headers
-            .get(header::ORIGIN)
-            .and_then(|v| v.to_str().ok())
-            .is_none_or(|o| o == format!("{scheme}://{host}"));
-        let site_ok = headers
-            .get("sec-fetch-site")
-            .and_then(|v| v.to_str().ok())
-            .is_none_or(|s| s == "same-origin" || s == "none");
+        let host = req.uri().authority().map(|a| a.as_str()).or_else(|| headers.get(header::HOST).and_then(|v| v.to_str().ok())).unwrap_or("");
+        let origin_ok = headers.get(header::ORIGIN).and_then(|v| v.to_str().ok()).is_none_or(|o| o == format!("{scheme}://{host}"));
+        let site_ok = headers.get("sec-fetch-site").and_then(|v| v.to_str().ok()).is_none_or(|s| s == "same-origin" || s == "none");
         if !origin_ok || !site_ok {
             let origin = headers.get(header::ORIGIN).and_then(|v| v.to_str().ok()).unwrap_or("-");
             let site = headers.get("sec-fetch-site").and_then(|v| v.to_str().ok()).unwrap_or("-");
@@ -262,10 +304,10 @@ async fn same_origin_writes(scheme: &'static str, req: Request, next: Next) -> R
 async fn static_file(Path(file): Path<String>) -> Response {
     let (body, mime): (&'static [u8], &str) = match file.as_str() {
         "app.css" => (include_bytes!("../static/app.css"), "text/css; charset=utf-8"),
-        "setup-camera-position.svg" => (include_bytes!("../static/setup-camera-position.svg"), "image/svg+xml"),
+        "setup-camera-position.svg" => (include_bytes!("../static/assets/setup-camera-position.svg"), "image/svg+xml"),
         "court.js" => (include_bytes!("../static/court.js"), "text/javascript; charset=utf-8"),
         "print.js" => (include_bytes!("../static/print.js"), "text/javascript; charset=utf-8"),
-        "empty-library-scan.svg" => (include_bytes!("../static/empty-library-scan.svg"), "image/svg+xml"),
+        "empty-library-scan.svg" => (include_bytes!("../static/assets/empty-library-scan.svg"), "image/svg+xml"),
         _ => return StatusCode::NOT_FOUND.into_response(),
     };
     ([(header::CONTENT_TYPE, mime), (header::CACHE_CONTROL, "public, max-age=3600")], body).into_response()
@@ -297,7 +339,7 @@ pub fn shell(db: &Db, staff: &Staff, section: &'static str) -> Result<Shell, App
 #[derive(Template, Default)]
 #[template(path = "setup.html")]
 struct SetupPage {
-    error: Option<String>,
+    f: FormErrors,
     venue: String,
     open: String,
     close: String,
@@ -355,25 +397,31 @@ async fn setup_submit(State(app): State<AppState>, mut form: Multipart) -> Page 
         }
     }
     let times = (chrono::NaiveTime::parse_from_str(&page.open, "%H:%M"), chrono::NaiveTime::parse_from_str(&page.close, "%H:%M"));
-    let problem = if page.venue.is_empty() || page.display_name.is_empty() || page.username.is_empty() {
-        Some("Fill in the venue name, your name and a username.".to_string())
-    } else if !matches!(times, (Ok(o), Ok(c)) if o < c) {
-        Some("Opening time must be before closing time on the same day.".to_string())
-    } else if logo.as_ref().is_some_and(|l| l.len() > LOGO_MAX_BYTES) {
-        Some("The logo is larger than 2 MB.".to_string())
+    let f = &mut page.f;
+    if page.venue.is_empty() {
+        f.add("venue", "Enter the venue's name.");
+    }
+    if logo.as_ref().is_some_and(|l| l.len() > LOGO_MAX_BYTES) {
+        f.add("logo", "The logo is larger than 2 MB.");
     } else if logo.as_deref().is_some_and(|l| logo_type(l).is_none()) {
-        Some("The logo must be a PNG or JPEG image.".to_string())
-    } else {
-        auth::password_problem(&password).map(str::to_string)
-    };
-    if let Some(e) = problem {
-        page.error = Some(e);
-        let mut res = html(page)?;
-        *res.status_mut() = StatusCode::UNPROCESSABLE_ENTITY;
-        return Ok(res);
+        f.add("logo", "The logo must be a PNG or JPEG image.");
+    }
+    if !matches!(times, (Ok(o), Ok(c)) if o < c) {
+        f.add("open", "Opening time must be before closing time on the same day.");
+    }
+    if page.display_name.is_empty() {
+        f.add("display_name", "Enter your name.");
+    }
+    if page.username.is_empty() {
+        f.add("username", "Choose a username for signing in.");
+    }
+    if let Some(p) = auth::password_problem(&password) {
+        f.add("password", p);
+    }
+    if !page.f.is_empty() {
+        return invalid(page);
     }
     let now = crate::clock::now().to_rfc3339();
-    let token;
     {
         let conn = app.db.conn();
         let tx = conn.unchecked_transaction()?;
@@ -388,11 +436,12 @@ async fn setup_submit(State(app): State<AppState>, mut form: Multipart) -> Page 
         db::log(&tx, Some(tx.last_insert_rowid()), &page.username, "set up venue", &page.venue, "")?;
         tx.commit()?;
     }
-    match auth::sign_in(&app.db, &page.username, &password)? {
-        auth::SignInOutcome::Ok { token: t, .. } => token = t,
+    let token = match auth::sign_in(&app.db, &page.username, &password)? {
+        auth::SignInOutcome::Ok { token, .. } => token,
         auth::SignInOutcome::Refused => return Err(AppError::Internal("new owner could not sign in".into())),
-    }
-    Ok(([(header::SET_COOKIE, auth::session_cookie(&token))], Redirect::to("/console")).into_response())
+    };
+    // On to step 2 of the setup wizard: courts and cameras.
+    Ok(([(header::SET_COOKIE, auth::session_cookie(&token))], Redirect::to("/setup/courts")).into_response())
 }
 
 // ------------------------------------------------------------------ sign-in (FR-28)
@@ -520,7 +569,15 @@ struct StaffFormPage {
 
 async fn staff_new(State(app): State<AppState>, staff: Staff) -> Page {
     staff.require_owner()?;
-    html(StaffFormPage { shell: shell(&app.db, &staff, "staff")?, id: None, display_name: String::new(), username: String::new(), role: "staff".into(), active: true, error: None })
+    html(StaffFormPage {
+        shell: shell(&app.db, &staff, "staff")?,
+        id: None,
+        display_name: String::new(),
+        username: String::new(),
+        role: "staff".into(),
+        active: true,
+        error: None,
+    })
 }
 
 #[derive(Deserialize)]
@@ -551,7 +608,17 @@ async fn staff_create(State(app): State<AppState>, staff: Staff, Form(f): Form<S
     let role = valid_role(&f.role)?.to_string();
     let display_name = f.display_name.trim().to_string();
     let username = f.username.unwrap_or_default().trim().to_string();
-    let form_error = |msg: &str, shell| html(StaffFormPage { shell, id: None, display_name: display_name.clone(), username: username.clone(), role: role.clone(), active: true, error: Some(msg.into()) });
+    let form_error = |msg: &str, shell| {
+        html(StaffFormPage {
+            shell,
+            id: None,
+            display_name: display_name.clone(),
+            username: username.clone(),
+            role: role.clone(),
+            active: true,
+            error: Some(msg.into()),
+        })
+    };
     if display_name.is_empty() || username.is_empty() || username.len() > 40 {
         return form_error("Fill in a name and a username (up to 40 characters).", shell(&app.db, &staff, "staff")?);
     }

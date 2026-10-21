@@ -17,9 +17,12 @@ impl Db {
     pub fn open(path: &Path) -> rusqlite::Result<Self> {
         let conn = Connection::open(path)?;
         #[cfg(feature = "test-hooks")]
-        conn.trace_v2(rusqlite::trace::TraceEventCodes::SQLITE_TRACE_STMT, Some(|_| {
-            STATEMENTS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        }));
+        conn.trace_v2(
+            rusqlite::trace::TraceEventCodes::SQLITE_TRACE_STMT,
+            Some(|_| {
+                STATEMENTS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            }),
+        );
         conn.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000; PRAGMA secure_delete=ON;")?;
         migrate(&conn)?;
         Ok(Self(Arc::new(Mutex::new(conn))))
@@ -30,7 +33,8 @@ impl Db {
     }
 }
 
-const MIGRATIONS: &[&str] = &[r#"
+const MIGRATIONS: &[&str] = &[
+    r#"
 CREATE TABLE venue (
   id INTEGER PRIMARY KEY CHECK (id = 1),
   name TEXT NOT NULL,
@@ -82,7 +86,8 @@ CREATE TABLE activity (
   item TEXT NOT NULL DEFAULT '',
   detail TEXT NOT NULL DEFAULT ''
 );
-"#, r#"
+"#,
+    r#"
 CREATE TABLE segment (
   id INTEGER PRIMARY KEY,
   court_id INTEGER NOT NULL REFERENCES court(id) ON DELETE CASCADE,
@@ -91,7 +96,8 @@ CREATE TABLE segment (
   path TEXT NOT NULL UNIQUE
 );
 CREATE INDEX segment_court_start ON segment (court_id, start_ms);
-"#, r#"
+"#,
+    r#"
 CREATE TABLE game (
   id INTEGER PRIMARY KEY,
   court_id INTEGER NOT NULL REFERENCES court(id) ON DELETE CASCADE,
@@ -119,7 +125,8 @@ CREATE TABLE clip (
 CREATE INDEX clip_court_made ON clip (court_id, made_at);
 ALTER TABLE segment ADD COLUMN width INTEGER;
 ALTER TABLE segment ADD COLUMN height INTEGER;
-"#, r#"
+"#,
+    r#"
 ALTER TABLE venue ADD COLUMN contact TEXT NOT NULL DEFAULT '';
 ALTER TABLE venue ADD COLUMN clock_correction_ms INTEGER NOT NULL DEFAULT 0;
 CREATE INDEX clip_made ON clip (made_at);
@@ -135,7 +142,8 @@ CREATE TABLE hold (
   released_by TEXT
 );
 CREATE INDEX hold_court ON hold (court_id);
-"#, r#"
+"#,
+    r#"
 ALTER TABLE game ADD COLUMN stop_reason TEXT;
 ALTER TABLE game ADD COLUMN highlights TEXT NOT NULL DEFAULT 'pending';
 ALTER TABLE game ADD COLUMN highlights_ready_by TEXT;
@@ -155,12 +163,14 @@ CREATE TABLE recipient (
 );
 CREATE INDEX recipient_game ON recipient (game_id);
 CREATE INDEX recipient_clip ON recipient (clip_id);
-"#, r#"
+"#,
+    r#"
 CREATE TABLE box_config (name TEXT PRIMARY KEY, value TEXT NOT NULL);
 ALTER TABLE clip ADD COLUMN cloud_id INTEGER;
 ALTER TABLE clip ADD COLUMN uploaded_at TEXT;
 CREATE TABLE withdraw (cloud_id INTEGER PRIMARY KEY);
-"#, r#"
+"#,
+    r#"
 ALTER TABLE venue ADD COLUMN updated_at TEXT NOT NULL DEFAULT '';
 ALTER TABLE venue ADD COLUMN updated_box TEXT NOT NULL DEFAULT '';
 ALTER TABLE venue ADD COLUMN time_leader TEXT NOT NULL DEFAULT '';
@@ -199,7 +209,8 @@ CREATE TRIGGER court_stamp_new AFTER INSERT ON court WHEN NEW.updated_at = '' BE
     updated_box = COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), ''),
     box = CASE WHEN NEW.box = '' THEN COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), '') ELSE NEW.box END WHERE id = NEW.id;
 END;
-"#];
+"#,
+];
 
 fn migrate(conn: &Connection) -> rusqlite::Result<()> {
     let version: i64 = conn.query_row("PRAGMA user_version", [], |r| r.get(0))?;

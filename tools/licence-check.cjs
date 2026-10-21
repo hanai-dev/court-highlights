@@ -1,9 +1,16 @@
 // Licence gate (A-114, NFR-10): every crate in the resolved dependency graph must carry a permissive licence.
 // GPL/AGPL anywhere fails; LGPL is allowed only for separately-linked system libraries, never for crates.
-// Usage: node tools/licence-check.cjs   (exit 1 on a violation; prints a per-licence tally)
+// Usage: node tools/licence-check.cjs [metadata.json]   (exit 1 on a violation; prints a per-licence tally)
+// With no file it runs `cargo metadata`; pass a saved `cargo metadata --format-version 1 --locked` where node and
+// cargo live in different places (the build image has no node).
 const { execFileSync } = require('child_process');
+const fs = require('fs');
 
-const meta = JSON.parse(execFileSync('cargo', ['metadata', '--format-version', '1', '--locked'], { maxBuffer: 64 * 1024 * 1024 }));
+const meta = JSON.parse(
+  process.argv[2]
+    ? fs.readFileSync(process.argv[2], 'utf8')
+    : execFileSync('cargo', ['metadata', '--format-version', '1', '--locked'], { maxBuffer: 64 * 1024 * 1024 }),
+);
 const ours = new Set(meta.workspace_members);
 const bad = [];
 const tally = {};

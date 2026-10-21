@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Set up court signs{% endblock %}
+{% block body %}
+<main class="narrow">
+  <ol class="steps" aria-label="Setup steps">
+    <li>Owner and venue</li>
+    <li>Courts and cameras</li>
+    <li aria-current="step">Court signs</li>
+  </ol>
+  <h1>3 of 3 · Court signs</h1>
+  <p>Players scan the sign on the net post to open their court's page. Print one sign per court{% if !courts.is_empty() %} ({{ courts.len() }} {% if courts.len() == 1 %}court{% else %}courts{% endif %}){% endif %} and hang it where players stand between points.</p>
+  <img class="illustration" src="/static/setup-camera-position.svg" width="640" height="400" alt="Line drawing of a pickleball court with the camera mounted high at the centre and the court sign on the net post">
+  <div class="row spaced">
+    <a class="btn" href="/setup/courts">← Back: courts and cameras</a>
+    <a class="btn" href="/console/signs" target="_blank" rel="noopener">Print court signs</a>
+    <a class="btn btn-primary" href="/console/clips">Finish setup</a>
+  </div>
+</main>
+{% endblock %}

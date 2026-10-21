@@ -82,7 +82,7 @@ test('a venue of three boxes shares staff, settings and courts; any box shows th
   await a.getByLabel('Owner username').fill(OWNER.username);
   await a.getByLabel('Owner password').fill(OWNER.password);
   await a.getByRole('button', { name: 'Continue' }).click();
-  await expect(a).toHaveURL(`${staffUrl('a')}/console`);
+  await expect(a).toHaveURL(`${staffUrl('a')}/setup/courts`);
   const b = await (await browser.newContext({ ignoreHTTPSErrors: true })).newPage();
   const c = await (await browser.newContext({ ignoreHTTPSErrors: true })).newPage();
   for (const [p, box] of [[b, 'b'], [c, 'c']] as const) {
@@ -254,11 +254,22 @@ test('a replacement box joins the venue and gets its courts, logo and staff from
   expect(Buffer.from(await logo.body()).equals(fs.readFileSync(LOGO))).toBe(true);
 });
 
-test('a device without the venue key gets nothing from the sync interface (FR-42)', async ({ request }) => {
-  expect((await request.get('http://localhost:18446/sync/state')).status()).toBe(401);
-  const forged = await request.get('http://localhost:18446/sync/state', { headers: { 'x-venue-auth': `${Date.now()}.${'ab'.repeat(32)}` } });
+test('a device without the venue key gets nothing from the sync interface, which speaks only TLS (FR-42, SEC-VENUE-SYNC)', async ({ request }) => {
+  const SYNC = 'https://localhost:18446';
+  expect((await request.get(`${SYNC}/sync/state`)).status()).toBe(401);
+  const forged = await request.get(`${SYNC}/sync/state`, { headers: { 'x-venue-auth': `${Date.now()}.${'ab'.repeat(32)}` } });
   expect(forged.status()).toBe(401);
-  expect((await request.get('http://localhost:18446/sync/clips?limit=50')).status()).toBe(401);
+  expect((await request.get(`${SYNC}/sync/clips?limit=50`)).status()).toBe(401);
+  // Box-to-box traffic is encrypted: plain HTTP to the sync port gets no answer at all.
+  const plain = await request.get('http://localhost:18446/sync/state', { timeout: 5_000 }).then((r) => r.status(), () => 'no answer');
+  expect(plain).not.toBe(200);
+  expect(plain).not.toBe(401);
+  // The certificate siblings pin is the box's own (the staff console's fingerprint).
+  const out = compose('exec', '-T', 'venue-a', 'sh', '-c',
+    'openssl s_client -connect localhost:8444 </dev/null 2>/dev/null | openssl x509 -noout -fingerprint -sha256; openssl s_client -connect localhost:443 </dev/null 2>/dev/null | openssl x509 -noout -fingerprint -sha256');
+  const [sync, staff] = out.trim().split('\n');
+  expect(sync).toMatch(/^sha256 Fingerprint=/i);
+  expect(sync).toBe(staff);
 });
 
 test('all boxes keep the time the Owner set on one of them (FR-38)', async ({ browser }) => {
@@ -274,6 +285,59 @@ test('all boxes keep the time the Owner set on one of them (FR-38)', async ({ br
     await b.goto(`${staffUrl('b')}/console/settings`);
     return b.locator('[data-box-time]').textContent();
   }, { timeout: 60_000, intervals: [3000] }).toContain(hhmm(wanted));
+});
+
+test('with 100 phones on the courts of three boxes, a court page loads within 2 s at p95 on venue Wi-Fi (UX-PAGE-SPEED)', async ({ browser }) => {
+  test.setTimeout(240_000);
+  // Each court page at the box that records it (another box would redirect there).
+  const pages: string[] = [];
+  for (const code of Object.values(codes)) {
+    for (const b of BOXES) {
+      const res = await fetch(`${playerUrl(b)}/c/${code}`, { redirect: 'manual' });
+      if (res.status === 200) pages.push(`${playerUrl(b)}/c/${code}`);
+    }
+  }
+  expect(new Set(pages.map((u) => new URL(u).port)).size, 'courts on all three boxes').toBe(3);
+
+  // 100 phones: each opens its court page (page, stylesheet, script, logo), then refreshes its clip list every
+  // 2 s as the page does while a clip saves.
+  let stop = false;
+  let failures = 0;
+  const phone = async (i: number): Promise<void> => {
+    const url = pages[i % pages.length];
+    const base = new URL(url).origin;
+    await new Promise((r) => setTimeout(r, (i * 97) % 5000));
+    for (const u of [url, `${base}/static/app.css`, `${base}/static/court.js`, `${base}/logo`]) {
+      if (!(await fetch(u).catch(() => null))?.ok) failures++;
+    }
+    while (!stop) {
+      if (!(await fetch(`${url}/clips`).catch(() => null))?.ok) failures++;
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+  };
+  const crowd = Array.from({ length: 100 }, (_, i) => phone(i));
+  await new Promise((r) => setTimeout(r, 6000));
+
+  // Meanwhile: real page loads in Chromium on a throttled venue Wi-Fi profile, nothing cached.
+  const times: number[] = [];
+  for (let i = 0; i < 20; i++) {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const p = await context.newPage();
+    const cdp = await context.newCDPSession(p);
+    await cdp.send('Network.enable');
+    await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 40, downloadThroughput: (10_000_000 / 8), uploadThroughput: (5_000_000 / 8) });
+    const started = Date.now();
+    await p.goto(pages[i % pages.length], { waitUntil: 'load' });
+    times.push(Date.now() - started);
+    await context.close();
+  }
+  stop = true;
+  await Promise.all(crowd);
+  times.sort((a, b) => a - b);
+  const p95 = times[Math.ceil(0.95 * times.length) - 1];
+  console.log(`court page load on throttled Wi-Fi with 100 phones: p50 ${times[9]} ms, p95 ${p95} ms, max ${times[19]} ms; phone request failures ${failures}`);
+  expect(failures, 'every phone request answered').toBe(0);
+  expect(p95).toBeLessThanOrEqual(2000);
 });
 
 test('a one-box venue restores a replacement box from the settings backup (FR-43, FR-44)', async ({ browser, page }) => {

@@ -1,0 +1,88 @@
+{
+ "version": 1,
+ "status": "delivered by build: authored line drawings in the D3 sign style; approved against the client-review slots (A-107), pending the owner's look at release review",
+ "assetRoots": [
+  "crates/box/static/assets"
+ ],
+ "budget": {
+  "jobs": 0,
+  "maxFileBytes": 60000,
+  "maxTotalBytes": 150000
+ },
+ "jobs": [],
+ "assets": [
+  {
+   "id": "setup-camera-position",
+   "kind": "svg",
+   "state": "approved",
+   "required": true,
+   "usage": [
+    {
+     "route": "/setup",
+     "selector": "[data-illustration=camera-position]"
+    }
+   ],
+   "width": 640,
+   "height": 400,
+   "decorative": false,
+   "alt": "Line drawing of a pickleball court with the camera mounted high at the centre and the court sign on the net post",
+   "loading": "eager",
+   "source": {
+    "type": "authored",
+    "creator": "build (authored SVG line art in the D3 sign style)",
+    "license": "proprietary — owner's product"
+   },
+   "path": "crates/box/static/assets/setup-camera-position.svg",
+   "bytes": 1764,
+   "sha256": "975255ef0867d38b9585b537df212d5d112fd42bf0cd98c0be2852cec25e0fa8"
+  },
+  {
+   "id": "empty-library-scan",
+   "kind": "svg",
+   "state": "approved",
+   "required": true,
+   "usage": [
+    {
+     "route": "/console/clips",
+     "selector": "[data-illustration=scan-code]"
+    }
+   ],
+   "width": 480,
+   "height": 360,
+   "decorative": false,
+   "alt": "Line drawing of a phone scanning the court code on a net post",
+   "loading": "eager",
+   "source": {
+    "type": "authored",
+    "creator": "build (authored SVG line art in the D3 sign style)",
+    "license": "proprietary — owner's product"
+   },
+   "path": "crates/box/static/assets/empty-library-scan.svg",
+   "bytes": 1876,
+   "sha256": "aeb2dd300c13897f9ef302344b7b1bbd36fdcc9e276acc57391738702c51aea5"
+  }
+ ],
+ "motion": [
+  {
+   "id": "clip-saving-ring",
+   "route": "/c/example-court",
+   "selector": "[data-saving-ring]",
+   "trigger": {
+    "type": "click",
+    "selector": "[data-clip-that]"
+   },
+   "properties": [
+    "stroke-dashoffset"
+   ],
+   "maxDurationMs": 15000,
+   "essential": false,
+   "reduced": "none"
+  }
+ ],
+ "planningNotes": [
+  "Venue logos (e.g. Paddle Point Leisure Hub) are venue data uploaded in settings (FR-33), not build assets; the original Paddle Point logo PNG is needed before the trial (A-109).",
+  "No raster generation (jobs 0): the two required slots are authored SVG line drawings; icons, if any, use one native line family with visible text labels.",
+  "The saving ring conveys progress that the text countdown also states, so it is non-essential; under reduced motion it is static and the text countdown remains (A-108).",
+  "Build replaces the example route/selectors with the real ones, renders both drawings, and proves decode, alt text, both motion preferences and keyboard task outcome. This inventory is not delivery evidence."
+ ]
+}

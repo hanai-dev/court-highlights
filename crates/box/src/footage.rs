@@ -120,7 +120,14 @@ pub async fn footage(State(app): State<AppState>, staff: Staff, Query(s): Query<
                     params![id, start, end],
                     |r| r.get(0),
                 )?;
-                found = Some(Found { court_id: *id, label: span_label(name, start, end), start_ms: start, end_ms: end, minutes: covered_ms / 60_000, covered: covered_ms > 0 });
+                found = Some(Found {
+                    court_id: *id,
+                    label: span_label(name, start, end),
+                    start_ms: start,
+                    end_ms: end,
+                    minutes: covered_ms / 60_000,
+                    covered: covered_ms > 0,
+                });
             }
             _ => error = Some("Choose a court, a date and a time window of up to 4 hours."),
         }
@@ -185,11 +192,9 @@ struct Hold {
 fn hold(app: &AppState, id: i64) -> Result<Hold, AppError> {
     app.db
         .conn()
-        .query_row(
-            "SELECT h.court_id, ct.name, h.start_ms, h.end_ms FROM hold h JOIN court ct ON ct.id = h.court_id WHERE h.id = ?1",
-            [id],
-            |r| Ok(Hold { court_id: r.get(0)?, court: r.get(1)?, start_ms: r.get(2)?, end_ms: r.get(3)? }),
-        )
+        .query_row("SELECT h.court_id, ct.name, h.start_ms, h.end_ms FROM hold h JOIN court ct ON ct.id = h.court_id WHERE h.id = ?1", [id], |r| {
+            Ok(Hold { court_id: r.get(0)?, court: r.get(1)?, start_ms: r.get(2)?, end_ms: r.get(3)? })
+        })
         .optional()?
         .ok_or(AppError::NotFound)
 }

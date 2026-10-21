@@ -34,12 +34,22 @@ impl Mailer {
         Self { client: Client::from_conf(conf.build()), from: from.into() }
     }
 
+    /// Turns on the SES account-level suppression list for bounces and complaints, so a hard-bounced address gets
+    /// nothing from any venue (FR-25, SN-6). Needs ses:PutAccountSuppressionAttributes (RUNBOOK).
+    pub async fn suppress_bounces(&self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        use aws_sdk_sesv2::types::SuppressionListReason;
+        self.client
+            .put_account_suppression_attributes()
+            .suppressed_reasons(SuppressionListReason::Bounce)
+            .suppressed_reasons(SuppressionListReason::Complaint)
+            .send()
+            .await?;
+        Ok(())
+    }
+
     pub async fn send(&self, e: &Email<'_>) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let content = |s: &str| Content::builder().data(s).charset("UTF-8").build();
-        let message = Message::builder()
-            .subject(content(e.subject)?)
-            .body(Body::builder().text(content(e.text)?).html(content(e.html)?).build())
-            .build();
+        let message = Message::builder().subject(content(e.subject)?).body(Body::builder().text(content(e.text)?).html(content(e.html)?).build()).build();
         self.client
             .send_email()
             .from_email_address(&self.from)

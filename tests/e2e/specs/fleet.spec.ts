@@ -133,6 +133,13 @@ test('switched off with a reason, court pages hide the email box and nothing is 
   await page.goto(`${CLOUD}/fleet/log`);
   await expect(page.locator('tbody tr').filter({ hasText: 'switched online features off' })).toContainText('invoice late');
   await expect(page.locator('tbody tr').filter({ hasText: 'switched online features off' })).toContainText('root');
+  // The box's own activity log shows both switches, made by the fleet (F-LOG).
+  const staff = await (await browser.newContext({ ignoreHTTPSErrors: true })).newPage();
+  await signIn(staff, OWNER.username, OWNER.password);
+  await staff.goto(`${STAFF}/console/log`);
+  for (const action of ['online features switched off', 'online features switched on']) {
+    await expect(staff.locator('tbody tr').filter({ hasText: action }).first()).toContainText('fleet');
+  }
 });
 
 test('an Installer registers boxes but cannot switch, revoke or manage users; 5 wrong tries lock an account (FR-47, FR-48)', async ({ page, browser }) => {
@@ -246,4 +253,52 @@ test("one venue's key cannot reach another venue's items, cross-site fleet write
   for (const action of ['signed in', 'added venue', 'registered box', 'revoked box key', 'switched online features on', 'added fleet user']) {
     await expect(page.locator('tbody tr').filter({ hasText: action }).first()).toBeVisible();
   }
+});
+
+test('Wipe box: the Owner types the venue name; clips, footage, accounts and logs are gone from the disk and the fleet no longer lists the box (FR-55, SEC-WIPE)', async ({ page, browser }) => {
+  test.setTimeout(240_000);
+  const staff = await (await browser.newContext({ ignoreHTTPSErrors: true })).newPage();
+  await signIn(staff, OWNER.username, OWNER.password);
+  await staff.goto(`${STAFF}/console/settings`);
+  await staff.getByLabel('Box key').fill(spareKey);
+  await staff.getByRole('button', { name: 'Save box key' }).click();
+  await expect.poll(() => boxSettingsStatus(staff), { timeout: 30_000 }).toMatch(/^Connected\./);
+  const p = await (await browser.newContext()).newPage();
+  await p.goto(`${PLAYER}/c/${code}`);
+  await p.getByRole('button', { name: 'Clip that' }).click();
+  await expect(p.locator('[data-clip-state="ready"]').first()).toBeVisible({ timeout: 60_000 });
+  expect(Number(boxExec('find /data -name "*.mp4" | wc -l').trim())).toBeGreaterThan(0);
+
+  await staff.goto(`${STAFF}/console/settings`);
+  await staff.getByRole('link', { name: 'Wipe this box…' }).click();
+  await staff.getByLabel(/Type the venue name to confirm/).fill('Some other venue');
+  await staff.getByRole('button', { name: 'Wipe this box' }).click();
+  await expect(staff.locator('#confirm-error')).toContainText(`Type the venue name exactly as shown: ${OWNER.venue}`);
+  expect(Number(boxExec('find /data -name "*.mp4" | wc -l').trim()), 'a wrong name erases nothing').toBeGreaterThan(0);
+
+  await staff.getByLabel(/Type the venue name to confirm/).fill(OWNER.venue);
+  await staff.getByRole('button', { name: 'Wipe this box' }).click();
+  await expect(staff.getByRole('heading', { name: 'This box is wiped' })).toBeVisible();
+  // The box process ends; its service manager (systemd Restart=always on the box) starts it again.
+  await expect.poll(() => compose('ps', '-a', '--format', '{{.State}}', 'box-a').trim(), { timeout: 30_000 }).toBe('exited');
+  compose('start', 'box-a');
+  await expect.poll(async () => (await fetch(`${PLAYER}/healthz`).catch(() => null))?.ok ?? false, { timeout: 60_000 }).toBe(true);
+
+  await staff.goto(`${STAFF}/console`);
+  await expect(staff).toHaveURL(`${STAFF}/setup`);
+  const files = boxExec('find /data -type f').trim().split('\n');
+  expect(files.filter((f) => /\.(mp4|jpg|png|ts|mkv)$/.test(f)), 'no footage, clips or logos').toEqual([]);
+  for (const text of [OWNER.venue, OWNER.username, 'argon2id', code]) {
+    expect(boxExec(`grep -r -a -l "${text}" /data || true`).trim(), `nothing on the disk mentions ${text}`).toBe('');
+  }
+  await asAdmin(page);
+  await page.goto(`${CLOUD}/fleet/venues/${venueId}`);
+  await expect(page.locator('tr[data-box="Box B"]')).toHaveCount(0);
+  await page.goto(`${CLOUD}/fleet/log`);
+  await expect(page.locator('tbody tr').filter({ hasText: 'wiped box' }).first()).toContainText('Box B');
+  const checkin = await page.request.post(`${CLOUD}/api/v1/checkin`, {
+    headers: { Authorization: `Bearer ${spareKey}` },
+    data: { version: 'x', disk_pct: 1, courts_recording: 0, courts_total: 0 },
+  });
+  expect(checkin.status(), 'the wiped box key no longer works').toBe(401);
 });

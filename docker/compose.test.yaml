@@ -54,6 +54,13 @@ services:
     depends_on: [rtsp]
     command: ["bash", "-c", "until ffmpeg -nostdin -loglevel error -re -f lavfi -i testsrc2=size=640x360:rate=15 -re -f lavfi -i sine=frequency=330 -vf \"drawbox=c=black:t=fill:enable='lt(mod(t,20),4)+between(mod(t,20),10,12)'\" -c:v libx264 -preset ultrafast -tune zerolatency -b:v 800k -g 15 -c:a aac -f rtsp rtsp://rtsp:8554/court4; do sleep 1; done"]
 
+  # A test-only ONVIF camera: answers discovery probes and Media calls; its stream is cam-3 (court3).
+  onvif-cam:
+    image: node:24.11.0-alpine3.22
+    command: ["node", "/work/tests/fixtures/fake-onvif.cjs"]
+    environment: { ONVIF_HOST: onvif-cam, ONVIF_STREAM: "rtsp://rtsp:8554/court3" }
+    volumes: ["../:/work"]
+
   # Online service and its test stand-ins (test-only credentials, not secrets): PostgreSQL 18, an S3-compatible
   # store (SeaweedFS, Apache-2.0) in place of R2, and a fake SES that keeps sent mail in memory.
   db:
@@ -93,6 +100,7 @@ services:
       CH_MAIL_FROM: videos@test.invalid
       CH_EMAIL_PEPPER: ch-test-only-pepper-not-a-secret-0123456789
       CH_SECRET_KEY: "0000000000000000000000000000000000000000000000000000000000000001"
+      CH_READY_TOKEN: ch-test-only-ready-token
     volumes:
       - ../:/work
       - ch-target:/work/target
@@ -119,7 +127,7 @@ services:
       CH_PLAYER_URL: "http://localhost:18180"
       CH_SUPPORT_PHONE: "0917 555 0100"
       CH_VENUE_KEY: "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
-      CH_PEERS: "http://venue-b:8444,http://venue-c:8444"
+      CH_PEERS: "https://venue-b:8444,https://venue-c:8444"
       CH_SYNC_SECS: "3"
     volumes:
       - ../:/work
@@ -137,7 +145,7 @@ services:
       CH_PLAYER_URL: "http://localhost:18181"
       CH_SUPPORT_PHONE: "0917 555 0100"
       CH_VENUE_KEY: "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
-      CH_PEERS: "http://venue-a:8444,http://venue-c:8444"
+      CH_PEERS: "https://venue-a:8444,https://venue-c:8444"
       CH_SYNC_SECS: "3"
     volumes:
       - ../:/work
@@ -155,7 +163,7 @@ services:
       CH_PLAYER_URL: "http://localhost:18182"
       CH_SUPPORT_PHONE: "0917 555 0100"
       CH_VENUE_KEY: "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
-      CH_PEERS: "http://venue-a:8444,http://venue-b:8444"
+      CH_PEERS: "https://venue-a:8444,https://venue-b:8444"
       CH_SYNC_SECS: "3"
     volumes:
       - ../:/work

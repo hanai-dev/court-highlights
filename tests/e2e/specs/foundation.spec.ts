@@ -36,6 +36,7 @@ test('setup refuses weak passwords, then creates the owner with an argon2 hash (
     await expect(page.getByRole('alert')).toContainText(/at least 12 characters|too common/);
   }
   await completeSetup(page);
+  await page.goto(`${STAFF}/console`);
   await expect(page.getByRole('heading', { name: 'No courts yet' })).toBeVisible();
   // WAL mode: fresh rows may still live in box.db-wal, so search both files.
   expect(Number(boxExec('cat /data/box.db /data/box.db-wal 2>/dev/null | grep -a -c argon2id').trim())).toBeGreaterThan(0);
@@ -84,6 +85,12 @@ test('staff lifecycle: temporary password, forced change, reset, deactivate ends
   await signIn(kenPage, 'ken', 'ken-second-password-26');
   await expect(kenPage.getByRole('alert')).toContainText('Wrong username or password');
   await ken.close();
+
+  // Staff changes are in the activity log, with who made them (F-LOG).
+  await page.goto(`${STAFF}/console/log`);
+  for (const action of ['added staff', 'reset password', 'deactivated staff']) {
+    await expect(page.locator('tbody tr').filter({ hasText: action }).first()).toContainText(OWNER.username);
+  }
 });
 
 test('a temporary password expires after 72 h unused (v5.0.0-6.4.1)', async ({ browser, page, request }) => {
