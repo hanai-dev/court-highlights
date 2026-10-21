@@ -4,7 +4,8 @@
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     gstreamer::init()?;
-    let _ort = ort::session::Session::builder()?;
+    let env = ort::environment::init().build()?;
+    let _ort = ort::session::Session::builder(&env)?;
     let _rtsp = retina::client::SessionOptions::default();
     let db = rusqlite::Connection::open_in_memory()?;
     let one: i64 = db.query_row("select 1", [], |r| r.get(0))?;

@@ -34,5 +34,14 @@ owner (builder, seller, support), venue owners/staff, players, installers, the n
 | R5 | retina reads fewer camera models than FFmpeg | Test against MediaMTX-served streams; keep GStreamer `rtspsrc` as the fallback path (stack decision) |
 | R6 | Windows dev host vs Ubuntu 26.04 target | All box builds, tests and CI run in an Ubuntu 26.04 container; only the pure rules engine also builds natively |
 
-## Feasibility verdict
-*(Phase 2 — filled after the toolchain spike.)*
+## Feasibility verdict — **GO (conditional)**, 2026-10-21
+
+| Check | Result |
+|---|---|
+| Technical | **Pass.** Ubuntu 26.04 container (`docker/dev.Dockerfile`) builds and runs the pinned stack: GStreamer 1.28.2 via gstreamer-rs 0.25, ONNX Runtime via ort 2.0.0-rc.15 (rustls download — the default native-tls pulled OpenSSL), retina 0.4.21, SQLite (rusqlite 0.40, bundled), axum 0.8 — `toolchain ok: GStreamer 1.28.2`. The pure rules engine also builds natively. |
+| Stack confirmation | **Not run on the pre-registered hardware** (no N150 here). Owner chose "build now, N150 test later": `DEV-SPIKE` stays a required, blocked check. Proxy run (`docs/adr/0001-tech-stack/confirmation-results.md`): stream-copy recording works; software OpenH264 clip encoding takes ≈ 118 s for a 30 s clip in both shapes vs the 10 s target, so NFR-1 depends entirely on the N150's VA hardware encoder. |
+| Operational | Docker 29.5 + Playwright available; fake cameras via MediaMTX v1.21.2 (`tools/spike/mediamtx.yml`); other projects' containers share the Docker VM, so dev services use non-default ports. |
+| Schedule | 110 pinned checks vs 40 iterations: feature-sized slices; logic first. A BOUNDED finish is likely and will be reported as such. |
+| Licensing | **Pass.** `node tools/licence-check.cjs`: 264 crates, no GPL/AGPL-only or unlicensed crate; GStreamer (LGPL) is dynamically linked; no x264/libav in the image. |
+
+Stack pinned: the approved O-2 record, `docs/adr/0001-tech-stack/` (`STACK_DECISION: READY`).
