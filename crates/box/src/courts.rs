@@ -31,19 +31,25 @@ pub struct CourtLine {
     pub code: String,
     pub ok: bool,
     pub status: String,
+    pub last_clip: String,
 }
 
 fn court_lines(app: &AppState) -> Result<Vec<CourtLine>, AppError> {
-    let rows: Vec<(i64, String, String, bool)> = {
+    let rows: Vec<(i64, String, String, bool, Option<String>)> = {
         let conn = app.db.conn();
-        let mut st = conn.prepare("SELECT id, name, code, camera_url IS NOT NULL FROM court ORDER BY position, id")?;
-        st.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))?.collect::<Result<_, _>>()?
+        let mut st = conn.prepare(
+            "SELECT c.id, c.name, c.code, c.camera_url IS NOT NULL,
+                    (SELECT MAX(made_at) FROM clip WHERE court_id = c.id AND kind = 'tap')
+             FROM court c ORDER BY c.position, c.id",
+        )?;
+        st.query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get::<_, Option<String>>(4)?)))?.collect::<Result<_, _>>()?
     };
     Ok(rows
         .into_iter()
-        .map(|(id, name, code, has_camera)| {
+        .map(|(id, name, code, has_camera, last)| {
             let (ok, status) = status_label(&app.recorders.status(id, has_camera));
-            CourtLine { id, name, code, ok, status }
+            let last_clip = last.and_then(|l| crate::clock::parse(&l)).map_or_else(|| "None yet".into(), crate::library::when_label);
+            CourtLine { id, name, code, ok, status, last_clip }
         })
         .collect())
 }
@@ -63,7 +69,7 @@ struct HomePage {
 
 pub async fn home(State(app): State<AppState>, staff: Staff) -> Page {
     let courts = court_lines(&app)?;
-    let disk = disk_use(app.recorders.footage_dir());
+    let disk = disk_use(&app.data);
     html(HomePage {
         shell: shell(&app.db, &staff, "home")?,
         courts,

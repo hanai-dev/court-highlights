@@ -142,7 +142,7 @@ export async function addCourt(page: Page, name: string, cameraUrl: string): Pro
 /** The court code shown on the console home. */
 export async function courtCode(page: Page, court: string): Promise<string> {
   await page.goto(`${STAFF}/console`);
-  return ((await page.locator(`tr[data-court="${court}"] td.num`).textContent()) ?? '').trim();
+  return ((await page.locator(`tr[data-court="${court}"] [data-court-code]`).textContent()) ?? '').trim();
 }
 
 /** Polls the console home until the court's status text matches. */

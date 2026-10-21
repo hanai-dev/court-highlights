@@ -93,10 +93,6 @@ impl Recorders {
         Ok(open.len())
     }
 
-    pub fn footage_dir(&self) -> &Path {
-        &self.footage
-    }
-
     /// Starts and stops court recorders to match the courts, cameras and opening hours; trims rolling footage.
     pub fn spawn_supervisor(&self) {
         let me = self.clone();
@@ -420,9 +416,40 @@ impl SegmentWriter {
 pub struct DiskUse {
     pub used_pct: u64,
     pub free_gb: f64,
+    pub used_bytes: u64,
+    pub total_bytes: u64,
+}
+
+/// Test builds can pretend the disk is this many bytes, with the data directory's real contents as "used", so disk
+/// pressure (FR-46) is exercised with real files.
+#[cfg(feature = "test-hooks")]
+pub static TEST_DISK_BYTES: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
+#[cfg(feature = "test-hooks")]
+fn tree_bytes(path: &Path) -> u64 {
+    std::fs::read_dir(path).map_or(0, |entries| {
+        entries
+            .flatten()
+            .map(|e| match e.file_type() {
+                Ok(t) if t.is_dir() => tree_bytes(&e.path()),
+                _ => e.metadata().map_or(0, |m| m.len()),
+            })
+            .sum()
+    })
+}
+
+fn usage(used: u64, total: u64) -> Option<DiskUse> {
+    (total > 0).then(|| DiskUse { used_pct: used * 100 / total, free_gb: total.saturating_sub(used) as f64 / 1e9, used_bytes: used, total_bytes: total })
 }
 
 pub fn disk_use(path: &Path) -> Option<DiskUse> {
+    #[cfg(feature = "test-hooks")]
+    {
+        let pretend = TEST_DISK_BYTES.load(std::sync::atomic::Ordering::Relaxed);
+        if pretend > 0 {
+            return usage(tree_bytes(path), pretend);
+        }
+    }
     let c = std::ffi::CString::new(path.to_string_lossy().as_bytes()).ok()?;
     let mut s: libc::statvfs = unsafe { std::mem::zeroed() };
     // SAFETY: valid NUL-terminated path and a zeroed out-parameter of the right type.
@@ -430,7 +457,7 @@ pub fn disk_use(path: &Path) -> Option<DiskUse> {
         return None;
     }
     let (total, free) = (s.f_blocks as u64 * s.f_frsize as u64, s.f_bavail as u64 * s.f_frsize as u64);
-    (total > 0).then(|| DiskUse { used_pct: (total - free) * 100 / total, free_gb: free as f64 / 1e9 })
+    usage(total.saturating_sub(free), total)
 }
 
 pub fn temperature_c() -> Option<f64> {

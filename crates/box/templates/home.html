@@ -16,12 +16,12 @@
 <div class="table-wrap" role="region" aria-labelledby="courts-caption" tabindex="0">
 <table>
   <caption id="courts-caption">{{ courts.len() }} courts</caption>
-  <thead><tr><th scope="col">Court</th><th scope="col">Recording</th><th scope="col">Court code</th></tr></thead>
+  <thead><tr><th scope="col">Court</th><th scope="col">Recording</th><th scope="col">Last clip</th><th scope="col">Court code</th></tr></thead>
   <tbody>
   {% for c in courts %}
     <tr data-court="{{ c.name }}"><td>{{ c.name }}</td>
       <td><span class="status {% if c.ok %}status-ok{% else %}status-bad{% endif %}" data-court-status>{{ c.status }}</span></td>
-      <td class="num">{{ c.code }}</td></tr>
+      <td class="num" data-last-clip>{{ c.last_clip }}</td><td class="num" data-court-code>{{ c.code }}</td></tr>
   {% endfor %}
   </tbody>
 </table>

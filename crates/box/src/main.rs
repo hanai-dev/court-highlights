@@ -7,6 +7,7 @@ mod courts;
 mod db;
 mod footage;
 mod games;
+mod janitor;
 mod judge;
 mod library;
 mod media;
@@ -50,6 +51,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     clips::resume_saving(&state)?;
     games::recover(&state)?;
     games::spawn_watch(state.clone());
+    janitor::spawn(state.clone());
     let tls = axum_server::tls_rustls::RustlsConfig::from_pem(cert.into_bytes(), key.into_bytes()).await?;
 
     let (player_handle, staff_handle) = (axum_server::Handle::new(), axum_server::Handle::new());

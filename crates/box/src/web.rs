@@ -115,6 +115,10 @@ fn test_hooks(r: Router<AppState>) -> Router<AppState> {
         ms: i64,
     }
     #[derive(Deserialize)]
+    struct Disk {
+        bytes: u64,
+    }
+    #[derive(Deserialize)]
     struct Seed {
         court: i64,
         n: i64,
@@ -134,6 +138,10 @@ fn test_hooks(r: Router<AppState>) -> Router<AppState> {
             .map_err(|e| AppError::Internal(e.to_string()))?;
         }
         Ok::<_, AppError>(s.n.to_string())
+    }))
+    .route("/__test/disk", post(|Form(d): Form<Disk>| async move {
+        crate::recorder::TEST_DISK_BYTES.store(d.bytes, std::sync::atomic::Ordering::Relaxed);
+        "ok"
     }))
     .route("/__test/clock", post(|State(app): State<AppState>, Form(a): Form<Advance>| async move {
         crate::clock::advance(a.ms);
