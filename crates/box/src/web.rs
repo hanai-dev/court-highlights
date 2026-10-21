@@ -132,7 +132,9 @@ async fn security_headers(req: Request, next: Next) -> Response {
     );
     h.insert(header::X_CONTENT_TYPE_OPTIONS, HeaderValue::from_static("nosniff"));
     h.insert(header::X_FRAME_OPTIONS, HeaderValue::from_static("DENY"));
-    h.insert(header::REFERRER_POLICY, HeaderValue::from_static("no-referrer"));
+    // same-origin, not no-referrer: Chrome sends `Origin: null` on form posts under no-referrer, which would
+    // defeat the same-origin check below; same-origin still never leaks the referrer off the box.
+    h.insert(header::REFERRER_POLICY, HeaderValue::from_static("same-origin"));
     res
 }
 
@@ -157,6 +159,9 @@ async fn same_origin_writes(req: Request, next: Next) -> Response {
             .and_then(|v| v.to_str().ok())
             .is_none_or(|s| s == "same-origin" || s == "none");
         if !origin_ok || !site_ok {
+            let origin = headers.get(header::ORIGIN).and_then(|v| v.to_str().ok()).unwrap_or("-");
+            let site = headers.get("sec-fetch-site").and_then(|v| v.to_str().ok()).unwrap_or("-");
+            tracing::warn!(path = %req.uri().path(), origin, host, site, "cross-site request refused");
             return (StatusCode::FORBIDDEN, "Cross-site request refused").into_response();
         }
     }
