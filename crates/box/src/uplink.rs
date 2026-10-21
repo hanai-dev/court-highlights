@@ -83,6 +83,15 @@ pub fn spawn(app: AppState) {
 #[derive(Deserialize)]
 struct CheckinAnswer {
     online_on: bool,
+    /// A release the fleet offers this box (FR-51); boxes at a venue are offered it one at a time.
+    #[serde(default)]
+    update: Option<Offer>,
+}
+
+#[derive(Deserialize)]
+struct Offer {
+    version: String,
+    url: String,
 }
 
 async fn checkin(app: &AppState) -> Result<(), Error> {
@@ -94,8 +103,10 @@ async fn checkin(app: &AppState) -> Result<(), Error> {
         st.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<Result<_, _>>()?
     };
     let recording = courts.iter().filter(|(id, cam)| matches!(app.recorders.status(*id, *cam), CourtStatus::Recording { .. })).count();
+    let report = config(&app.db, crate::update::REPORT)?;
     let body = serde_json::json!({
-        "version": env!("CARGO_PKG_VERSION"),
+        "version": crate::update::current_version(),
+        "update": report.as_deref().and_then(|r| serde_json::from_str::<serde_json::Value>(r).ok()),
         "disk_pct": disk_use(&app.data).map_or(0, |d| d.used_pct),
         "temperature_c": temperature_c(),
         "courts_recording": recording,
@@ -107,6 +118,21 @@ async fn checkin(app: &AppState) -> Result<(), Error> {
         return Err("the online service refused this box's key".into());
     }
     let answer: CheckinAnswer = res.error_for_status()?.json().await?;
+    // Delivered: forget the report, unless a newer one was written meanwhile.
+    if let Some(sent) = report {
+        app.db.conn().execute("DELETE FROM box_config WHERE name = ?1 AND value = ?2", [crate::update::REPORT, sent.as_str()])?;
+    }
+    if let Some(offer) = answer.update {
+        let a = app.clone();
+        tokio::spawn(async move {
+            if let Err(e) = crate::update::from_fleet(&a, &offer.version, &offer.url).await {
+                tracing::warn!(version = offer.version, error = %e, "fleet update refused");
+                let _ = db::log(&a.db.conn(), None, "fleet", "update refused", &offer.version, &e);
+                let report = serde_json::json!({ "version": offer.version, "outcome": "refused" }).to_string();
+                let _ = set_config(&a.db, crate::update::REPORT, &report);
+            }
+        });
+    }
     set_config(&app.db, "cloud_status", "connected")?;
     set_config(&app.db, "last_checkin", &clock::now().to_rfc3339())?;
     let conn = app.db.conn();

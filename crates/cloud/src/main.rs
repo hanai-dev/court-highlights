@@ -5,8 +5,10 @@ mod api;
 mod fleet;
 mod fleet_auth;
 mod mail;
+mod metrics;
 mod player;
 mod store;
+mod updates;
 
 use axum::Router;
 use axum::extract::Request;
@@ -142,14 +144,26 @@ async fn security_headers(req: Request, next: Next) -> Response {
     res
 }
 
+/// Readiness and metrics are for the platform only: with CH_READY_TOKEN set, they need it as a bearer token.
+fn platform_only(app: &App, headers: &axum::http::HeaderMap) -> Option<Response> {
+    let token = app.ready_token.as_ref()?;
+    let given = headers.get(header::AUTHORIZATION).and_then(|v| v.to_str().ok()).and_then(|v| v.strip_prefix("Bearer "));
+    (given != Some(token.as_str())).then(|| (StatusCode::UNAUTHORIZED, "unauthorized").into_response())
+}
+
+/// Counters for the platform's scrape (HOST-observability).
+async fn metrics(axum::extract::State(app): axum::extract::State<App>, headers: axum::http::HeaderMap) -> Response {
+    if let Some(refused) = platform_only(&app, &headers) {
+        return refused;
+    }
+    ([(header::CONTENT_TYPE, "text/plain; version=0.0.4")], metrics::render()).into_response()
+}
+
 /// Readiness for the platform (HOST-health): database and object store reachable. The answer never says which
 /// part failed; the log does.
 async fn readyz(axum::extract::State(app): axum::extract::State<App>, headers: axum::http::HeaderMap) -> Response {
-    if let Some(token) = &app.ready_token {
-        let given = headers.get(header::AUTHORIZATION).and_then(|v| v.to_str().ok()).and_then(|v| v.strip_prefix("Bearer "));
-        if given != Some(token.as_str()) {
-            return (StatusCode::UNAUTHORIZED, "unauthorized").into_response();
-        }
+    if let Some(refused) = platform_only(&app, &headers) {
+        return refused;
     }
     let db = sqlx::query_scalar::<_, i32>("SELECT 1").fetch_one(&app.db).await.is_ok();
     let store = app.store.reachable().await;
@@ -182,6 +196,7 @@ fn router(app: App) -> Router {
     test_hooks(Router::new())
         .route("/healthz", get(|| async { "ok" }))
         .route("/readyz", get(readyz))
+        .route("/metrics", get(metrics))
         .route("/static/app.css", get(stylesheet))
         .route("/api/v1/checkin", post(api::checkin))
         .route("/api/v1/items", post(api::create_item))
@@ -202,6 +217,8 @@ fn router(app: App) -> Router {
         .route("/fleet/venues/{id}/switch", post(fleet::switch))
         .route("/fleet/boxes/{id}/revoke", post(fleet::revoke_box))
         .route("/fleet/users", get(fleet::users).post(fleet::user_add))
+        .route("/fleet/updates", get(updates::page).post(updates::publish).layer(axum::extract::DefaultBodyLimit::max(updates::MAX_BYTES)))
+        .route("/fleet/users/{username}/deactivate", post(fleet::user_deactivate))
         .route("/fleet/log", get(fleet::fleet_log))
         .layer(middleware::from_fn_with_state(app.clone(), fleet_auth::same_origin))
         .layer(middleware::from_fn(security_headers))

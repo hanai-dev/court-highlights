@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHmac } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -18,7 +19,22 @@ export interface Owner {
 
 export const OWNER: Owner = { venue: 'Paddle Point Test Club', name: 'Olive Owner', username: 'olive', password: 'court-box-owner-pass-1' };
 
+const LOG_FILE = path.resolve(here, '../test-results/service-logs.txt');
+const LOGGED = ['box-a', 'cloud', 'venue-a', 'venue-b', 'venue-c'];
+
+/** Containers lose their logs when removed: keep them for the log privacy scan (SEC-LOGS-NO-PII). */
+export function saveServiceLogs(): void {
+  const out = execFileSync('docker', ['compose', '-f', COMPOSE_FILE, '--profile', 'venue', 'logs', '--no-color', ...LOGGED], {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'ignore'],
+    maxBuffer: 512 * 1024 * 1024,
+  });
+  fs.mkdirSync(path.dirname(LOG_FILE), { recursive: true });
+  fs.appendFileSync(LOG_FILE, out);
+}
+
 export function compose(...args: string[]): string {
+  if (args.includes('down') || args.includes('rm') || args.includes('--force-recreate')) saveServiceLogs();
   return execFileSync('docker', ['compose', '-f', COMPOSE_FILE, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 }
 

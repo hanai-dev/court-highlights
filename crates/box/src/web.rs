@@ -249,6 +249,7 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/console/settings/online", post(crate::venue::save_online))
         .route("/console/settings/backup", post(crate::backup::export))
         .route("/console/settings/wipe", get(crate::wipe::form).post(crate::wipe::wipe))
+        .route("/console/settings/update", get(crate::update::form).post(crate::update::upload).layer(DefaultBodyLimit::max(crate::update::MAX_BYTES)))
         .route("/console/help", get(crate::venue::help))
         .route("/console/signs", get(crate::venue::signs))
         .route("/console/logo", get(crate::clips::venue_logo))

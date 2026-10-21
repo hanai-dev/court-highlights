@@ -5,4 +5,6 @@
 node_modules/
 tests/e2e/test-results/
 tests/e2e/results.json
+tests/e2e/test-results-e2e.txt
+tests/e2e/log-pii-scan.txt
 tests/e2e/playwright-report/

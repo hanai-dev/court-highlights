@@ -17,6 +17,7 @@ mod recorder;
 mod remote;
 mod sync;
 mod tls;
+mod update;
 mod uplink;
 mod venue;
 mod web;
@@ -33,6 +34,10 @@ fn env(name: &str, default: &str) -> String {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    if let Some(done) = release_tool(&std::env::args().collect::<Vec<_>>())? {
+        println!("{done}");
+        return Ok(());
+    }
     tracing_subscriber::fmt().json().with_env_filter(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into())).init();
     let data_dir = PathBuf::from(env("CH_DATA_DIR", "/var/lib/court-highlights"));
     let http: SocketAddr = env("CH_HTTP_ADDR", "0.0.0.0:80").parse()?;
@@ -55,6 +60,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     recorders.spawn_supervisor();
     let state = web::AppState { db, recorders, data: data_dir.clone(), fingerprint: tls::fingerprint(&cert)?, venue, peers: Default::default(), box_name };
+    update::on_start(&state)?;
     clips::resume_saving(&state)?;
     games::recover(&state)?;
     games::spawn_watch(state.clone());
@@ -101,4 +107,26 @@ async fn shutdown_signal() {
     }
     #[cfg(not(unix))]
     let _ = ctrl_c.await;
+}
+
+/// The owner's release commands, run on a workstation: `ch-box --version`, `ch-box release-key <key file>` (prints
+/// the public key for CH_RELEASE_KEY) and `ch-box make-update <version> <new ch-box> <key file> <update file>`.
+fn release_tool(args: &[String]) -> Result<Option<String>, Box<dyn std::error::Error>> {
+    match args.get(1).map(String::as_str) {
+        Some("--version") => Ok(Some(update::current_version())),
+        Some("release-key") => {
+            let out = args.get(2).ok_or("usage: ch-box release-key <key file>")?;
+            let (pkcs8, public) = update::new_key()?;
+            std::fs::write(out, pkcs8)?;
+            Ok(Some(format!("CH_RELEASE_KEY={public}")))
+        }
+        Some("make-update") => {
+            let [_, _, version, binary, key, out] = args else {
+                return Err("usage: ch-box make-update <version> <new ch-box> <key file> <update file>".into());
+            };
+            std::fs::write(out, update::make(version, &std::fs::read(binary)?, &std::fs::read(key)?)?)?;
+            Ok(Some(format!("wrote {out} (version {version})")))
+        }
+        _ => Ok(None),
+    }
 }

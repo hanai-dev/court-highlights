@@ -60,6 +60,18 @@ impl Store {
         Ok(req.presigned(PresigningConfig::expires_in(Duration::from_secs(60 * 60))?).await?.uri().to_string())
     }
 
+    /// Stores a release the fleet publishes (FR-51).
+    pub async fn put(&self, key: &str, bytes: Vec<u8>) -> Result<(), StoreError> {
+        self.internal.put_object().bucket(&self.bucket).key(key).body(bytes.into()).send().await?;
+        Ok(())
+    }
+
+    /// A box downloads an offered release with this (signed for the store's address on the box network).
+    pub async fn box_download_url(&self, key: &str) -> Result<String, StoreError> {
+        let req = self.internal.get_object().bucket(&self.bucket).key(key);
+        Ok(req.presigned(PresigningConfig::expires_in(Duration::from_secs(60 * 60))?).await?.uri().to_string())
+    }
+
     pub async fn reachable(&self) -> bool {
         self.internal.head_bucket().bucket(&self.bucket).send().await.is_ok()
     }

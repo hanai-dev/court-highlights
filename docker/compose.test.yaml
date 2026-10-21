@@ -6,7 +6,10 @@ name: ch-test
 x-box: &box
   image: ch-dev:0
   working_dir: /work
-  command: ["./target/debug/ch-box"]
+  # As on the N150: the launcher runs ch-box from its active update slot and takes failed updates back. The slots
+  # live in the container (seeded from the build at each new container), so a fresh build is always what starts.
+  command: ["sh", "/work/tools/box-launcher.sh"]
+  # CH_RELEASE_KEY on each box is the public half of tests/fixtures/release-test.pk8, a test-only signing key.
   volumes:
     - ../:/work
     - ch-target:/work/target
@@ -108,7 +111,7 @@ services:
 
   box-a:
     <<: *box
-    environment: { CH_DATA_DIR: /data, CH_HTTP_ADDR: "0.0.0.0:80", CH_HTTPS_ADDR: "0.0.0.0:443", CH_BOX_NAME: box-a, CH_PLAYER_URL: "http://localhost:18080", CH_SUPPORT_PHONE: "0917 555 0100", CH_CLOUD_URL: "http://cloud:8080", CH_CHECKIN_SECS: "3" }
+    environment: { CH_DATA_DIR: /data, CH_HTTP_ADDR: "0.0.0.0:80", CH_HTTPS_ADDR: "0.0.0.0:443", CH_BOX_NAME: box-a, CH_PLAYER_URL: "http://localhost:18080", CH_SUPPORT_PHONE: "0917 555 0100", CH_CLOUD_URL: "http://cloud:8080", CH_CHECKIN_SECS: "3", CH_SLOTS_DIR: /opt/court-highlights, CH_SEED_BINARY: /work/target/debug/ch-box, CH_RELEASE_KEY: "c802698987acc0a5003330bba30226936d12bbe609c99874ed5ed75a630da6bd", CH_UPDATE_GRACE_SECS: "45" }
     volumes:
       - ../:/work
       - ch-target:/work/target
@@ -124,6 +127,9 @@ services:
       CH_HTTP_ADDR: "0.0.0.0:80"
       CH_HTTPS_ADDR: "0.0.0.0:443"
       CH_BOX_NAME: box-a
+      CH_SLOTS_DIR: /opt/court-highlights
+      CH_SEED_BINARY: /work/target/debug/ch-box
+      CH_RELEASE_KEY: "c802698987acc0a5003330bba30226936d12bbe609c99874ed5ed75a630da6bd"
       CH_PLAYER_URL: "http://localhost:18180"
       CH_SUPPORT_PHONE: "0917 555 0100"
       CH_VENUE_KEY: "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
@@ -142,6 +148,9 @@ services:
       CH_HTTP_ADDR: "0.0.0.0:80"
       CH_HTTPS_ADDR: "0.0.0.0:443"
       CH_BOX_NAME: box-b
+      CH_SLOTS_DIR: /opt/court-highlights
+      CH_SEED_BINARY: /work/target/debug/ch-box
+      CH_RELEASE_KEY: "c802698987acc0a5003330bba30226936d12bbe609c99874ed5ed75a630da6bd"
       CH_PLAYER_URL: "http://localhost:18181"
       CH_SUPPORT_PHONE: "0917 555 0100"
       CH_VENUE_KEY: "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
@@ -160,6 +169,9 @@ services:
       CH_HTTP_ADDR: "0.0.0.0:80"
       CH_HTTPS_ADDR: "0.0.0.0:443"
       CH_BOX_NAME: box-c
+      CH_SLOTS_DIR: /opt/court-highlights
+      CH_SEED_BINARY: /work/target/debug/ch-box
+      CH_RELEASE_KEY: "c802698987acc0a5003330bba30226936d12bbe609c99874ed5ed75a630da6bd"
       CH_PLAYER_URL: "http://localhost:18182"
       CH_SUPPORT_PHONE: "0917 555 0100"
       CH_VENUE_KEY: "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"

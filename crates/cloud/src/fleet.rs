@@ -11,17 +11,19 @@ use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use sqlx::Row;
 
-type Page = Result<Response, Denied>;
+pub type Page = Result<Response, Denied>;
 
-fn html<T: Template>(t: T) -> Page {
+pub fn html<T: Template>(t: T) -> Page {
     Ok(Html(t.render()?).into_response())
 }
 
-fn when(t: DateTime<Utc>) -> String {
+pub fn when(t: DateTime<Utc>) -> String {
     t.with_timezone(&ch_core::manila()).format("%-d %b %Y, %-I:%M %P").to_string()
 }
 
 pub async fn log(app: &App, actor: &str, action: &str, item: &str, detail: &str) -> Result<(), sqlx::Error> {
+    crate::metrics::add(&crate::metrics::FLEET_ACTIONS, 1);
+    tracing::info!(actor, action, "fleet action");
     sqlx::query("INSERT INTO fleet_log (at, actor, action, item, detail) VALUES ($1, $2, $3, $4, $5)")
         .bind(crate::now())
         .bind(actor)
@@ -39,7 +41,7 @@ pub struct Nav {
     pub section: &'static str,
 }
 
-fn nav(u: &FleetUser, section: &'static str) -> Nav {
+pub fn nav(u: &FleetUser, section: &'static str) -> Nav {
     Nav { user: u.username.clone(), admin: u.is_admin, section }
 }
 
@@ -315,6 +317,7 @@ pub struct UserLine {
 #[template(path = "fleet/users.html")]
 struct UsersPage {
     nav: Nav,
+    me: String,
     users: Vec<UserLine>,
     created: Option<Created>,
 }
@@ -333,7 +336,7 @@ async fn users_page(app: &App, u: &FleetUser, created: Option<Created>) -> Page 
         .into_iter()
         .map(|r| UserLine { username: r.get(0), role: r.get(1), active: r.get(2) })
         .collect();
-    html(UsersPage { nav: nav(u, "users"), users, created })
+    html(UsersPage { nav: nav(u, "users"), me: u.username.clone(), users, created })
 }
 
 pub async fn users(State(app): State<App>, u: FleetUser) -> Page {
@@ -345,6 +348,23 @@ pub async fn users(State(app): State<App>, u: FleetUser) -> Page {
 pub struct UserForm {
     username: String,
     role: String,
+}
+
+/// An Admin ends a fleet user's access (someone who left): their sessions end at once and they can't sign in.
+/// An Admin can't deactivate their own account, so the fleet always keeps one.
+pub async fn user_deactivate(State(app): State<App>, u: FleetUser, Path(username): Path<String>) -> Page {
+    u.admin()?;
+    if username == u.username {
+        return Ok(crate::player::message(StatusCode::BAD_REQUEST, "Not your own account", "Another Admin deactivates an Admin account."));
+    }
+    let id: i64 = sqlx::query_scalar("UPDATE fleet_user SET active = FALSE WHERE username = $1 AND active RETURNING id")
+        .bind(&username)
+        .fetch_optional(&app.db)
+        .await?
+        .ok_or(Denied::NotFound)?;
+    sqlx::query("DELETE FROM fleet_session WHERE user_id = $1").bind(id).execute(&app.db).await?;
+    log(&app, &u.username, "deactivated fleet user", &username, "").await?;
+    Ok(Redirect::to("/fleet/users").into_response())
 }
 
 /// New Admin or Installer: a temporary password and authenticator enrolment, shown once.

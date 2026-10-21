@@ -5,11 +5,10 @@
 
 FROM rust:1.99.0-slim-trixie@sha256:2752b332db73fdbb7dc576f06c82ed1f312005784ef913d7e04a28f5f55dc581 AS build
 WORKDIR /src
-# Only what the online service compiles from: its crate, the shared rules, and two files it embeds.
-COPY crates/core crates/core
-COPY crates/cloud crates/cloud
-COPY crates/box/static/app.css crates/box/static/app.css
-COPY crates/box/data/common-passwords.txt crates/box/data/common-passwords.txt
+# The shared rules crate takes its edition and versions from the root workspace, whose manifest names every member,
+# so the crates come in whole; only the online service is compiled.
+COPY Cargo.toml ./
+COPY crates crates
 RUN cargo build --release --locked --manifest-path crates/cloud/Cargo.toml
 
 FROM gcr.io/distroless/cc-debian13:nonroot@sha256:83b9b50586253821cf63ffcec87d3d94265a093ad30da232039af962dd8f4edf

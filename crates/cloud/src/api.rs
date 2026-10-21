@@ -43,11 +43,17 @@ pub struct Checkin {
     temperature_c: Option<f32>,
     courts_recording: i32,
     courts_total: i32,
+    /// The outcome of the box's last update, once (FR-51).
+    #[serde(default)]
+    update: Option<crate::updates::Outcome>,
 }
 
 #[derive(Serialize)]
 pub struct State_ {
     online_on: bool,
+    /// A release offered to this box; venues switched off take no updates (FR-27).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    update: Option<crate::updates::Offer>,
 }
 
 /// Health report every minute (FR-49); the answer carries the venue's online switch (FR-27).
@@ -62,7 +68,13 @@ pub async fn checkin(State(app): State<App>, auth: BoxAuth, Json(c): Json<Checki
         .bind(crate::now())
         .execute(&app.db)
         .await?;
-    Ok(Json(State_ { online_on: auth.online }))
+    crate::metrics::add(&crate::metrics::CHECKINS, 1);
+    tracing::info!(box_id = auth.box_id, "check-in");
+    if let Some(o) = &c.update {
+        crate::updates::record(&app, &auth, o).await?;
+    }
+    let update = if auth.online { crate::updates::offer(&app, &auth, &c.version).await? } else { None };
+    Ok(Json(State_ { online_on: auth.online, update }))
 }
 
 #[derive(Deserialize)]
@@ -131,6 +143,8 @@ pub async fn item_done(State(app): State<App>, auth: BoxAuth, Path(id): Path<i64
     }
     let bytes = app.store.size(&key).await.ok_or(ApiError::Bad("upload not found"))?;
     sqlx::query("UPDATE item SET uploaded_at = now(), bytes = $1 WHERE id = $2").bind(bytes).bind(id).execute(&app.db).await?;
+    crate::metrics::add(&crate::metrics::UPLOADS, 1);
+    tracing::info!(item = id, box_id = auth.box_id, bytes, "item uploaded");
     Ok(StatusCode::NO_CONTENT)
 }
 

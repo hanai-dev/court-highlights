@@ -146,5 +146,14 @@ test('staff cannot reach owner pages; cross-site writes are refused (v5.0.0-8.2.
   expect(forged.status()).toBe(403);
   const asStaff = await samPage.request.post(`${STAFF}/console/staff`, { form: { display_name: 'Mallory', username: 'mallory', role: 'owner' } });
   expect(asStaff.status()).toBe(403);
+  await page.goto(`${STAFF}/console/staff`);
+  await expect(page.getByText('Mallory'), 'no account was made').toHaveCount(0);
+  // The session cookie is host-only, Secure, HttpOnly and SameSite=Strict; no route opens itself to other origins.
+  const cookie = (await sam.cookies()).find((c) => c.name === '__Host-ch_staff')!;
+  expect([cookie.secure, cookie.httpOnly, cookie.sameSite]).toEqual([true, true, 'Strict']);
+  for (const url of [`${STAFF}/console`, `${STAFF}/console/clips`, `${PLAYER}/`]) {
+    const res = await samPage.request.get(url, { headers: { Origin: 'https://evil.example' } });
+    expect(res.headers()['access-control-allow-origin'], url).toBeUndefined();
+  }
   await sam.close();
 });

@@ -302,3 +302,32 @@ test('Wipe box: the Owner types the venue name; clips, footage, accounts and log
   });
   expect(checkin.status(), 'the wiped box key no longer works').toBe(401);
 });
+
+test('an Admin deactivates a fleet user who left: their open session ends and they cannot sign in again (security operations)', async ({ page, browser }) => {
+  await asAdmin(page);
+  await page.goto(`${CLOUD}/fleet/users`);
+  await expect(page.getByRole('button', { name: 'Deactivate root' }), 'no button for your own account').toHaveCount(0);
+  await page.getByLabel('Username').fill('leaver');
+  await page.getByRole('button', { name: 'Add user' }).click();
+  const leaver: FleetAccount = {
+    username: 'leaver',
+    password: (await page.locator('[data-temp-password]').textContent())!.trim(),
+    secret: (await page.locator('[data-totp-secret]').textContent())!.trim(),
+  };
+  const l = await (await browser.newContext()).newPage();
+  await fleetSignIn(l, leaver);
+  await l.getByLabel('Temporary password').fill(leaver.password);
+  await l.getByLabel('New password').fill('leaver-own-password-26');
+  await l.getByRole('button', { name: 'Change password' }).click();
+  await expect(l).toHaveURL(`${CLOUD}/fleet`);
+
+  await page.goto(`${CLOUD}/fleet/users`);
+  await page.getByRole('button', { name: 'Deactivate leaver' }).click();
+  await expect(page.locator('tbody tr').filter({ hasText: 'leaver' })).toContainText('Deactivated');
+  await l.goto(`${CLOUD}/fleet`);
+  await expect(l).toHaveURL(`${CLOUD}/fleet/signin`);
+  await fleetSignIn(l, leaver, 'leaver-own-password-26');
+  await expect(l.getByRole('alert')).toHaveText("That username, password or code isn't right.");
+  await page.goto(`${CLOUD}/fleet/log`);
+  await expect(page.locator('tbody tr').filter({ hasText: 'deactivated fleet user' }).first()).toContainText('leaver');
+});

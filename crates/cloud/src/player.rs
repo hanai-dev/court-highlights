@@ -112,6 +112,8 @@ pub async fn send_delivery(app: &App, delivery: i64, token: &str, recipients: &[
             }
         }
     }
+    crate::metrics::add(&crate::metrics::EMAILS_SENT, sent as u64);
+    crate::metrics::add(&crate::metrics::EMAILS_FAILED, skipped as u64);
     tracing::info!(delivery, sent, skipped, "take-home email");
     Ok((sent, skipped))
 }

@@ -19,9 +19,10 @@
 <div class="table-wrap" role="region" aria-labelledby="users-caption" tabindex="0">
 <table>
   <caption id="users-caption">{{ users.len() }} users</caption>
-  <thead><tr><th scope="col">Username</th><th scope="col">Role</th><th scope="col">Status</th></tr></thead>
+  <thead><tr><th scope="col">Username</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col"><span class="skip">Actions</span></th></tr></thead>
   <tbody>
-  {% for u in users %}<tr><td>{{ u.username }}</td><td>{% if u.role == "admin" %}Admin{% else %}Installer{% endif %}</td><td>{% if u.active %}Active{% else %}Deactivated{% endif %}</td></tr>{% endfor %}
+  {% for u in users %}<tr><td>{{ u.username }}</td><td>{% if u.role == "admin" %}Admin{% else %}Installer{% endif %}</td><td>{% if u.active %}Active{% else %}Deactivated{% endif %}</td>
+    <td>{% if u.active && u.username != me %}<form method="post" action="/fleet/users/{{ u.username }}/deactivate"><button class="btn btn-danger" type="submit">Deactivate {{ u.username }}</button></form>{% endif %}</td></tr>{% endfor %}
   </tbody>
 </table>
 </div>

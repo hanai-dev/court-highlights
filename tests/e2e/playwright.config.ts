@@ -4,6 +4,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './specs',
   workers: 1,
+  globalTeardown: './global-teardown.ts',
   fullyParallel: false,
   timeout: 120_000,
   expect: { timeout: 15_000 },

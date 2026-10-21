@@ -1,0 +1,24 @@
+{% extends "console.html" %}
+{% block title %}Software update{% endblock %}
+{% block main %}
+<p><a href="/console/settings">← Settings</a></p>
+<h1>Software update</h1>
+{% if let Some(v) = installing %}
+<div class="notice notice-ok" role="status" data-update-installing>Installing version {{ v }}. The box restarts in a moment and checks itself; if the new version doesn't work, it returns to version {{ version }} by itself.</div>
+{% endif %}
+{% if let Some(e) = error %}<div class="error-summary" role="alert" tabindex="-1" autofocus data-error-summary><h2>Nothing was installed</h2><p>{{ e }}</p></div>{% endif %}
+<section class="panel">
+  <p>This box runs version <strong class="num" data-box-version>{{ version }}</strong>.</p>
+  {% if let Some(s) = status %}<p data-update-status>{{ s }}</p>{% endif %}
+</section>
+{% if can_update %}
+<form method="post" action="/console/settings/update" enctype="multipart/form-data" class="panel">
+  <h2>Install from a USB stick</h2>
+  <p class="muted">Use only update files from your installer. The box checks the file's signature before installing it, and other boxes at the venue are not changed.</p>
+  <div class="field"><label for="file">Update file</label><input id="file" name="file" type="file" accept=".chupdate" required></div>
+  <button class="btn btn-primary" type="submit">Install update</button>
+</form>
+{% else %}
+<p class="muted">This box was not installed with update slots, so updates come only with a new install.</p>
+{% endif %}
+{% endblock %}

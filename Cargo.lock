@@ -393,6 +393,7 @@ dependencies = [
  "rcgen",
  "reqwest",
  "retina",
+ "ring",
  "rusqlite",
  "rustls",
  "serde",

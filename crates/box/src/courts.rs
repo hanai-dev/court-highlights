@@ -46,7 +46,7 @@ fn this_box_health(app: &AppState) -> BoxHealth {
         disk_warning: disk.as_ref().is_some_and(|d| d.used_pct >= ch_core::DISK_WARN_PCT),
         disk: disk.map_or("not available".into(), |d| format!("{} % used, {:.0} GB free", d.used_pct, d.free_gb)),
         temperature: temperature_c().map_or("not available".into(), |c| format!("{c:.0} °C")),
-        version: env!("CARGO_PKG_VERSION").into(),
+        version: crate::update::current_version(),
     }
 }
 
