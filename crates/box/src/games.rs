@@ -110,8 +110,12 @@ fn recipients(db: &Db, column: &str, id: i64) -> rusqlite::Result<Vec<Recipient>
     st.query_map([id], |r| Ok(Recipient { id: r.get(0)?, masked: mask(&r.get::<_, String>(1)?) }))?.collect()
 }
 
+/// Email is offered only when this box is registered with the online service and the venue's online features are
+/// on (FR-27). Without internet the addresses wait on the box (store and forward, FR-22).
 pub fn online(db: &Db) -> rusqlite::Result<bool> {
-    db.conn().query_row("SELECT online_on FROM venue WHERE id = 1", [], |r| r.get(0))
+    // No venue yet (before setup) means nothing to send.
+    let on: Option<bool> = db.conn().query_row("SELECT online_on FROM venue WHERE id = 1", [], |r| r.get(0)).optional()?;
+    Ok(on == Some(true) && crate::uplink::registered(db)?)
 }
 
 pub fn email_box(db: &Db, column: &str, id: i64) -> rusqlite::Result<EmailBox> {

@@ -1,0 +1,9 @@
+{
+  "identities": [
+    {
+      "name": "ch-test",
+      "credentials": [{ "accessKey": "ch-test-access", "secretKey": "ch-test-only-not-a-secret" }],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}

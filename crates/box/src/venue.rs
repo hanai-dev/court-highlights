@@ -67,6 +67,7 @@ fn load(app: &AppState) -> Result<Venue, AppError> {
 #[template(path = "settings.html")]
 struct SettingsPage {
     shell: Shell,
+    cloud_status: String,
     v: Venue,
     notice_draft: bool,
     now: String,
@@ -86,6 +87,7 @@ fn page(app: &AppState, staff: &Staff, v: Venue, saved: Option<&'static str>, er
     let v = Venue { notice: if notice_draft { NOTICE_TEMPLATE.into() } else { v.notice }, ..v };
     let mut res = html(SettingsPage {
         shell: shell(&app.db, staff, "settings")?,
+        cloud_status: cloud_status(app)?,
         v,
         notice_draft,
         now: now.format("%-d %b %Y, %-I:%M:%S %P").to_string(),
@@ -101,7 +103,11 @@ fn page(app: &AppState, staff: &Staff, v: Venue, saved: Option<&'static str>, er
 
 pub async fn settings(State(app): State<AppState>, staff: Staff, Query(q): Query<SavedQuery>) -> Page {
     staff.require_owner()?;
-    let saved = q.saved.as_deref().map(|s| if s == "time" { "Box time corrected." } else { "Settings saved." });
+    let saved = q.saved.as_deref().map(|s| match s {
+        "time" => "Box time corrected.",
+        "online" => "Box key saved. The box connects within a minute.",
+        _ => "Settings saved.",
+    });
     page(&app, &staff, load(&app)?, saved, None)
 }
 
@@ -217,6 +223,39 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
     }
     tx.commit()?;
     Ok(Redirect::to("/console/settings?saved=1").into_response())
+}
+
+fn cloud_status(app: &AppState) -> Result<String, AppError> {
+    use crate::uplink::{cloud_url, config, last_checkin};
+    if cloud_url().is_none() {
+        return Ok("This box has no online service address. Your installer sets it.".into());
+    }
+    if config(&app.db, "cloud_key")?.is_none_or(|k| k.is_empty()) {
+        return Ok("Not connected: enter this box's key.".into());
+    }
+    Ok(match (config(&app.db, "cloud_status")?.as_deref(), last_checkin(&app.db)?) {
+        (Some("key refused"), _) => "The online service refused this key. Ask your installer for a new one.".into(),
+        (_, Some(t)) => format!("Connected. Last check-in {}.", t.format("%-d %b, %-I:%M %P")),
+        _ => "Waiting for the first check-in.".into(),
+    })
+}
+
+#[derive(Deserialize)]
+pub struct OnlineForm {
+    cloud_key: String,
+}
+
+/// The installer registers the box in the fleet console and gives the Owner its key (FR-48).
+pub async fn save_online(State(app): State<AppState>, staff: Staff, Form(f): Form<OnlineForm>) -> Page {
+    staff.require_owner()?;
+    let key = f.cloud_key.trim();
+    if key.len() != 64 || !key.bytes().all(|b| b.is_ascii_hexdigit()) {
+        return Err(AppError::BadRequest("A box key is 64 letters and digits. Copy it again from the fleet console.".into()));
+    }
+    crate::uplink::set_config(&app.db, "cloud_key", key)?;
+    crate::uplink::set_config(&app.db, "cloud_status", "saved")?;
+    db::log(&app.db.conn(), Some(staff.id), &staff.username, "set the online service key", "", "")?;
+    Ok(Redirect::to("/console/settings?saved=online").into_response())
 }
 
 #[derive(Deserialize)]

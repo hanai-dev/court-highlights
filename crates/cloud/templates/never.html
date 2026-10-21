@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Don't email me again{% endblock %}
+{% block body %}
+<main class="narrow">
+  {% if done %}
+  <h1>We won't email you again</h1>
+  <div class="panel" role="status"><p>No venue using Court Highlights will send videos to this address again.</p></div>
+  {% else %}
+  <h1>Don't email me again?</h1>
+  <div class="panel">
+    <p>If someone typed your address by mistake, confirm below. No venue using Court Highlights will email this address again.</p>
+    <form method="post" action="/never/{{ token }}"><button class="btn btn-primary" type="submit">Don't email me again</button></form>
+  </div>
+  {% endif %}
+</main>
+{% endblock %}

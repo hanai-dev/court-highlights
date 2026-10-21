@@ -42,6 +42,48 @@ export async function freshBox(): Promise<void> {
 
 export const CAMERA = (n: number): string => `rtsp://rtsp:8554/court${n}`;
 
+export const CLOUD = 'http://localhost:18090';
+const SES = 'http://localhost:18025';
+
+/** Online service with its test stand-ins (PostgreSQL, S3-compatible store, fake SES). */
+export async function cloudUp(): Promise<void> {
+  compose('up', '-d', 'db', 's3', 'ses', 'cloud');
+  for (let i = 0; i < 90; i++) {
+    try {
+      if ((await fetch(`${CLOUD}/healthz`)).ok) return;
+    } catch {
+      /* not up yet */
+    }
+    await new Promise((r) => setTimeout(r, 1000));
+  }
+  throw new Error('online service did not start');
+}
+
+/** Registers box-a with the online service (installer step) and returns its key. */
+export function registerBox(venue: string): string {
+  return compose('exec', '-T', 'cloud', './target/debug/ch-cloud', 'add-box', venue, 'box-a').trim();
+}
+
+export interface Mail {
+  to: string[];
+  subject: string;
+  text: string;
+  html: string;
+}
+
+export async function sentMail(): Promise<Mail[]> {
+  return (await (await fetch(`${SES}/messages`)).json()) as Mail[];
+}
+
+export async function clearMail(): Promise<void> {
+  await fetch(`${SES}/messages`, { method: 'DELETE' });
+}
+
+/** Runs SQL against the online service's database (test inspection only). */
+export function cloudSql(sql: string): string {
+  return compose('exec', '-T', 'db', 'psql', '-U', 'postgres', '-d', 'ch', '-At', '-c', sql).trim();
+}
+
 /** Fake cameras: MediaMTX plus one publisher per court (cam-1 also sends audio). */
 export async function startCameras(...cams: string[]): Promise<void> {
   compose('up', '-d', 'rtsp', ...(cams.length ? cams : ['cam-1', 'cam-2']));

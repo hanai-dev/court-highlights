@@ -13,6 +13,7 @@ mod library;
 mod media;
 mod recorder;
 mod tls;
+mod uplink;
 mod venue;
 mod web;
 
@@ -52,6 +53,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     games::recover(&state)?;
     games::spawn_watch(state.clone());
     janitor::spawn(state.clone());
+    uplink::spawn(state.clone());
     let tls = axum_server::tls_rustls::RustlsConfig::from_pem(cert.into_bytes(), key.into_bytes()).await?;
 
     let (player_handle, staff_handle) = (axum_server::Handle::new(), axum_server::Handle::new());

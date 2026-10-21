@@ -20,7 +20,7 @@ impl Db {
         conn.trace_v2(rusqlite::trace::TraceEventCodes::SQLITE_TRACE_STMT, Some(|_| {
             STATEMENTS.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         }));
-        conn.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;")?;
+        conn.execute_batch("PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000; PRAGMA secure_delete=ON;")?;
         migrate(&conn)?;
         Ok(Self(Arc::new(Mutex::new(conn))))
     }
@@ -155,6 +155,11 @@ CREATE TABLE recipient (
 );
 CREATE INDEX recipient_game ON recipient (game_id);
 CREATE INDEX recipient_clip ON recipient (clip_id);
+"#, r#"
+CREATE TABLE box_config (name TEXT PRIMARY KEY, value TEXT NOT NULL);
+ALTER TABLE clip ADD COLUMN cloud_id INTEGER;
+ALTER TABLE clip ADD COLUMN uploaded_at TEXT;
+CREATE TABLE withdraw (cloud_id INTEGER PRIMARY KEY);
 "#];
 
 fn migrate(conn: &Connection) -> rusqlite::Result<()> {

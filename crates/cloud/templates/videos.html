@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Your videos{% endblock %}
+{% block body %}
+<main class="narrow">
+  <p class="venue">{{ venue }}</p>
+  <h1>{{ title }}</h1>
+  <ul class="clips">
+    {% for l in lines %}
+    <li class="panel" data-item="{{ l.id }}">
+      <h2>{{ l.label }}</h2>
+      <p class="fine">{{ l.until }}</p>
+      <a class="btn btn-primary" href="/v/{{ token }}/{{ l.id }}">Download</a>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="fine">Save the videos you want to keep: links stop working when they expire.</p>
+</main>
+{% endblock %}

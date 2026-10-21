@@ -43,6 +43,14 @@
   <button class="btn btn-primary" type="submit">Save settings</button>
 </form>
 
+<form method="post" action="/console/settings/online" class="panel">
+  <h2>Online service</h2>
+  <p data-cloud-status>{{ cloud_status }}</p>
+  <div class="field"><label for="cloud_key">Box key</label><input id="cloud_key" name="cloud_key" type="password" autocomplete="off" required minlength="64" maxlength="64" aria-describedby="key-hint">
+    <p class="hint" id="key-hint">From your installer's fleet console. Each box has its own key; it is never shown again here.</p></div>
+  <button class="btn" type="submit">Save box key</button>
+</form>
+
 <form method="post" action="/console/settings/time" class="panel">
   <h2>Box time</h2>
   <p>The box says it is <strong class="num" data-box-time>{{ now }}</strong>.</p>

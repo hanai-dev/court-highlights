@@ -12,7 +12,7 @@ test-hooks = ["rusqlite/trace"]
 
 [dependencies]
 ch-core = { path = "../core" }
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "fs", "process", "signal", "time", "sync"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "fs", "io-util", "process", "signal", "time", "sync"] }
 axum = { version = "0.8", features = ["multipart"] }
 axum-server = { version = "0.8", features = ["tls-rustls-no-provider"] }
 rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
@@ -24,6 +24,7 @@ gstreamer = "0.25"
 gstreamer-app = "0.25"
 futures = "0.3"
 url = "2"
+reqwest = { version = "0.13", default-features = false, features = ["rustls-no-provider", "json", "stream", "http2"] }
 libc = "0.2"
 ort = { version = "=2.0.0-rc.15", default-features = false, features = ["std", "ndarray", "tracing", "download-binaries", "tls-rustls", "copy-dylibs", "api-31"] }
 rusqlite = { version = "0.40", features = ["bundled"] }

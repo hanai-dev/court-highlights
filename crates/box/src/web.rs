@@ -185,6 +185,7 @@ pub fn staff_router(state: AppState) -> Router {
         .route("/console/log.csv", get(crate::library::log_csv))
         .route("/console/settings", get(crate::venue::settings).post(crate::venue::save).layer(DefaultBodyLimit::max(UPLOAD_LIMIT)))
         .route("/console/settings/time", post(crate::venue::correct_time))
+        .route("/console/settings/online", post(crate::venue::save_online))
         .route("/console/help", get(crate::venue::help))
         .route("/console/signs", get(crate::venue::signs))
         .route("/console/logo", get(crate::clips::venue_logo))

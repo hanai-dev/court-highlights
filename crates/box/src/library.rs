@@ -282,6 +282,7 @@ pub async fn delete(State(app): State<AppState>, staff: Staff, Path(id): Path<i6
     let it = item(&app, id)?;
     {
         let conn = app.db.conn();
+        crate::uplink::queue_withdraw(&conn, id)?;
         conn.execute("DELETE FROM clip WHERE id = ?1", [id])?;
         db::log(&conn, Some(staff.id), &staff.username, "deleted", &it.label(), "")?;
     }

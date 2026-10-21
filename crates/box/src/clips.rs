@@ -587,7 +587,11 @@ pub fn slug(s: &str) -> String {
 pub async fn hide(State(app): State<AppState>, Path((code, token)): Path<(String, String)>) -> Page {
     let court = court_by_code(&app.db, &code)?;
     let clip = visible_clip(&app.db, &court, &token)?;
-    app.db.conn().execute("UPDATE clip SET hidden = 1 WHERE id = ?1", [clip.id])?;
+    {
+        let conn = app.db.conn();
+        conn.execute("UPDATE clip SET hidden = 1 WHERE id = ?1", [clip.id])?;
+        crate::uplink::queue_withdraw(&conn, clip.id)?;
+    }
     tracing::info!(clip = clip.id, court = court.id, "clip hidden by a player");
     Ok(Redirect::to(&format!("/c/{}", court.code)).into_response())
 }
