@@ -141,7 +141,13 @@ async fn security_headers(req: Request, next: Next) -> Response {
 async fn same_origin_writes(req: Request, next: Next) -> Response {
     if req.method() != Method::GET && req.method() != Method::HEAD {
         let headers = req.headers();
-        let host = headers.get(header::HOST).and_then(|v| v.to_str().ok()).unwrap_or("");
+        // HTTP/2 carries the host in the URI authority (:authority), HTTP/1.1 in the Host header.
+        let host = req
+            .uri()
+            .authority()
+            .map(|a| a.as_str())
+            .or_else(|| headers.get(header::HOST).and_then(|v| v.to_str().ok()))
+            .unwrap_or("");
         let origin_ok = headers
             .get(header::ORIGIN)
             .and_then(|v| v.to_str().ok())
