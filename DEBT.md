@@ -14,4 +14,6 @@ Each entry says what was accepted, why, and when to look again.
 |---|---|---|
 | Wipe box erases files and empties the database in place (`crates/box/src/wipe.rs`) | Deleted blocks can still be read by forensic tools until the disk reuses them | On the installed image, also discard the data partition's encryption key (crypto-erase) |
 | Sibling certificate pins live in one process-wide table (`crates/box/src/remote.rs`) | Fine for a handful of boxes per venue | Per-peer state on `Peer` if venues grow large |
+| Cameras are read through retina only; the GStreamer `rtspsrc` fallback in the stack decision is not built | A camera whose RTSP dialect retina can't read cannot record | Add the fallback when a trial camera needs it (H4 then measures both paths) |
+| The shot judge is the motion baseline; no trained ONNX model is installed yet | Highlight quality is unmeasured (F-JUDGE-EVAL needs hand-marked trial footage) | Install `judge.onnx` once trained; ort is already a dependency, the OpenVINO execution provider is still to add |
 | Camera discovery waits a fixed 1.5 s for WS-Discovery answers on each court form load | Slow cameras that answer later are missed until reload | Background discovery cache refreshed every minute |

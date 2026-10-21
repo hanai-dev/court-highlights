@@ -52,8 +52,8 @@ jobs:
           node tools/licence-check.cjs box-metadata.json
       - name: Advisories and leaked credentials
         run: sh tools/supply-chain-scan.sh .
-      - name: Payload, cost model, support horizon
-        run: node tools/payload-check.cjs && node tools/cost-model.cjs && node tools/horizon-check.cjs
+      - name: Payload, cost model, support horizon, additive migrations
+        run: node tools/payload-check.cjs && node tools/cost-model.cjs && node tools/horizon-check.cjs && node tools/migration-check.cjs
 
   # The online service's container, built from this commit (HOST-container-image, -nonroot, -health).
   image:
@@ -75,11 +75,20 @@ jobs:
         run: |
           set -o pipefail
           sh tools/cloud-image-check.sh ch-cloud:${{ github.sha }} | tee cloud-image-check.txt
+      - name: Box system packages (SEC-DEPENDENCIES)
+        # The build image is Ubuntu 26.04 plus GStreamer, the box's own base, with build tools on top: a superset of
+        # what the install image ships, so a clean scan here is clean there.
+        run: |
+          set -o pipefail
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.75.0 image --quiet --pkg-types os \
+            --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 ch-dev:0 | tee box-os-scan.txt
       - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: cloud-image-evidence
-          path: cloud-image-check.txt
+          path: |
+            cloud-image-check.txt
+            box-os-scan.txt
           retention-days: 30
 
   e2e:

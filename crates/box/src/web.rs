@@ -169,7 +169,22 @@ fn test_hooks(r: Router<AppState>) -> Router<AppState> {
         court: i64,
         n: i64,
     }
+    #[derive(Deserialize)]
+    struct Since {
+        since_ms: i64,
+    }
     r.route("/__test/statements", get(|| async { crate::db::STATEMENTS.load(std::sync::atomic::Ordering::Relaxed).to_string() }))
+        // The longest stretch without footage on any court since a moment (ms), for continuity checks.
+        .route(
+            "/__test/max-gap",
+            get(|State(app): State<AppState>, Query(s): Query<Since>| async move {
+                let conn = app.db.conn();
+                let mut st = conn.prepare("SELECT court_id, start_ms, end_ms FROM segment WHERE end_ms IS NOT NULL AND start_ms >= ?1 ORDER BY court_id, start_ms")?;
+                let rows: Vec<(i64, i64, i64)> = st.query_map([s.since_ms], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<Result<_, _>>()?;
+                let gap = rows.windows(2).filter(|w| w[0].0 == w[1].0).map(|w| w[1].1 - w[0].2).max().unwrap_or(0);
+                Ok::<_, AppError>(gap.to_string())
+            }),
+        )
         // Library fixtures: ready clip rows with a thumbnail but no video files, one minute apart, cycling through the kinds.
         .route(
             "/__test/seed-clips",

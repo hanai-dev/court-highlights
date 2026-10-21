@@ -42,7 +42,7 @@ if [ "$status" = healthy ]; then ok "healthy on a read-only root filesystem"; el
 docker rm -f ch-cloud-image-check >/dev/null 2>&1
 
 echo
-echo "# trivy ($TRIVY) image --severity HIGH,CRITICAL --ignore-unfixed"
-MSYS_NO_PATHCONV=1 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "$TRIVY" image --quiet --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 "$IMAGE" || bad "unpatched Critical/High findings"
+echo "# trivy ($TRIVY) image --scanners vuln,secret --severity HIGH,CRITICAL --ignore-unfixed"
+MSYS_NO_PATHCONV=1 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock "$TRIVY" image --quiet --scanners vuln,secret --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 "$IMAGE" || bad "unpatched Critical/High findings or a secret in the image"
 echo
 [ "$fail" -eq 0 ] && echo "CLOUD-IMAGE: PASS" || { echo "CLOUD-IMAGE: FAIL"; exit 1; }

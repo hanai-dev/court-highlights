@@ -1,5 +1,12 @@
 import { test, expect, type Page } from '@playwright/test';
-import { CLOUD, cloudSql, cloudUp, compose, createAdmin, fleetSignIn, registerBox } from './helpers';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { CLOUD, COMPOSE_FILE, cloudSql, cloudUp, compose, createAdmin, fleetSignIn, registerBox } from './helpers';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
 
 test.describe.configure({ mode: 'serial' });
 
@@ -96,6 +103,39 @@ test('metrics count uploads, emails, check-ins and fleet actions; the logs are s
   expect(all).not.toContain(key);
   expect(all).not.toContain('ch-test-only-ready-token');
   expect(all).not.toMatch(/\b[0-9a-f]{64}\b/);
+});
+
+test('a copy of the previous release\'s schema and data migrates forward, and the previous release\'s statements still work on it (HOST-compatibility)', async () => {
+  await cloudUp();
+  const psql = (db: string, sql: string): string =>
+    execFileSync('docker', ['compose', '-f', COMPOSE_FILE, 'exec', '-T', 'db', 'psql', '-U', 'postgres', '-d', db, '-At', '-v', 'ON_ERROR_STOP=1'], { input: sql, encoding: 'utf8' }).trim();
+  psql('ch', 'DROP DATABASE IF EXISTS ch_prev;');
+  psql('ch', 'CREATE DATABASE ch_prev;');
+  // The release before wipe and updates: migrations 0001-0002, recorded the way sqlx records applied migrations.
+  psql('ch_prev', `CREATE TABLE _sqlx_migrations (version BIGINT PRIMARY KEY, description TEXT NOT NULL, installed_on TIMESTAMPTZ NOT NULL DEFAULT now(),
+    success BOOLEAN NOT NULL, checksum BYTEA NOT NULL, execution_time BIGINT NOT NULL);`);
+  for (const [version, name] of [[1, 'init'], [2, 'fleet']] as const) {
+    const sql = fs.readFileSync(path.resolve(here, `../../../crates/cloud/migrations/000${version}_${name}.sql`));
+    psql('ch_prev', sql.toString('utf8'));
+    const checksum = createHash('sha384').update(sql).digest('hex');
+    psql('ch_prev', `INSERT INTO _sqlx_migrations (version, description, success, checksum, execution_time) VALUES (${version}, '${name}', true, '\\x${checksum}', 0);`);
+  }
+  psql('ch_prev', `INSERT INTO venue (name) VALUES ('Previous Club');
+    INSERT INTO box (venue_id, name, key_hash, registered_by) SELECT id, 'old-box', repeat('ab', 32), 'installer' FROM venue WHERE name = 'Previous Club';
+    INSERT INTO checkin (box_id, at, version, disk_pct, courts_recording, courts_total) SELECT id, now(), '0.0.9', 40, 2, 2 FROM box WHERE name = 'old-box';`);
+
+  // This release starts on it: 0003 and 0004 apply forward; the old rows stay.
+  const key = compose('run', '--rm', '--no-deps', '-e', 'DATABASE_URL=postgres://postgres:ch-test-only@db/ch_prev', 'cloud', './target/debug/ch-cloud', 'add-box', 'Previous Club', 'new-box').trim();
+  expect(key).toMatch(/^[0-9a-f]{64}$/);
+  expect(psql('ch_prev', 'SELECT max(version) FROM _sqlx_migrations;')).toBe('4');
+  expect(psql('ch_prev', "SELECT count(*) FROM box b JOIN venue v ON v.id = b.venue_id WHERE v.name = 'Previous Club';")).toBe('2');
+  expect(psql('ch_prev', "SELECT count(*) FROM checkin WHERE version = '0.0.9';")).toBe('1');
+
+  // The previous release's own statements (its box auth, check-in and fleet listing) run unchanged on the new schema.
+  psql('ch_prev', `SELECT b.id, b.venue_id, v.online_on FROM box b JOIN venue v ON v.id = b.venue_id WHERE b.key_hash = repeat('ab', 32) AND b.revoked_at IS NULL;
+    INSERT INTO checkin (box_id, at, version, disk_pct, temperature_c, courts_recording, courts_total) SELECT id, now(), '0.0.9', 41, NULL, 2, 2 FROM box WHERE name = 'old-box';
+    SELECT v.id, v.name, b.id, b.name FROM venue v LEFT JOIN box b ON b.venue_id = v.id ORDER BY v.name;`);
+  psql('ch', 'DROP DATABASE ch_prev;');
 });
 
 test('the service refuses to start with missing or malformed configuration and never prints a secret value (HOST-configuration)', () => {

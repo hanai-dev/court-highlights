@@ -161,10 +161,17 @@ test('an Installer registers boxes but cannot switch, revoke or manage users; 5 
   await expect(i).toHaveURL(`${CLOUD}/fleet`);
   await expect(i.getByRole('link', { name: 'Users' })).toHaveCount(0);
   await expect(i.getByRole('link', { name: 'Fleet log' })).toHaveCount(0);
-  for (const [method, url] of [['GET', '/fleet/users'], ['GET', '/fleet/log'], ['POST', `/fleet/venues/${venueId}/switch`], ['POST', '/fleet/boxes/1/revoke']] as const) {
+  for (const [method, url] of [['GET', '/fleet/users'], ['GET', '/fleet/log'], ['GET', '/fleet/updates'], ['POST', `/fleet/venues/${venueId}/switch`], ['POST', '/fleet/boxes/1/revoke']] as const) {
     const res = await i.request.fetch(`${CLOUD}${url}`, { method, form: method === 'POST' ? { on: '0', reason: 'test' } : undefined, headers: { Origin: CLOUD } });
     expect(res.status(), `${method} ${url}`).toBe(403);
   }
+  // An Installer cannot publish an update either (SEC-ROLES), even with a well-formed request.
+  const publish = await i.request.post(`${CLOUD}/fleet/updates`, {
+    multipart: { file: { name: 'x.chupdate', mimeType: 'application/octet-stream', buffer: Buffer.from('CHUPDATE 1\n{}\n') } },
+    headers: { Origin: CLOUD },
+  });
+  expect(publish.status(), 'POST /fleet/updates').toBe(403);
+  await expect(i.getByRole('link', { name: 'Updates' })).toHaveCount(0);
   await i.goto(`${CLOUD}/fleet/venues/${venueId}`);
   await expect(i.getByRole('button', { name: /Switch online features/ })).toHaveCount(0);
   await expect(i.getByRole('button', { name: /^Revoke/ })).toHaveCount(0);

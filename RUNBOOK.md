@@ -93,6 +93,7 @@ bounces and complaints, so a hard-bounced address gets no further mail from any 
 | Make an update | `ch-box make-update <version> target/release/ch-box owner-release.pk8 ch-box-<version>.chupdate` | verified |
 | Send it to the fleet | Fleet console → **Updates** → **Publish update**. Each venue gets it one box at a time; venues with online features off get nothing. | verified |
 | Install from a USB stick | Staff console → Settings → **Software update…** → the file → **Install update** | verified |
+| Roll back the online service | Redeploy the previous image digest. Migrations only add (`tools/migration-check.cjs` in CI), and an older image starts on a newer schema (it ignores migrations it doesn't know), so no database restore is needed. | verified (HOST-compatibility test) |
 | A failed update | The launcher returns the box to its previous version when the new one fails to start 3 times or isn't healthy (every court with a camera recording) within 10 minutes. The console and the fleet show **Update rolled back**, and the venue's other boxes don't get that release. | verified |
 
 ## 6. Backup and restore

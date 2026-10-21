@@ -253,7 +253,11 @@ fn spawn_cleanup(app: App) {
 
 async fn connect() -> Result<sqlx::PgPool, Box<dyn std::error::Error>> {
     let db = sqlx::postgres::PgPoolOptions::new().max_connections(10).connect(&need("DATABASE_URL")?).await?;
-    sqlx::migrate!("./migrations").run(&db).await?;
+    // Migrations only add (tools/migration-check.cjs), so an older image still runs on a newer schema: that is the
+    // rollback path (HOST-compatibility). It must not refuse to start because it doesn't know the newer migrations.
+    let mut migrator = sqlx::migrate!("./migrations");
+    migrator.set_ignore_missing(true);
+    migrator.run(&db).await?;
     Ok(db)
 }
 

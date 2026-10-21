@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="1200" height="380" role="img" aria-labelledby="t">
+  <title id="t">Court Highlights: offline-first court cameras for pickleball venues, with a yellow Clip that button beside a line drawing of a court and its camera</title>
+  <!-- the laminated sign: cream card, heavy ink edge, zip-tie holes -->
+  <rect x="6" y="6" width="1188" height="368" rx="18" fill="#f6f4ee" stroke="#1b1b1b" stroke-width="6"/>
+  <g fill="#fffdf7" stroke="#1b1b1b" stroke-width="3">
+    <circle cx="34" cy="34" r="8"/><circle cx="1166" cy="34" r="8"/>
+    <circle cx="34" cy="346" r="8"/><circle cx="1166" cy="346" r="8"/>
+  </g>
+
+  <g font-family="Arial, Helvetica, sans-serif" fill="#1b1b1b">
+    <text x="72" y="96" font-size="18" font-weight="700" letter-spacing="3">PICKLEBALL · OFFLINE-FIRST</text>
+    <text x="68" y="168" font-size="68" font-weight="800" letter-spacing="1">Court Highlights</text>
+    <text x="72" y="210" font-size="24" fill="#4a4a46">One camera per court. One tap saves the point.</text>
+  </g>
+
+  <!-- the one highlighter action -->
+  <g font-family="Arial, Helvetica, sans-serif">
+    <rect x="72" y="244" width="250" height="76" rx="6" fill="#ffe14d" stroke="#1b1b1b" stroke-width="4"/>
+    <text x="197" y="294" font-size="34" font-weight="800" fill="#1b1b1b" text-anchor="middle">Clip that</text>
+    <text x="346" y="276" font-size="18" font-weight="700" fill="#1b1b1b">25 s before · 5 s after</text>
+    <text x="346" y="304" font-size="18" fill="#4a4a46">ready in about 10 s, wide and vertical</text>
+  </g>
+
+  <!-- court, camera and sign, after the setup illustration -->
+  <g transform="translate(660 10) scale(0.9)" fill="none" stroke="#1b1b1b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 360 L490 360 L430 140 L210 140 Z" fill="#fffdf7"/>
+    <path d="M178 250 L462 250" stroke-width="6"/>
+    <path d="M178 250 L178 220 M462 250 L462 220"/>
+    <path d="M165 305 L475 305 M193 197 L447 197"/>
+    <path d="M320 360 L320 305 M320 197 L320 140"/>
+    <path d="M320 140 L320 60"/>
+    <rect x="296" y="42" width="48" height="24" rx="4" fill="#fffdf7"/>
+    <circle cx="320" cy="54" r="6"/>
+    <path d="M296 66 L250 132 M344 66 L390 132" stroke-dasharray="6 8" stroke-width="2.5"/>
+    <rect x="474" y="220" width="44" height="58" rx="4" fill="#ffe14d"/>
+    <path d="M462 234 L474 234"/>
+    <rect x="482" y="228" width="14" height="14" stroke-width="2"/>
+    <rect x="500" y="228" width="10" height="10" stroke-width="2"/>
+    <rect x="482" y="248" width="10" height="10" stroke-width="2"/>
+    <path d="M482 266 L510 266" stroke-width="2"/>
+    <circle cx="372" cy="226" r="9" fill="#ffe14d"/>
+  </g>
+</svg>

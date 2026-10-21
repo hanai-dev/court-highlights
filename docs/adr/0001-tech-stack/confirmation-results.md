@@ -28,3 +28,25 @@ Nothing in the decision: the pre-registered hardware was not used. It sharpens t
    target fails and the decision must be replayed to the owner (stronger Intel chip or the Jetson backup, A-123).
 2. CI and the developer laptop can verify clip **correctness** (window, logo, shapes) with OpenH264, never clip **speed**;
    `MON-CLIP-SPEED`, `MON-JUDGE-THROUGHPUT` and `DEV-SPIKE` stay blocked until the N150 run.
+
+## Running the pre-registered spike on the N150
+
+`tools/spike/n150-spike.sh` runs the product itself (release build, started through the update launcher as systemd
+will) against four replayed 1080p30 cameras, so the numbers are the shipped box's, not a proxy's. On the N150 with
+Ubuntu 26.04 (`apt install ffmpeg sqlite3 gstreamer1.0-tools gstreamer1.0-plugins-bad intel-media-va-driver`, MediaMTX
+on the PATH), from the repo root:
+
+| Command | Hypotheses | Time |
+|---|---|---|
+| `cargo build --release -p ch-box` | — | once |
+| `tools/spike/n150-spike.sh quick` | H2 (100 taps on courts 1–3 while court 4 records a game), H4 (5 unplugs), H5 | ~45 min |
+| `tools/spike/n150-spike.sh judge 60` | H3 (4 games of 60 min, then the judge) | ~2 h |
+| `tools/spike/n150-spike.sh soak 24` | H1 (worst gap, sampled every 30 min) | 24 h |
+
+Run `quick` 5 times (the pre-registration asks for ≥ 5 runs); set `FOOTAGE=/path` to replay recorded court footage
+(`court1.mp4`…`court4.mp4`) instead of generated test patterns. Each run writes `spike-<time>/results.txt`; paste the
+summary lines here with the date and the box's hardware line. H4 measures the retina camera path only: the `rtspsrc`
+fallback named in the pre-registration is not built (DEBT.md).
+
+The script itself was dry-run on the developer laptop (debug build, software encoder): it completed setup, taps,
+unplug and the failing update end to end. Those numbers are not spike evidence.

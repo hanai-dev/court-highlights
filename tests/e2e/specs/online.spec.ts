@@ -217,8 +217,13 @@ test('with the line down, clips and on-court downloads still work; back up, item
   }
   expect(await sentMail()).toHaveLength(0);
 
+  const sendingFrom = (await advanceClock(page.request, 0)).getTime();
   await cloudUp();
   await expect.poll(async () => (await sentMail()).length, { timeout: 240_000, intervals: [3000] }).toBe(2);
+  // Recording carried on while the box sent everything (PERF-UPLOAD-CAP): no stretch over 2 s without footage.
+  await page.waitForTimeout(12_000); // the segment that spans the end of sending closes
+  const gap = Number(await (await page.request.get(`${STAFF}/__test/max-gap?since_ms=${sendingFrom}`)).text());
+  expect(gap, 'longest gap in footage while sending (ms)').toBeLessThanOrEqual(2000);
   const kinds = cloudSql(`SELECT kind FROM item WHERE id > ${firstNew} ORDER BY uploaded_at`).split('\n');
   expect(kinds, 'clips of both games first, then the game videos').toEqual(['tap', 'tap', 'game', 'game']);
   const refs = cloudSql(`SELECT box_ref FROM item WHERE id > ${firstNew} AND kind = 'game' ORDER BY uploaded_at`).split('\n');
