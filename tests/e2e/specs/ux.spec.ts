@@ -190,6 +190,11 @@ test('SC-7 by keyboard alone: find footage, hold it, export it (UX-MOTION-KEYBOA
   await tabTo(page, page.getByRole('link', { name: 'Footage', exact: true }));
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(`${STAFF}/console/footage`);
+  // The court is required: choose it from the keyboard (the arrow key picks the first court after "Choose a court").
+  const court = page.getByLabel('Court', { exact: true });
+  await tabTo(page, court);
+  await page.keyboard.press('ArrowDown');
+  await expect(court).not.toHaveValue('');
   await tabTo(page, page.getByRole('button', { name: 'Find footage' }));
   await page.keyboard.press('Enter');
   await tabTo(page, page.getByRole('button', { name: 'Hold footage' }));
