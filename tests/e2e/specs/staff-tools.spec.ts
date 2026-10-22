@@ -109,7 +109,7 @@ test('settings save, survive a restart and take effect on the next clip: corner 
   await page.getByLabel('Logo corner').selectOption('bottom-left');
   await page.getByLabel('Seconds before the tap').fill('10');
   await page.getByLabel('Seconds after the tap').fill('2');
-  await page.getByLabel(/Upload cap/).fill('25');
+  await page.getByLabel(/Venue contact/).fill('Front desk 0917 555 0125');
   await page.getByLabel(/Make highlights/).uncheck();
   await page.getByLabel('Privacy notice shown to players').fill('Test venue notice.\n\nSecond paragraph.');
   await page.getByRole('button', { name: 'Save settings' }).click();
@@ -120,7 +120,7 @@ test('settings save, survive a restart and take effect on the next clip: corner 
   await expect(page.getByLabel('Logo corner')).toHaveValue('bottom-left');
   await expect(page.getByLabel('Seconds before the tap')).toHaveValue('10');
   await expect(page.getByLabel('Seconds after the tap')).toHaveValue('2');
-  await expect(page.getByLabel(/Upload cap/)).toHaveValue('25');
+  await expect(page.getByLabel(/Venue contact/)).toHaveValue('Front desk 0917 555 0125');
   await expect(page.getByLabel(/Make highlights/)).not.toBeChecked();
 
   const player = await page.context().browser()!.newPage();

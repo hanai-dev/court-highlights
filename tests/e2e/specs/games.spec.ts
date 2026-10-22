@@ -209,7 +209,7 @@ test('after a power cut everything made through the UI is still there, recording
   await page.getByRole('button', { name: /Add staff/ }).click();
   const temp = (await page.locator('[data-temp-password]').textContent())!.trim();
   await page.goto(`${STAFF}/console/settings`);
-  await page.getByLabel('Upload cap for sending videos (Mbit/s)').fill('33');
+  await page.getByLabel(/Venue contact/).fill('Front desk 0917 555 0133');
   await page.getByRole('button', { name: 'Save settings' }).click();
   const manila = new Date(Date.parse((await (await page.request.post(`${STAFF}/__test/clock`, { form: { ms: '0' } })).text())) + 8 * 3600_000);
   const hm = (d: Date): string => d.toISOString().slice(11, 16);
@@ -233,7 +233,7 @@ test('after a power cut everything made through the UI is still there, recording
   await page.goto(`${STAFF}/console/clips`);
   expect(Number(await page.locator('[data-total]').textContent())).toBeGreaterThanOrEqual(clipsBefore);
   await page.goto(`${STAFF}/console/settings`);
-  await expect(page.getByLabel('Upload cap for sending videos (Mbit/s)')).toHaveValue('33');
+  await expect(page.getByLabel(/Venue contact/)).toHaveValue('Front desk 0917 555 0133');
   await page.goto(`${STAFF}/console/footage`);
   await expect(page.locator('tr[data-hold]').first()).toContainText('Court 6');
   const ken = await (await browser.newContext({ ignoreHTTPSErrors: true })).newPage();

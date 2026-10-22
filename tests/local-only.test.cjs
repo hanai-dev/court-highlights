@@ -63,7 +63,7 @@ const AREAS = {
   // The end-to-end suite: no stand-ins for the online service, no mail checks.
   'e2e suite': () =>
     hits(files('tests/e2e/specs', (p) => p.endsWith('.ts')).concat(files('tests/e2e', (p) => /global-teardown\.ts$|playwright\.config\.ts$/.test(p))),
-      /cloudUp|CLOUD\b|sentMail|clearMail|registerBox|connectBox|createAdmin|fleetSignIn|cloudSql|18090|18025|e-?mail|fleet/i),
+      /cloudUp|CLOUD\b|sentMail|clearMail|registerBox|connectBox|createAdmin|fleetSignIn|cloudSql|18090|18025|e-?mail|fleet|upload cap|cap-error/i),
   // What people read: the product documents describe a venue-network system.
   documents: () =>
     hits(['README.md', 'RUNBOOK.md', 'RELEASE_NOTES.md', 'DEBT.md', 'DESIGN.md', 'evals-summary.md', 'docs/user-manual.md', 'docs/HLD.md', 'docs/charter.md']
