@@ -187,12 +187,16 @@ test('footage: find, hold against the 4-hour overwrite, export, record missing f
   await advanceClock(page.request, 4 * 3600_000 + 5 * 60_000);
   await page.waitForTimeout(70_000); // the overwrite runs every minute
   const left = boxExec('ls /data/footage/court-1/').trim().split('\n');
-  // The form takes whole minutes, so the hold starts at the minute boundary at or before now − 3 min.
+  // The form takes whole minutes, so the hold starts at the minute boundary at or before now − 3 min. A segment runs
+  // until the next one starts (taps split segments, so they are not all 10 s); the hold keeps every segment it
+  // overlaps. Segments ending within a second of the hold's start are left out of both checks.
   const heldStart = Math.floor((now.getTime() - 3 * 60_000) / 60_000) * 60_000;
-  const protectedFiles = held.filter((f) => Number(f.replace('.mp4', '')) >= heldStart - 10_000);
+  const starts = held.map((f) => Number(f.replace('.mp4', ''))).sort((a, b) => a - b);
+  const endOf = (i: number): number => starts[i + 1] ?? Number.MAX_SAFE_INTEGER;
+  const protectedFiles = starts.filter((_, i) => endOf(i) > heldStart + 1_000).map((s) => `${s}.mp4`);
   expect(protectedFiles.length).toBeGreaterThan(0);
   for (const f of protectedFiles) expect(left, `${f} is held`).toContain(f);
-  const unprotected = held.filter((f) => Number(f.replace('.mp4', '')) < heldStart - 15_000);
+  const unprotected = starts.filter((_, i) => endOf(i) < heldStart - 1_000).map((s) => `${s}.mp4`);
   for (const f of unprotected) expect(left, `${f} is not held`).not.toContain(f);
 
   await page.goto(`${STAFF}/console/footage`);
