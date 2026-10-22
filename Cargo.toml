@@ -1,8 +1,6 @@
 [workspace]
 resolver = "3"
 members = ["crates/core", "crates/box"]
-# The online service is its own workspace (own lockfile): sqlx and rusqlite pin different SQLite libraries.
-exclude = ["crates/cloud"]
 
 [workspace.package]
 edition = "2024"

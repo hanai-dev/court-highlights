@@ -47,7 +47,8 @@ const AREAS = {
       .filter((p) => fs.existsSync(path.join(ROOT, p)))
       .map((p) => `${p}: exists`),
     ...hits(
-      [path.join(ROOT, 'docker/compose.test.yaml'), path.join(ROOT, '.github/workflows/ci.yml'), ...files('tools', (p) => /\.(cjs|sh|js)$/.test(p))],
+      [path.join(ROOT, 'Cargo.toml'), path.join(ROOT, 'docker/compose.test.yaml'), path.join(ROOT, '.github/workflows/ci.yml'),
+        ...files('install', () => true), ...files('tools', (p) => /\.(cjs|sh|js)$/.test(p))],
       /ch-cloud|crates\/cloud|cloud\.Dockerfile|cloud-image|^\s*(cloud|db|s3|ses):|seaweedfs|fake-ses|CH_SES|CH_S3|DATABASE_URL|postgres|CH_CLOUD_URL|debian 13/i,
     ),
   ],
@@ -65,7 +66,7 @@ const AREAS = {
       /cloudUp|CLOUD\b|sentMail|clearMail|registerBox|connectBox|createAdmin|fleetSignIn|cloudSql|18090|18025|e-?mail|fleet/i),
   // What people read: the product documents describe a venue-network system.
   documents: () =>
-    hits(['README.md', 'RUNBOOK.md', 'RELEASE_NOTES.md', 'DEBT.md', 'DESIGN.md', 'evals-summary.md', 'docs/user-manual.md', 'docs/HLD.md']
+    hits(['README.md', 'RUNBOOK.md', 'RELEASE_NOTES.md', 'DEBT.md', 'DESIGN.md', 'evals-summary.md', 'docs/user-manual.md', 'docs/HLD.md', 'docs/charter.md']
       .map((p) => path.join(ROOT, p)).filter((p) => fs.existsSync(p)),
       /online service|fleet|e-?mail|take-home|\bSES\b|\bR2\b|DigitalOcean|PostgreSQL|check-?in|upload cap|box key/i),
 };
