@@ -206,7 +206,10 @@ test('footage: find, hold against the 4-hour overwrite, export, record missing f
   expect(probe).toMatch(/^video/m);
   expect(probe).not.toContain('audio');
 
-  await page.goto(`${STAFF}/console/footage?court=1&date=${day}&from=00:00&to=00:30`);
+  // Yesterday: the box started minutes ago and its clock only moves forward, so nothing was ever recorded then. (Today's
+  // 00:00–00:30 held this test's own footage when it ran just after midnight.)
+  const yesterday = new Date(manila(now).getTime() - 86_400_000).toISOString().slice(0, 10);
+  await page.goto(`${STAFF}/console/footage?court=1&date=${yesterday}&from=00:00&to=00:30`);
   await expect(page.getByRole('heading', { name: 'No footage for that time' })).toBeVisible();
   await page.getByRole('button', { name: 'Record that it no longer exists' }).click();
   await expect(page.getByRole('status')).toHaveText('Recorded in the activity log.');
