@@ -1,0 +1,35 @@
+# Monthly, grouped dependency updates; each pull request runs the full CI, e2e included. Commit prefixes feed
+# semantic-release: crates the box ships are `fix` (a patch release), everything else releases nothing.
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      cargo:
+        update-types: [minor, patch]
+    commit-message: { prefix: fix, prefix-development: chore, include: scope }
+
+  - package-ecosystem: npm
+    directory: /tests/e2e
+    schedule: { interval: monthly }
+    groups:
+      e2e:
+        patterns: ["*"]
+    commit-message: { prefix: chore, include: scope }
+
+  - package-ecosystem: npm
+    directory: /tools/release
+    schedule: { interval: monthly }
+    groups:
+      release-tooling:
+        patterns: ["*"]
+    commit-message: { prefix: chore, include: scope }
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message: { prefix: ci, include: scope }
