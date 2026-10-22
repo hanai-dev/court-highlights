@@ -41,7 +41,7 @@ jobs:
     outputs:
       image-cache: ${{ steps.day.outputs.scope }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # gitleaks scans the whole history
       # The image comes from the Actions cache, keyed by day: the first run of a day builds it fresh, so the OS scan
@@ -77,7 +77,7 @@ jobs:
           node tools/licence-check.cjs box-metadata.json
       - name: Keep the test build for e2e (the last build above, with test hooks; outside the checkout the scans read)
         run: docker run --rm -v ch-target:/t alpine:3.22 cat /t/debug/ch-box > "$RUNNER_TEMP/ch-box"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: ch-box-test-hooks
           path: ${{ runner.temp }}/ch-box
@@ -110,7 +110,7 @@ jobs:
     # No clean-up step: the runner disk is 145 GB with about 100 GB free, and a shard holds only the image, the browsers
     # and its own specs' footage.
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4
       - name: Build image (from the checks job's cache)
         uses: docker/build-push-action@v7
@@ -120,7 +120,7 @@ jobs:
           tags: ch-dev:0
           load: true
           cache-from: type=gha,scope=${{ needs.checks.outputs.image-cache }}
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           name: ch-box-test-hooks
           path: ${{ runner.temp }}
@@ -128,7 +128,7 @@ jobs:
         run: |
           docker volume create ch-target && docker volume create ch-cargo-registry
           docker run --rm -v ch-target:/t -v "$RUNNER_TEMP:/in" alpine:3.22 install -D -m 755 /in/ch-box /t/debug/ch-box
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       # Playwright's system packages (most are WebKit's, for the iPhone check in clips.spec.ts) come from the Ubuntu
@@ -157,7 +157,7 @@ jobs:
           cam-pass-1 | tee tests/e2e/log-pii-scan.txt
       - name: Keep the evidence
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-evidence-${{ matrix.shard }}
           path: |
