@@ -234,7 +234,9 @@ test('the clip library is a real table with a caption and scoped headers, pages 
   const del = page.getByRole('link', { name: /^Delete / }).first();
   const name = (await del.getAttribute('aria-label'))!.replace(/^Delete /, '');
   await del.click();
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(name);
+  // The confirmation names the clip the link named: "Court 1 · 22 Oct, 12:36 pm · Clip is removed …".
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/^Delete this [a-z ]+\?$/);
+  expect((await page.getByRole('main').textContent())!.replace(/ · /g, ' ')).toContain(name);
   await page.getByRole('link', { name: 'Keep it' }).click();
 });
 
