@@ -167,7 +167,7 @@ CREATE INDEX recipient_clip ON recipient (clip_id);
     r#"
 CREATE TABLE box_config (name TEXT PRIMARY KEY, value TEXT NOT NULL);
 ALTER TABLE clip ADD COLUMN cloud_id INTEGER; -- local-only: unused since the online service went
-ALTER TABLE clip ADD COLUMN uploaded_at TEXT;
+ALTER TABLE clip ADD COLUMN uploaded_at TEXT; -- local-only: unused since the online service went
 CREATE TABLE withdraw (cloud_id INTEGER PRIMARY KEY); -- local-only: emptied by the venue-network-only migration below
 "#,
     r#"

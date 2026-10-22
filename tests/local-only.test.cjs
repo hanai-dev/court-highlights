@@ -55,7 +55,7 @@ const AREAS = {
   // The box calling out: check-ins, sending, the box key, the upload cap, the online switch, the send order.
   'box uplink': () =>
     hits([...files('crates/box/src', code), ...files('crates/box/templates', code), ...files('crates/core', code)],
-      /uplink|CH_CLOUD_URL|CH_CHECKIN|cloud|check-?in|online_on|online features|upload[_ ]cap|cap_kbps|send_order|Outgoing|\/api\/v1\/|withdraw/i),
+      /uplink|CH_CLOUD_URL|CH_CHECKIN|cloud|check-?in|online_on|online features|upload[_ ]cap|cap_kbps|send_order|Outgoing|\/api\/v1\/|withdraw|never sent|uploaded_at/i),
   // Player email: the address list, "Email me this", the email-sized copies.
   'player email': () => hits([...files('crates/box', code), ...files('crates/core', code)], /e-?mail/i),
   // The fleet console's reach into the box: fleet updates, leaving the fleet.

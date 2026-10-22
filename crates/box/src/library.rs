@@ -368,7 +368,7 @@ pub async fn delete_confirm(State(app): State<AppState>, staff: Staff, Path(id):
     html(ConfirmPage {
         shell: shell(&app.db, &staff, "clips")?,
         title: format!("Delete this {}?", kind_label(&it.kind).to_lowercase()),
-        consequence: format!("{} is removed from the court page and the library and is never sent. It can't be recovered.", it.label()),
+        consequence: format!("{} is removed from the court page and the library. It can't be recovered.", it.label()),
         action: format!("/console/clips/{id}/delete"),
         button: "Delete".into(),
         back: "/console/clips".into(),
@@ -496,7 +496,7 @@ pub async fn peer_delete_confirm(State(app): State<AppState>, staff: Staff, Path
     html(ConfirmPage {
         shell: shell(&app.db, &staff, "clips")?,
         title: format!("Delete this {}?", kind_label(&m.kind).to_lowercase()),
-        consequence: format!("{} is removed from the court page and the library and is never sent. It can't be recovered.", m.label),
+        consequence: format!("{} is removed from the court page and the library. It can't be recovered.", m.label),
         action: format!("/console/clips/peer/{name}/{id}/delete"),
         button: "Delete".into(),
         back: "/console/clips".into(),
