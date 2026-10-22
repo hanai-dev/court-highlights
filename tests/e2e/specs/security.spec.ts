@@ -43,10 +43,11 @@ test('script and SQL payloads in court, staff, settings and email fields render 
   const phone = await (await browser.newContext()).newPage();
   await phone.goto(`${PLAYER}/c/${code}`);
   await phone.getByRole('button', { name: 'Start game' }).click();
-  await phone.getByLabel('Email address').fill('<script>__pwned=1</script>@example.com');
-  await phone.getByRole('button', { name: 'Add' }).click();
-  await expect(phone.getByRole('alert')).toBeVisible();
-  await phone.getByLabel('Email address').fill(`o'neil');DROP-TABLE-clip;--@example.com`);
+  // The browser's own check stops markup in an address; sent past the browser, the box refuses it too.
+  await phone.request.post(`${PLAYER}/c/${code}/emails`, { form: { email: '<script>__pwned=1</script>@example.com' }, headers: { Origin: PLAYER } });
+  await phone.goto(`${PLAYER}/c/${code}`);
+  await expect(phone.locator('.chip')).toHaveCount(0);
+  await phone.getByLabel('Email address').fill(`o'neil'--drop@example.com`);
   await phone.getByRole('button', { name: 'Add' }).click();
   await expect(phone.locator('.chip').filter({ hasText: 'o••••@' })).toBeVisible();
   expect(await phone.evaluate(() => (window as unknown as { __pwned?: number }).__pwned)).toBeUndefined();

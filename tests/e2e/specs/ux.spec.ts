@@ -154,7 +154,8 @@ test('body text and the Clip that label reach 7:1; every court page action is at
   await phone.goto(`${PLAYER}/c/${code}`);
   expect(await contrast(phone.locator('main p').first()), 'body text').toBeGreaterThanOrEqual(7);
   expect(await contrast(phone.getByRole('button', { name: 'Clip that' })), 'Clip that label').toBeGreaterThanOrEqual(7);
-  const targets = phone.locator('main button:visible, main a.btn:visible, main label.check:visible, main input:not([type=hidden]):visible');
+  // A checkbox's target is its whole label, so inputs inside labels are measured through the label.
+  const targets = phone.locator('main button:visible, main a.btn:visible, main label.check:visible, main input:not([type=hidden]):not(label input):visible');
   expect(await targets.count()).toBeGreaterThan(2);
   for (const t of await targets.all()) {
     const box = (await t.boundingBox())!;
