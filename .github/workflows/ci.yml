@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # gitleaks scans the whole history
       - name: Build image (Ubuntu 26.04, Rust 1.99, GStreamer)
@@ -79,13 +79,13 @@ jobs:
     steps:
       - name: Make room (recorded footage, three boxes, the build)
         run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h /
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Build image and binaries
         run: |
           docker build -t ch-dev:0 -f docker/dev.Dockerfile docker
           docker volume create ch-target && docker volume create ch-cargo-registry
           docker compose -p ch-test -f docker/compose.test.yaml --profile build run --rm builder
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - name: Playwright
@@ -104,7 +104,7 @@ jobs:
           cam-pass-1 | tee tests/e2e/log-pii-scan.txt
       - name: Keep the evidence
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-evidence
           path: |
