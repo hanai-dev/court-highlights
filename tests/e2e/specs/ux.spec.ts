@@ -43,6 +43,12 @@ async function tabTo(page: Page, target: Locator, max = 120): Promise<void> {
   throw new Error(`not reachable by Tab: ${target}`);
 }
 
+/** Types "HH:MM" into the focused time field segment by segment, as a keyboard user does (en-US: hh, mm, AM/PM). */
+async function typeTime(page: Page, hhmm: string): Promise<void> {
+  const [h, m] = hhmm.split(':').map(Number);
+  await page.keyboard.type(`${String(h % 12 || 12).padStart(2, '0')}${String(m).padStart(2, '0')}${h < 12 ? 'A' : 'P'}`);
+}
+
 /** WCAG contrast ratio between an element's text colour and the first opaque background behind it. */
 async function contrast(el: Locator): Promise<number> {
   return el.evaluate((node) => {
@@ -190,11 +196,20 @@ test('SC-7 by keyboard alone: find footage, hold it, export it (UX-MOTION-KEYBOA
   await tabTo(page, page.getByRole('link', { name: 'Footage', exact: true }));
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(`${STAFF}/console/footage`);
-  // The court is required: choose it from the keyboard (the arrow key picks the first court after "Choose a court").
+  // Court and time window are required, as when a parent asks about a moment (SC-7): enter them from the keyboard.
+  // The arrow key picks the first court after "Choose a court"; the window is the last few minutes of box time.
   const court = page.getByLabel('Court', { exact: true });
   await tabTo(page, court);
   await page.keyboard.press('ArrowDown');
   await expect(court).not.toHaveValue('');
+  const now = Date.parse(await (await page.request.post(`${STAFF}/__test/clock`, { form: { ms: '0' } })).text());
+  const hm = (ms: number): string => new Date(ms + 8 * 3600_000).toISOString().slice(11, 16); // Manila
+  for (const [label, at] of [['From', now - 3 * 60_000], ['To', now + 60_000]] as const) {
+    const field = page.getByLabel(label, { exact: true });
+    await tabTo(page, field);
+    await typeTime(page, hm(at));
+    await expect(field).toHaveValue(hm(at));
+  }
   await tabTo(page, page.getByRole('button', { name: 'Find footage' }));
   await page.keyboard.press('Enter');
   await tabTo(page, page.getByRole('button', { name: 'Hold footage' }));
