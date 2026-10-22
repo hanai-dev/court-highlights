@@ -65,21 +65,16 @@ gives the installer a fleet console.
 
 ## How it works
 
-<table>
-  <tr>
-    <td width="45%" valign="middle">
-      <img src="docs/readme/court.svg" alt="Line drawing of a pickleball court with the camera mounted high at the centre and the court sign on the net post">
-    </td>
-    <td valign="middle">
-      <ol>
-        <li><b>Scan the court code</b> on the sign at the net post, on the venue Wi-Fi.</li>
-        <li><b>Tap Clip that</b> right after a good point. Tap again within 5 s to make it longer.</li>
-        <li><b>Download</b> the clip, wide for watching or vertical for stories and reels.</li>
-      </ol>
-      Clips stay on the court page for 2 hours. Staff can keep a clip for up to a year.
-    </td>
-  </tr>
-</table>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/court-figure-dark.svg">
+  <img src="docs/readme/court-figure-light.svg" width="100%" alt="Isometric drawing of a 1:50 model pickleball court with its camera high on a pole behind one baseline and the court sign on the net post. A network cable runs to the court box beside it, and a phone in front shows the court page with the yellow Clip that button, a clip two thirds saved.">
+</picture>
+
+1. **Scan the court code** on the sign at the net post, on the venue Wi-Fi.
+2. **Tap Clip that** right after a good point. Tap again within 5 s to make it longer.
+3. **Download** the clip, wide for watching or vertical for stories and reels.
+
+Clips stay on the court page for 2 hours. Staff can keep a clip for up to a year.
 
 ```mermaid
 flowchart LR
