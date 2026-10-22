@@ -131,10 +131,20 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+      # Playwright's system packages (most are WebKit's, for the iPhone check in clips.spec.ts) come from the Ubuntu
+      # mirror, which has crawled at 86 kB/s (117 MB in 22 minutes). apt downloads them into a folder the Actions cache
+      # keeps, keyed by the Playwright version; packages a newer runner image adds still come from the mirror.
+      - name: Playwright system packages (cache)
+        uses: actions/cache@v6
+        with:
+          path: ~/playwright-debs/*.deb
+          key: playwright-debs-ubuntu-24.04-${{ hashFiles('tests/e2e/package-lock.json') }}
       - name: Playwright
         working-directory: tests/e2e
         run: |
           npm ci
+          mkdir -p ~/playwright-debs/partial
+          echo "Dir::Cache::Archives \"$HOME/playwright-debs/\";" | sudo tee /etc/apt/apt.conf.d/99playwright-debs
           npx playwright install --with-deps chromium webkit
           set -o pipefail
           npx playwright test --shard=${{ matrix.shard }}/4 2>&1 | tee test-results-e2e.txt
@@ -156,3 +166,14 @@ jobs:
             tests/e2e/log-pii-scan.txt
             tests/e2e/test-results
           retention-days: 30
+
+  e2e-gate:
+    # The one check called "e2e" that the main ruleset requires, whatever the shard count. Skipped where the shards
+    # are (a push to main); red if any shard failed or was cancelled.
+    name: e2e
+    needs: e2e
+    if: ${{ !cancelled() && needs.e2e.result != 'skipped' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - run: test "${{ needs.e2e.result }}" = success
