@@ -29,6 +29,12 @@ test('first run: the wizard shows field-level errors with a focused summary, the
   await summary.getByRole('link', { name: "Enter the venue's name." }).click();
   await expect(page).toHaveURL(/#venue$/);
 
+  // Pasting into the password field works (a password manager or a pasted password is fine).
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: STAFF });
+  await page.evaluate(() => navigator.clipboard.writeText('pasted-password-123'));
+  await page.getByLabel('Owner password').focus();
+  await page.keyboard.press('ControlOrMeta+V');
+  await expect(page.getByLabel('Owner password')).toHaveValue('pasted-password-123');
   // The viewport never locks zoom, and password managers can fill the new password.
   expect(await page.locator('meta[name="viewport"]').getAttribute('content')).not.toMatch(/maximum-scale|user-scalable=no/);
   await expect(page.getByLabel('Owner password')).toHaveAttribute('autocomplete', 'new-password');
