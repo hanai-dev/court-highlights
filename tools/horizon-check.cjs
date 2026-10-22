@@ -5,9 +5,7 @@ const HORIZON = '2030-06-30';
 
 const CHECKED = [
   { what: 'Box OS: Ubuntu 26.04 LTS', product: 'ubuntu', cycle: '26.04', field: 'eol' },
-  { what: 'Online database: PostgreSQL 18', product: 'postgresql', cycle: '18', field: 'eol' },
   // Free LTS ends exactly on the horizon (paid extended support runs to 2035); rebase the image before then.
-  { what: 'Online service image base: Debian 13 (distroless)', product: 'debian', cycle: '13', field: 'eol' },
 ];
 
 const COVERED = [

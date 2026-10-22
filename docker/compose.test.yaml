@@ -25,7 +25,7 @@ services:
     working_dir: /work
     profiles: ["build"]
     # The online service is its own workspace; both build into the shared target volume.
-    command: ["sh", "-c", "cargo build -p ch-box --features test-hooks && cargo build --manifest-path crates/cloud/Cargo.toml --features test-hooks"]
+    command: ["cargo", "build", "-p", "ch-box", "--features", "test-hooks"]
     environment: { CARGO_TARGET_DIR: /work/target }
     volumes:
       - ../:/work
@@ -64,54 +64,9 @@ services:
     environment: { ONVIF_HOST: onvif-cam, ONVIF_STREAM: "rtsp://rtsp:8554/court3" }
     volumes: ["../:/work"]
 
-  # Online service and its test stand-ins (test-only credentials, not secrets): PostgreSQL 18, an S3-compatible
-  # store (SeaweedFS, Apache-2.0) in place of R2, and a fake SES that keeps sent mail in memory.
-  db:
-    image: postgres:18.0-alpine3.22
-    environment: { POSTGRES_PASSWORD: ch-test-only, POSTGRES_DB: ch }
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d ch"]
-      interval: 2s
-      retries: 30
-  s3:
-    image: chrislusf/seaweedfs:3.97
-    command: ["server", "-dir=/data", "-ip.bind=0.0.0.0", "-master.volumeSizeLimitMB=128", "-s3", "-s3.port=8333", "-s3.config=/work/tools/test/s3.json"]
-    volumes: ["../:/work"]
-    ports: ["18333:8333"]
-  ses:
-    image: node:24.11.0-alpine3.22
-    command: ["node", "/work/tests/fixtures/fake-ses.cjs"]
-    volumes: ["../:/work"]
-    ports: ["18025:8025"]
-  cloud:
-    image: ch-dev:0
-    working_dir: /work
-    command: ["sh", "-c", "until ./target/debug/ch-cloud; do sleep 2; done"]
-    depends_on:
-      db: { condition: service_healthy }
-    environment:
-      DATABASE_URL: postgres://postgres:ch-test-only@db/ch
-      CH_PUBLIC_URL: http://localhost:18090
-      CH_S3_ENDPOINT: http://s3:8333
-      CH_S3_PUBLIC_ENDPOINT: http://localhost:18333
-      CH_S3_BUCKET: clips
-      CH_S3_KEY: ch-test-access
-      CH_S3_SECRET: ch-test-only-not-a-secret
-      CH_SES_ENDPOINT: http://ses:8025
-      CH_SES_KEY: ch-test-access
-      CH_SES_SECRET: ch-test-only-not-a-secret
-      CH_MAIL_FROM: videos@test.invalid
-      CH_EMAIL_PEPPER: ch-test-only-pepper-not-a-secret-0123456789
-      CH_SECRET_KEY: "0000000000000000000000000000000000000000000000000000000000000001"
-      CH_READY_TOKEN: ch-test-only-ready-token
-    volumes:
-      - ../:/work
-      - ch-target:/work/target
-    ports: ["18090:8080"]
-
   box-a:
     <<: *box
-    environment: { CH_DATA_DIR: /data, CH_HTTP_ADDR: "0.0.0.0:80", CH_HTTPS_ADDR: "0.0.0.0:443", CH_BOX_NAME: box-a, CH_PLAYER_URL: "http://localhost:18080", CH_SUPPORT_PHONE: "0917 555 0100", CH_CLOUD_URL: "http://cloud:8080", CH_CHECKIN_SECS: "3", CH_SLOTS_DIR: /opt/court-highlights, CH_SEED_BINARY: /work/target/debug/ch-box, CH_RELEASE_KEY: "c802698987acc0a5003330bba30226936d12bbe609c99874ed5ed75a630da6bd", CH_UPDATE_GRACE_SECS: "45" }
+    environment: { CH_DATA_DIR: /data, CH_HTTP_ADDR: "0.0.0.0:80", CH_HTTPS_ADDR: "0.0.0.0:443", CH_BOX_NAME: box-a, CH_PLAYER_URL: "http://localhost:18080", CH_SUPPORT_PHONE: "0917 555 0100", CH_SLOTS_DIR: /opt/court-highlights, CH_SEED_BINARY: /work/target/debug/ch-box, CH_RELEASE_KEY: "c802698987acc0a5003330bba30226936d12bbe609c99874ed5ed75a630da6bd", CH_UPDATE_GRACE_SECS: "45" }
     volumes:
       - ../:/work
       - ch-target:/work/target
