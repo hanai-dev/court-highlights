@@ -3,12 +3,7 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    "@semantic-release/changelog",
     ["@semantic-release/exec", { "prepareCmd": "sh tools/release/build.sh ${nextRelease.version}" }],
-    [
-      "@semantic-release/git",
-      { "assets": ["CHANGELOG.md", "crates/box/Cargo.toml", "crates/core/Cargo.toml", "Cargo.lock"] }
-    ],
     [
       "@semantic-release/github",
       {

@@ -1,7 +1,7 @@
 #!/bin/sh
 # semantic-release prepare step (.releaserc.json): stamp the version, then build the box executable the release
 # ships. Nothing is tagged or published if this fails. The executable is unsigned: the owner signs it offline with
-# `ch-box make-update` (RUNBOOK section 5), so the release key never reaches CI.
+# `ch-box make-update` (RUNBOOK section 4), so the release key never reaches CI.
 # Usage: sh tools/release/build.sh <version>   (needs docker and the ch-dev:0 build image)
 set -eu
 V=$1

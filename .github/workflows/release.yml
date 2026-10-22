@@ -1,7 +1,8 @@
 # Cuts a release when the owner starts it (Actions → release → Run workflow): the full CI, e2e included, on this
 # commit; then semantic-release takes the version from the Conventional Commits since the last tag, stamps it into
-# the crates, builds the box executable (tools/release/build.sh), commits CHANGELOG.md and the versions, tags, and
-# publishes the GitHub release with the executable. The owner signs it into an update file offline (RUNBOOK §5).
+# the crates in this run's checkout only, builds the box executable (tools/release/build.sh), tags the commit, and
+# publishes the GitHub release (notes + executable). Nothing is committed back: main only takes PRs. The owner signs
+# the executable into an update file offline (RUNBOOK §4).
 name: release
 
 on:
