@@ -1,6 +1,7 @@
 # CI on the owner-laptop profile (DEV-ENVIRONMENTS): the same build image, compose stack and Playwright suite as a
 # developer machine, with replayed footage as RTSP cameras. Nothing here reaches a live venue or a deploy target.
-# Fast checks run on every push; the full e2e suite (about an hour) on pull requests and on demand.
+# Fast checks run on every push; the full e2e suite (about an hour) on pull requests, on demand, and before every
+# release (release.yml calls this workflow).
 name: ci
 
 on:
@@ -13,10 +14,18 @@ on:
         description: Run the full e2e suite (about an hour)
         type: boolean
         default: true
+  # From release.yml, which is started by hand: github.event_name is the caller's workflow_dispatch, so the e2e
+  # job's condition below holds with this input too.
+  workflow_call:
+    inputs:
+      e2e:
+        type: boolean
+        default: false
 
 concurrency:
-  # By trigger as well: a push never cancels an e2e run started by hand.
-  group: ci-${{ github.ref }}-${{ github.event_name }}
+  # By trigger as well: a push never cancels an e2e run started by hand. Called from release.yml, github.workflow is
+  # "release", so a release and a hand-started run never cancel each other either.
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 permissions:
@@ -34,7 +43,7 @@ jobs:
         run: docker build -t ch-dev:0 -f docker/dev.Dockerfile docker
       - name: Cache volumes
         run: docker volume create ch-target && docker volume create ch-cargo-registry
-      - name: Format, lint, unit tests, build
+      - name: Format, lint, unit tests, build (also without test hooks, as releases are built)
         run: >-
           docker compose -p ch-test -f docker/compose.test.yaml --profile build run --rm builder sh -c
           "cargo fmt --all --check
@@ -42,6 +51,7 @@ jobs:
           && cargo clippy -p ch-box -p ch-core --features test-hooks -- -D warnings
           && cargo clippy --manifest-path crates/cloud/Cargo.toml --features test-hooks -- -D warnings
           && cargo test -p ch-box -p ch-core --features test-hooks
+          && cargo build -p ch-box
           && cargo build -p ch-box --features test-hooks
           && cargo build --manifest-path crates/cloud/Cargo.toml --features test-hooks
           && cargo metadata --format-version 1 --locked > target/box-metadata.json
