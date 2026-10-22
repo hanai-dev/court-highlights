@@ -51,7 +51,8 @@ Environment of the box's service unit:
 | Task | How | |
 |---|---|---|
 | Make the release key, once | `ch-box release-key owner-release.pk8` prints `CH_RELEASE_KEY=…` for the install image. Keep the `.pk8` file offline. | verified |
-| Make an update | `ch-box make-update <version> target/release/ch-box owner-release.pk8 ch-box-<version>.chupdate` | verified |
+| Cut a release | GitHub → Actions → **release** → Run workflow. It runs the full CI (e2e included) on `main`, then semantic-release picks the version from the Conventional Commit messages since the last tag (`fix:` → patch, `feat:` → minor, `feat!:` or a `BREAKING CHANGE:` footer → major), updates `CHANGELOG.md` and the crate versions, tags `v<version>` and publishes a GitHub release with `ch-box-<version>-linux-x86_64` and its `.sha256`. Preview the next version locally: `cd tools/release && npm ci && cd ../.. && GITHUB_TOKEN=$(gh auth token) tools/release/node_modules/.bin/semantic-release --dry-run --no-ci`. Never edit versions or tags by hand. The `v0.0.0` tag on the first commit is the starting point, not a release: it makes the first release 0.1.0 (semantic-release otherwise starts at 1.0.0); leave it in place. | not yet run |
+| Make an update | Download the release's executable, check it (`sha256sum -c ch-box-<version>-linux-x86_64.sha256`), then sign it offline: `ch-box make-update <version> ch-box-<version>-linux-x86_64 owner-release.pk8 ch-box-<version>.chupdate`. Each box installs the `.chupdate` file from a USB stick (below). | verified |
 | Install from a USB stick | Staff console → Settings → **Software update…** → the file → **Install update**, on each box of the venue | verified |
 | A failed update | The launcher returns the box to its previous version when the new one fails to start 3 times or isn't healthy (every court with a camera recording) within 10 minutes. The console shows **Update rolled back**. | verified |
 
