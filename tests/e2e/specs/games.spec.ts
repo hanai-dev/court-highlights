@@ -171,7 +171,8 @@ test('a game stops by itself after 2 hours, or at closing time when that comes f
   }, { timeout: 20_000 }).toBe(1);
   const [h, m] = since.replace(/ [ap]m/, '').split(':').map(Number);
   const pm = since.endsWith('pm');
-  const end = new Date(Date.UTC(2000, 0, 1, (h % 12) + (pm ? 12 : 0) + 2, m));
+  // 2 h after the start or the 11:59 pm closing time (first test), whichever comes first: a late start stops at closing.
+  const end = new Date(Math.min(Date.UTC(2000, 0, 1, (h % 12) + (pm ? 12 : 0) + 2, m), Date.UTC(2000, 0, 1, 23, 59)));
   const endLabel = `${((end.getUTCHours() + 11) % 12) + 1}:${String(end.getUTCMinutes()).padStart(2, '0')} ${end.getUTCHours() >= 12 ? 'pm' : 'am'}`;
   await expect(phone.locator('[data-last-game] h3').first()).toHaveText(`Last game, ${since} – ${endLabel}`);
 
