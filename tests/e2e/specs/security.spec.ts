@@ -43,7 +43,8 @@ test('script and SQL payloads in court, staff and settings fields render as text
     [`${STAFF}/console/staff`, 'Mallory'],
     [`${STAFF}/console/settings`, 'Venue'],
     [`${STAFF}/console/signs`, 'Court'],
-    [`${STAFF}/console/log`, 'Mallory'],
+    // The log names a staff member by username; the payload it carries as typed is the venue name.
+    [`${STAFF}/console/log`, 'Venue'],
     [`${PLAYER}/c/${code}`, 'Venue'],
     [`${PLAYER}/privacy`, 'Venue'],
   ] as const) {
