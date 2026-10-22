@@ -62,7 +62,7 @@ test('an update from a USB stick installs, proves itself and stays; a damaged fi
   await boxBack();
   await expect.poll(async () => {
     await updatePage(page);
-    return (await page.locator('[data-update-status]').textContent().catch(() => '')) ?? '';
+    return (await page.locator('[data-update-status]').textContent({ timeout: 1000 }).catch(() => '')) ?? '';
   }, { timeout: 90_000, intervals: [3000] }).toBe('Updated to 0.1.1-test.');
   await expect(page.locator('[data-box-version]')).toHaveText('0.1.1-test');
   await waitCourtStatus(page, 'Court 1', /^Recording since/);
@@ -79,7 +79,7 @@ test('a failing update from a USB stick returns the box to its previous version 
   await boxBack();
   await expect.poll(async () => {
     await updatePage(page);
-    return (await page.locator('[data-update-status]').textContent().catch(() => '')) ?? '';
+    return (await page.locator('[data-update-status]').textContent({ timeout: 1000 }).catch(() => '')) ?? '';
   }, { timeout: 120_000, intervals: [3000] }).toBe('Update rolled back: version 0.1.2-crash did not start.');
   expect(Date.now() - installed, 'back on the previous version within 10 minutes').toBeLessThan(10 * 60_000);
   await expect(page.locator('[data-box-version]')).toHaveText('0.1.1-test');
@@ -113,7 +113,7 @@ test('a failing update from the fleet goes to one box of a venue at a time; it r
   // box-a checks in every 3 s, takes the offer and starts installing; meanwhile box-z is not offered it.
   await expect.poll(async () => {
     await fleet.goto(`${CLOUD}/fleet/updates`);
-    return (await fleet.locator('tr[data-box-update="box-a"]').first().textContent()) ?? '';
+    return (await fleet.locator('tr[data-box-update="box-a"]').first().textContent({ timeout: 1000 }).catch(() => '')) ?? '';
   }, { timeout: 60_000, intervals: [2000] }).toContain('Installing');
   expect((await otherCheckin()).update, 'one box of a venue at a time').toBeUndefined();
 
@@ -122,12 +122,12 @@ test('a failing update from the fleet goes to one box of a venue at a time; it r
   await boxBack();
   await expect.poll(async () => {
     await updatePage(page);
-    return (await page.locator('[data-update-status]').textContent().catch(() => '')) ?? '';
+    return (await page.locator('[data-update-status]').textContent({ timeout: 1000 }).catch(() => '')) ?? '';
   }, { timeout: 240_000, intervals: [5000] }).toMatch(/^Update rolled back: version 0\.1\.3-hang not healthy within \d+ s\.$/);
   await expect(page.locator('[data-box-version]')).toHaveText('0.1.1-test');
   await expect.poll(async () => {
     await fleet.goto(`${CLOUD}/fleet/updates`);
-    return (await fleet.locator('tr[data-box-update="box-a"]').first().textContent()) ?? '';
+    return (await fleet.locator('tr[data-box-update="box-a"]').first().textContent({ timeout: 1000 }).catch(() => '')) ?? '';
   }, { timeout: 60_000, intervals: [3000] }).toContain('Update rolled back');
   expect((await otherCheckin()).update, "the venue's other boxes are not updated").toBeUndefined();
   await fleet.goto(`${CLOUD}/fleet/log`);

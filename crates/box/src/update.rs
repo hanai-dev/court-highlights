@@ -180,7 +180,9 @@ pub fn on_start(app: &AppState) -> Result<(), AppError> {
                 if healthy(&app).unwrap_or(false) {
                     let version = current_version();
                     if std::fs::remove_dir_all(&pending).is_ok() {
-                        let _ = record(&app, "updated", &version, "", "updated");
+                        if let Err(e) = record(&app, "updated", &version, "", "updated") {
+                            tracing::error!(version, error = %e, "update kept but not recorded");
+                        }
                         tracing::info!(version, "update kept: the box is healthy");
                     }
                     return;

@@ -279,13 +279,14 @@ test('library: 50 per page, filters with Clear, no-results state, keep, posting 
   const [posted] = await Promise.all([page.waitForEvent('download'), page.getByRole('link', { name: 'Download for posting anyway' }).click()]);
   expect(posted.suggestedFilename()).toMatch(/\.mp4$/);
 
+  const foldersBefore = Number(boxExec(`ls /data/clips/ | wc -l`).trim());
   await page.goto(`${STAFF}/console/clips/${id}/delete`);
   await expect(page.getByRole('heading', { name: 'Delete this clip?' })).toBeVisible();
   await expect(page.getByText(/Court 4 · .* · Clip is removed .* It can't be recovered\./)).toBeVisible();
   await page.getByRole('button', { name: 'Delete' }).click();
   await expect(page.getByRole('status')).toHaveText('Clip deleted.');
   await expect(page.locator(`tr[data-clip="${id}"]`)).toHaveCount(0);
-  expect(boxExec(`ls /data/clips/ | wc -l`).trim()).toBe('0');
+  expect(Number(boxExec(`ls /data/clips/ | wc -l`).trim()), "the deleted clip's files are gone").toBe(foldersBefore - 1);
 
   const log = await logText(page);
   for (const entry of ['kept', 'downloaded for posting', 'players did NOT allow posting', 'deleted', 'changed settings', 'signed in']) expect(log).toContain(entry);

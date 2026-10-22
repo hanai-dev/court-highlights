@@ -338,9 +338,34 @@ pub fn merge(db: &Db, remote: &State_) -> rusqlite::Result<usize> {
         }
     }
     for s in &remote.staff {
-        let local: Option<Stamp> =
-            tx.query_row("SELECT version, updated_at, updated_box FROM staff WHERE username = ?1", [&s.username], |r| stamp(r, 0)).optional()?;
-        if local.as_ref().is_none_or(|l| s.stamp.newer_than(l)) {
+        let local: Option<(Stamp, Option<String>, Option<String>)> = tx
+            .query_row("SELECT version, updated_at, updated_box, locked_until, sessions_after FROM staff WHERE username = ?1", [&s.username], |r| {
+                Ok((stamp(r, 0)?, r.get(3)?, r.get(4)?))
+            })
+            .optional()?;
+        // Whichever row is newer, a lock or a session cut-off made on any box holds on every box (FR-28, FR-29):
+        // another box may have touched the account meanwhile (a sign-in resetting its failure count).
+        let (mut locked_until, sessions_after) = match &local {
+            Some((_, lock, cut)) => (later(lock.as_deref(), s.locked_until.as_deref()), later(cut.as_deref(), s.sessions_after.as_deref())),
+            None => (s.locked_until.clone(), s.sessions_after.clone()),
+        };
+        // A password reset or change after the lock began (it sets the cut-off) has cleared that lock.
+        if let (Some(lock), Some(cut)) = (locked_until.as_deref().and_then(clock::parse), sessions_after.as_deref().and_then(clock::parse))
+            && cut > lock - ch_core::LOCKOUT_FOR
+        {
+            locked_until = None;
+        }
+        if let Some((l, lock, cut)) = &local
+            && !s.stamp.newer_than(l)
+        {
+            if (lock, cut) != (&locked_until, &sessions_after) {
+                // The local row stays; it takes the later lock or cut-off and is stamped again, so it travels on.
+                tx.execute("UPDATE staff SET locked_until = ?1, sessions_after = ?2 WHERE username = ?3", params![locked_until, sessions_after, s.username])?;
+                applied += 1;
+            }
+            continue;
+        }
+        {
             tx.execute(
                 "INSERT INTO staff (username, display_name, role, password_hash, must_change, temp_expires_at, active, failures, locked_until, sessions_after,
                    created_at, version, updated_at, updated_box)
@@ -358,8 +383,8 @@ pub fn merge(db: &Db, remote: &State_) -> rusqlite::Result<usize> {
                     s.temp_expires_at,
                     s.active,
                     s.failures,
-                    s.locked_until,
-                    s.sessions_after,
+                    locked_until,
+                    sessions_after,
                     s.created_at,
                     s.stamp.version,
                     s.stamp.updated_at,
@@ -519,9 +544,28 @@ pub fn silent_peers(app: &AppState) -> Vec<String> {
     app.venue.as_ref().map_or_else(Vec::new, |v| v.peers.iter().filter(|p| !known.contains_key(*p)).cloned().collect())
 }
 
+/// The later of two optional RFC 3339 times (as stored); unparsable values lose to parsable ones.
+fn later(a: Option<&str>, b: Option<&str>) -> Option<String> {
+    match (a.and_then(|v| clock::parse(v).map(|t| (t, v))), b.and_then(|v| clock::parse(v).map(|t| (t, v)))) {
+        (Some((ta, va)), Some((tb, vb))) => Some(if tb > ta { vb } else { va }.to_string()),
+        (Some((_, v)), None) | (None, Some((_, v))) => Some(v.to_string()),
+        (None, None) => None,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn locks_and_cut_offs_take_the_later_time() {
+        let (early, late) = ("2026-10-22T08:00:00+08:00", "2026-10-22T00:15:00Z");
+        assert_eq!(later(Some(early), Some(late)).as_deref(), Some(late));
+        assert_eq!(later(Some(late), Some(early)).as_deref(), Some(late));
+        assert_eq!(later(None, Some(early)).as_deref(), Some(early));
+        assert_eq!(later(Some("garbage"), None), None);
+        assert_eq!(later(None, None), None);
+    }
 
     fn venue() -> Venue {
         Venue { auth: [1; 32], seal: [2; 32], peers: vec![], box_name: "box-a".into() }

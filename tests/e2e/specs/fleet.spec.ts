@@ -288,8 +288,8 @@ test('Wipe box: the Owner types the venue name; clips, footage, accounts and log
   await expect(staff.getByRole('heading', { name: 'This box is wiped' })).toBeVisible();
   // The box process ends and its launcher (systemd on the box) starts it again: a new, empty box at setup.
   await expect.poll(async () => {
-    const res = await staff.request.get(`${STAFF}/console`, { maxRedirects: 0 }).catch(() => null);
-    return res?.headers()['location'] ?? '';
+    const res = await staff.request.get(`${STAFF}/console`).catch(() => null);
+    return res ? new URL(res.url()).pathname : '';
   }, { timeout: 60_000, intervals: [2000] }).toBe('/setup');
   await staff.goto(`${STAFF}/console`);
   await expect(staff).toHaveURL(`${STAFF}/setup`);

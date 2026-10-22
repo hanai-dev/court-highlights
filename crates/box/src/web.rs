@@ -308,6 +308,11 @@ async fn security_headers(req: Request, next: Next) -> Response {
 /// State-changing requests must come from this listener's own pages (v5.0.0-3.5.1): a cross-site Origin or a
 /// cross-site fetch is refused before the handler runs. On the staff listener the SameSite=Strict cookie is the
 /// second layer.
+/// A path fit for the log: clip tokens and other 64-character secrets in it become `…` (SEC-LOGS-NO-PII).
+fn redact(path: &str) -> String {
+    path.split('/').map(|part| if part.len() >= 32 && part.bytes().all(|b| b.is_ascii_hexdigit()) { "…" } else { part }).collect::<Vec<_>>().join("/")
+}
+
 async fn same_origin_writes(scheme: &'static str, req: Request, next: Next) -> Response {
     if req.method() != Method::GET && req.method() != Method::HEAD {
         let headers = req.headers();
@@ -318,7 +323,7 @@ async fn same_origin_writes(scheme: &'static str, req: Request, next: Next) -> R
         if !origin_ok || !site_ok {
             let origin = headers.get(header::ORIGIN).and_then(|v| v.to_str().ok()).unwrap_or("-");
             let site = headers.get("sec-fetch-site").and_then(|v| v.to_str().ok()).unwrap_or("-");
-            tracing::warn!(path = %req.uri().path(), origin, host, site, "cross-site request refused");
+            tracing::warn!(path = %redact(req.uri().path()), origin, host, site, "cross-site request refused");
             return (StatusCode::FORBIDDEN, "Cross-site request refused").into_response();
         }
     }

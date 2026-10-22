@@ -94,8 +94,10 @@ test('a venue with clips, a game emailed and a fleet admin, for the checks below
 
   const phone = await (await browser.newContext()).newPage();
   await phone.goto(`${PLAYER}/c/${code}`);
+  // The seeded clips are already ready (and have no video): wait for the tapped one, the newest.
+  const seededReady = await phone.locator('[data-clip-state="ready"]').count();
   await phone.getByRole('button', { name: 'Clip that' }).click();
-  await expect(phone.locator('[data-clip-state="ready"]').first()).toBeVisible({ timeout: 60_000 });
+  await expect(phone.locator('[data-clip-state="ready"]')).toHaveCount(seededReady + 1, { timeout: 60_000 });
   clipToken = (await phone.locator('[data-clip-state="ready"] a.clip-link').first().getAttribute('href'))!.split('/').pop()!;
 
   await clearMail();
