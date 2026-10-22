@@ -62,7 +62,7 @@ test('the court page opens without sign-in and shows its parts in order (FR-17)'
   await expect(player.getByRole('heading', { level: 1 })).toHaveText('Court 3');
   await expect(player.locator('[data-court-status]')).toHaveText('Recording');
   await expect(player.getByRole('button', { name: 'Clip that' })).toBeEnabled();
-  // Document order of the parts (A-112); game and email panels join this list with F-GAME / F-EMAIL.
+  // Document order of the parts (A-112); the game panel joins this list in games.spec.ts.
   const order = await player.locator('img.venue-logo, h1, [data-court-status], .btn-clip-that, #clips-h').evaluateAll((els) =>
     els.map((e) => e.getAttribute('data-court-status') !== null ? 'status' : (e.className || e.tagName.toLowerCase())),
   );

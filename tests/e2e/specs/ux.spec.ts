@@ -1,22 +1,16 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  CAMERA, CLOUD, OWNER, PLAYER, STAFF, addCourt, clearMail, cloudSql, cloudUp, completeSetup, connectBox, courtCode, createAdmin, fleetSignIn,
-  freshBox, sentMail, signIn, startCameras, waitCourtStatus,
+  CAMERA, OWNER, PLAYER, STAFF, addCourt, completeSetup, courtCode, freshBox, signIn, startCameras, waitCourtStatus,
 } from './helpers';
 
 test.describe.configure({ mode: 'serial' });
 
 const LOGO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../fixtures/logo-magenta.png');
-const ADMIN_PASSWORD = 'ux-fleet-admin-pass-26';
 let code = '';
 let clipToken = '';
-let videosLink = '';
-let neverLink = '';
-let venueId = '';
 
 async function seriousViolations(page: Page): Promise<string[]> {
   const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
@@ -80,13 +74,11 @@ async function owner(browser: Browser): Promise<Page> {
   return page;
 }
 
-test('a venue with clips, a game emailed and a fleet admin, for the checks below', async ({ page, browser }) => {
+test('a venue with clips and a game, for the checks below', async ({ page, browser }) => {
   test.setTimeout(420_000);
   await freshBox();
-  await cloudUp();
   await startCameras('cam-3');
   await completeSetup(page, OWNER, ['00:00', '23:59'], LOGO);
-  await connectBox(page);
   await addCourt(page, 'Court 1', CAMERA(3));
   code = await courtCode(page, 'Court 1');
   await waitCourtStatus(page, 'Court 1', /^Recording since/);
@@ -100,30 +92,13 @@ test('a venue with clips, a game emailed and a fleet admin, for the checks below
   await expect(phone.locator('[data-clip-state="ready"]')).toHaveCount(seededReady + 1, { timeout: 60_000 });
   clipToken = (await phone.locator('[data-clip-state="ready"] a.clip-link').first().getAttribute('href'))!.split('/').pop()!;
 
-  await clearMail();
   await phone.getByRole('button', { name: 'Start game' }).click();
-  await phone.getByLabel('Email address').fill('uma@example.com');
-  await phone.getByRole('button', { name: 'Add' }).click();
   await phone.waitForTimeout(8_000);
   await phone.getByRole('button', { name: 'Stop game' }).click();
-  await expect.poll(async () => (await sentMail()).length, { timeout: 240_000, intervals: [3000] }).toBe(1);
-  const [mail] = await sentMail();
-  videosLink = mail.text.match(/http:\/\/localhost:18090\/v\/[0-9a-f]{64}(?=\n)/)![0];
-  neverLink = mail.text.match(/http:\/\/localhost:18090\/never\/[0-9a-f]{64}/)![0];
-  fs.writeFileSync('test-results/email.html', mail.html); // for the design scan
-
-  const admin = createAdmin('uxadmin');
-  await fleetSignIn(page, admin);
-  await page.getByLabel('Temporary password').fill(admin.password);
-  await page.getByLabel('New password').fill(ADMIN_PASSWORD);
-  await page.getByRole('button', { name: 'Change password' }).click();
-  await expect(page).toHaveURL(`${CLOUD}/fleet`);
-  // The Owner's and the fleet admin's sessions together: the fleet pages below and the design scan use them.
-  await page.context().storageState({ path: 'test-results/fleet-admin.json' });
-  venueId = cloudSql(`SELECT id FROM venue WHERE name = '${OWNER.venue}'`);
+  await expect(phone.locator('[data-game-video]')).toBeVisible({ timeout: 240_000 });
 });
 
-test('axe finds nothing serious or critical on any route: player, setup, staff console, fleet console, email pages (UX-A11Y)', async ({ browser }) => {
+test('axe finds nothing serious or critical on any route: player, setup and staff console (UX-A11Y)', async ({ browser }) => {
   test.setTimeout(300_000);
   const player = await (await browser.newContext()).newPage();
   await axeRoutes(player, PLAYER, [`/c/${code}`, `/c/${code}/clips/${clipToken}`, '/privacy']);
@@ -137,16 +112,6 @@ test('axe finds nothing serious or critical on any route: player, setup, staff c
   const anon = await (await browser.newContext({ ignoreHTTPSErrors: true })).newPage();
   await axeRoutes(anon, STAFF, ['/console/signin']);
 
-  const fleet = await (await browser.newContext({ storageState: 'test-results/fleet-admin.json' })).newPage();
-  await axeRoutes(fleet, CLOUD, ['/fleet', '/fleet/venues', `/fleet/venues/${venueId}`, '/fleet/users', '/fleet/log', '/fleet/account']);
-  const visitor = await (await browser.newContext()).newPage();
-  await axeRoutes(visitor, CLOUD, ['/fleet/signin', new URL(videosLink).pathname, new URL(neverLink).pathname]);
-
-  // The take-home email itself, as a mail client shows it: a fresh page, so no site's CSP blocks its inline styles.
-  const [mail] = await sentMail();
-  const client = await (await browser.newContext()).newPage();
-  await client.setContent(mail.html);
-  expect(await seriousViolations(client), 'email').toEqual([]);
 });
 
 test('body text and the Clip that label reach 7:1; every court page action is at least 48 px (UX-A11Y)', async ({ browser }) => {

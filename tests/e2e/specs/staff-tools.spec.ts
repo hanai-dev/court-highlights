@@ -293,7 +293,7 @@ test('library: 50 per page, filters with Clear, no-results state, keep, posting 
   expect(log).toContain(OWNER.username);
 });
 
-test('the activity log exports to CSV with formulas defused and no email addresses (FR-35)', async ({ page }) => {
+test('the activity log exports to CSV with formulas defused and no personal addresses (FR-35)', async ({ page }) => {
   await owner(page);
   await settingsForm(page);
   await page.getByLabel('Venue name').fill('=HYPERLINK("http://evil.example")');

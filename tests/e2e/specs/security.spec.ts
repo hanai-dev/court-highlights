@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { CAMERA, PLAYER, STAFF, addCourt, cloudUp, completeSetup, connectBox, courtCode, freshBox, startCameras, waitCourtStatus } from './helpers';
+import { CAMERA, PLAYER, STAFF, addCourt, completeSetup, courtCode, freshBox, startCameras, waitCourtStatus } from './helpers';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -16,13 +16,11 @@ async function inert(page: Page, url: string, literal: string): Promise<void> {
   expect(await page.locator('script:not([src]), [onerror], [onload], a[href^="javascript:"]').count(), `${url} has no injected markup`).toBe(0);
 }
 
-test('script and SQL payloads in court, staff, settings and email fields render as text and change nothing else (SEC-INJECTION)', async ({ page, browser }) => {
+test('script and SQL payloads in court, staff and settings fields render as text and change nothing else (SEC-INJECTION)', async ({ page, browser }) => {
   test.setTimeout(240_000);
   await freshBox();
   await startCameras('cam-3');
-  await cloudUp();
   await completeSetup(page);
-  await connectBox(page); // the court page offers email only to a registered box
   await addCourt(page, COURT, CAMERA(3));
   const code = await courtCode(page, COURT);
   await waitCourtStatus(page, COURT, /^Recording since/);
@@ -38,20 +36,6 @@ test('script and SQL payloads in court, staff, settings and email fields render 
   await page.getByLabel(/Venue contact/).fill(CONTACT);
   await page.getByRole('button', { name: 'Save settings' }).click();
   await expect(page.getByRole('status')).toHaveText('Settings saved.');
-
-  // The player's email box: markup is refused as an address; SQL characters are a valid address, kept as data, shown masked.
-  const phone = await (await browser.newContext()).newPage();
-  await phone.goto(`${PLAYER}/c/${code}`);
-  await phone.getByRole('button', { name: 'Start game' }).click();
-  // The browser's own check stops markup in an address; sent past the browser, the box refuses it too.
-  await phone.request.post(`${PLAYER}/c/${code}/emails`, { form: { email: '<script>__pwned=1</script>@example.com' }, headers: { Origin: PLAYER } });
-  await phone.goto(`${PLAYER}/c/${code}`);
-  await expect(phone.locator('.chip')).toHaveCount(0);
-  await phone.getByLabel('Email address').fill(`o'neil'--drop@example.com`);
-  await phone.getByRole('button', { name: 'Add' }).click();
-  await expect(phone.locator('.chip').filter({ hasText: 'o••••@' })).toBeVisible();
-  expect(await phone.evaluate(() => (window as unknown as { __pwned?: number }).__pwned)).toBeUndefined();
-  await phone.getByRole('button', { name: 'Stop game' }).click();
 
   for (const [url, literal] of [
     [`${STAFF}/console`, 'Court'],
