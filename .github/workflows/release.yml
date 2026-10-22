@@ -3,7 +3,8 @@
 # the crates in this run's checkout only, builds the box executable (tools/release/build.sh), tags the commit, and
 # publishes the GitHub release (notes + executable) with a provenance attestation of the executable. Nothing is
 # committed back: main only takes PRs. The owner checks the provenance and signs the executable into an update file
-# offline (tools/release/make-update.sh, RUNBOOK §4).
+# offline (tools/release/make-update.sh, RUNBOOK §4). Started on the `rc` branch (always a fast-forward of main), it
+# publishes a pre-release instead, `v<version>-rc.N`, for the test box.
 name: release
 
 on:
