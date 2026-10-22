@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { CAMERA, OWNER, PLAYER, STAFF, addCourt, completeSetup, courtCode, freshBox, startCameras, waitCourtStatus } from './helpers';
+import { CAMERA, PLAYER, STAFF, addCourt, cloudUp, completeSetup, connectBox, courtCode, freshBox, startCameras, waitCourtStatus } from './helpers';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -20,7 +20,9 @@ test('script and SQL payloads in court, staff, settings and email fields render 
   test.setTimeout(240_000);
   await freshBox();
   await startCameras('cam-3');
+  await cloudUp();
   await completeSetup(page);
+  await connectBox(page); // the court page offers email only to a registered box
   await addCourt(page, COURT, CAMERA(3));
   const code = await courtCode(page, COURT);
   await waitCourtStatus(page, COURT, /^Recording since/);

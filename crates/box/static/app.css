@@ -163,6 +163,7 @@ fieldset.field legend { font: 700 14px/1.25 var(--font); padding: 0 var(--xs); }
 .filters .row, .filters .muted { grid-column: 1 / -1; }
 .checks { display: grid; gap: var(--xs); }
 label.check { display: flex; gap: var(--sm); align-items: center; font-weight: 400; font-size: 16px; min-height: 44px; margin: 0; }
+.court-page label.check { min-height: 48px; } /* every court page action is at least 48 px (players' thumbs, outdoors) */
 label.check input { width: 22px; height: 22px; accent-color: var(--primary); }
 textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
 img.thumb { display: block; border: 1px solid var(--outline-variant); border-radius: var(--radius); background: var(--surface-container); }
