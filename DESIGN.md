@@ -68,7 +68,7 @@ A-28); one fixed look at every venue, with the venue's logo at the top (A-110).
 
 Key characteristics: readable in outdoor sun (body text ≥ 7:1, NFR-6); one primary action per state, 48 px or larger on
 the court page; ink rules instead of shadows; nothing animates except the saving ring. Mode: **Operate** on every
-surface (court page, staff console, fleet console, the take-home page). Dials: variance 2, motion 2, density 3 on the
+surface (court page and staff console). Dials: variance 2, motion 2, density 3 on the
 court page and 6 on the consoles (occasional use, never all-day). Scene: a sweaty player, one hand, bright court or hall
 lights, seconds of attention; staff at a front-desk laptop at opening and closing.
 
@@ -101,12 +101,11 @@ Flat. Depth is a 2 px ink border (3 px on the primary action); no shadows, no gr
 
 ## Shapes
 
-One radius: 4 px on buttons, panels and inputs. The only exception is the email chips (pill), which read as removable
-tokens. Borders: 2 px ink on panels and inputs; 1 px `#8b877c` for table row dividers.
+One radius: 4 px on buttons, panels and inputs. Borders: 2 px ink on panels and inputs; 1 px `#8b877c` for table row dividers.
 
 ## Imagery
 
-Real camera stills (clip thumbnails; the live preview in setup) and the venue logo (court page header, emails, signs,
+Real camera stills (clip thumbnails; the live preview in setup) and the venue logo (court page header, signs,
 burned into clips). Two authored black-line drawings in the sign style: the setup wizard (court with the camera mounted
 high at the centre and the sign on the net post) and the empty clip library (a phone scanning a court code). Inventory
 and alt texts in `docs/requirements/assets/manifest.json`. Omitted on purpose: decorative art on any task screen.
@@ -154,15 +153,6 @@ do ("Court 2 camera is offline — clips aren't available"; "These videos have e
 | `/console/signs` | report | Court sign | owner, staff | contextual | Print signs | SC-4 | /console/courts |
 | `/console/log` | list+crud | Activity entry | owner | global | Export CSV | SC-6, SC-7 | /console/clips |
 | `/console/help` | docs | Help | owner, staff | global | Call support | SC-9 | /console |
-| `/v/:token` | record | Take-home email videos | player | global | Download | SC-3, SC-12 | /never/:token |
-| `/never/:token` | form | Blocked address | player | contextual | Don't email me again | SC-3 | /v/:token |
-| `/fleet/signin` | auth | Fleet user | admin, installer | global | Sign in | SC-13 | /fleet |
-| `/fleet` | dashboard | Box health | admin, installer | global | Open venue | SC-9, SC-14 | /fleet/venues/:id |
-| `/fleet/venues` | list+crud | Venue | admin | global | Add venue | SC-4, SC-13 | /fleet/venues/:id |
-| `/fleet/venues/:id` | record | Venue | admin, installer | contextual | Switch online features | SC-11, SC-13 | /fleet/updates |
-| `/fleet/updates` | list+crud | Update release | admin | global | Publish update | SC-9 | /fleet |
-| `/fleet/users` | list+crud | Fleet user | admin | global | Add user | SC-13 | /fleet/log |
-| `/fleet/log` | list+crud | Fleet log entry | admin | global | Filter | SC-11, SC-13 | /fleet |
 
 ## Voice & terms
 

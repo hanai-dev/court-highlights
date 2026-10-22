@@ -4,6 +4,29 @@
 numbers or boundaries introduced while translating the approved decisions into testable rules; each was read back and
 confirmed individually ("All 20 correct", "Approve as final").
 
+> **Change record, 2026-10-22: venue network only (owner decision).** The owner's instruction: *"remove all cloud
+> functionalities here. This system should be fully local (only works on LAN, wifi)"*. The online service, take-home
+> email and the fleet console are removed. Nothing leaves the venue network, and the boxes make no internet calls.
+> The text below is kept as approved on 2026-10-21; where it conflicts with this record, this record wins.
+>
+> - **Removed:** FR-20…FR-27 (email list, Email me this, store and forward, take-home email, link expiry, never
+>   again, hidden means unsent, venue online switch), FR-47…FR-53 (fleet sign-in, box registration, fleet health,
+>   online switch, fleet updates, fleet log, no footage in the fleet), NFR-14 (check-ins), NFR-16 (online cost);
+>   golden vectors GV-15, GV-19, GV-24, GV-26 and GV-10's email text; the online service's records in §6 and its
+>   rows in §9, §10 and §12 (HOST-*, SEC-CROSS-VENUE, SEC-SN6, SEC-ONLINE-TRANSPORT, the managed secret store,
+>   DEV-COST-MODEL, MON-FLEET-CHECKINS, PERF-UPLOAD-CAP).
+> - **Changed:** FR-12, the game video is kept in one copy (no 720p email copy). FR-17, the court page has no email
+>   panel. FR-18, older items are reachable by staff only. FR-33, no upload cap. FR-35, no online-switch entries.
+>   FR-38, time comes from the clock battery, the Owner's correction and the venue's time-leading box. FR-42, venue
+>   sync carries staff, settings and courts. FR-45, there are no online copies to clean up. FR-55, wiping erases the
+>   box; there is no fleet to leave. FR-57, the privacy notice is linked from the court page. NFR-6, the court page
+>   and the staff console. NFR-9, ASVS Level 1 for the boxes. NFR-12, updates come as a signed file on a USB stick,
+>   installed box by box by the Owner. NFR-15, box logs.
+> - **Stored data:** a box migration deletes stored player addresses, the send queue and the online-service settings.
+>   The unused columns stay, so an update can still roll back to the release before this change.
+> - **Follow-up:** the build spec (`court-highlights.spec.yaml`, `court-highlights.checks.json`) still carries the
+>   removed rows. It needs re-baselining in a requirements session before the next acceptance run.
+
 Companion documents: [client-review.md](client-review.md) (the owner's decisions, A-1…A-125, and the reviewed
 scenarios) · [domain-brief.md](domain-brief.md) (category recon, Philippine privacy rules, sources) ·
 [stack/stack-decision.md](stack/stack-decision.md) (technology decision, `STACK_DECISION: READY`) ·

@@ -1,10 +1,10 @@
 # Court Highlights — user guide
 
 Court Highlights records every court at your venue with one camera per court. Players save the moment they just
-played with one tap, on their own phones, with no app and no account. Everything works without internet; when the
-venue has internet, players can also get their videos by email.
+played with one tap, on their own phones, with no app and no account. Everything works on the venue's own network,
+with no internet: players download on court, and nothing leaves the venue.
 
-This guide has four parts: **players**, **venue staff**, **the venue Owner**, and **installers**.
+This guide has three parts: **players**, **venue staff** and **the venue Owner**.
 
 ## Players
 
@@ -18,9 +18,8 @@ This guide has four parts: **players**, **venue staff**, **the venue Owner**, an
 5. **Games**: tap **Start game** before you play and **Stop game** when you finish (a game stops by itself after
    2 hours, or at closing time). You get the whole game video and up to 5 highlights. Tick **The venue may post our
    highlights on its pages** only if everyone on court agrees.
-6. **Email** (when the venue offers it): add up to 8 addresses during a game. Each address gets one take-home email
-   with links to the game video, clips and highlights, available for about 3 days. The box forgets the addresses once
-   the email is sent. **Don't email me again** in any email stops all further emails to that address.
+6. **Take them home**: download before you leave the venue. Clips and game videos stay on the court page for
+   2 hours.
 
 No sound is ever recorded.
 
@@ -60,17 +59,15 @@ A new box opens the first-run setup at its staff address. It has no default acco
 
 | Setting | What it does |
 |---|---|
-| Venue name, logo, logo corner, sponsor logo | Shown on court pages, emails, signs, and burned into every clip |
+| Venue name, logo, logo corner, sponsor logo | Shown on court pages and signs, and burned into every clip |
 | Opening hours | Courts record only during these hours |
 | Seconds before / after the tap | Clip length (default 25 + 5) |
 | Make highlights | Turns the shot judge on or off |
-| Upload cap | Limits how much of the venue's internet the boxes use for sending videos |
 | Privacy notice and contact | The notice players see from the court page |
 | Correct the time | Sets the time on every box at the venue |
-| Online service | The box key from your installer |
 | Settings backup | An encrypted file of courts, cameras, logo, settings and staff accounts; keep it safe |
-| Software update | Shows the box's version and its last update. Install an update file from a USB stick here; a version that doesn't work is taken back by the box itself ("Update rolled back") |
-| Wipe this box | For a venue that closes: erases all footage, clips, games, accounts and logs and takes the box off the fleet. Type the venue name to confirm |
+| Software update | Shows the box's version and its last update. Install an update file from a USB stick here, on each box of the venue; a version that doesn't work is taken back by the box itself ("Update rolled back") |
+| Wipe this box | For a venue that closes: erases all footage, clips, games, accounts and logs. Type the venue name to confirm |
 
 ### Staff
 
@@ -84,26 +81,11 @@ A box serves about 4 courts. At a bigger venue every box shows the whole venue: 
 library. If one box is off, its courts show as unreachable and everything else keeps working. A replacement box
 fills itself in from the others within a minute.
 
-## Installers and the fleet console
-
-The fleet console needs your password and a code from an authenticator app.
-
-| Task | Where | Who |
-|---|---|---|
-| Add a venue and register its boxes; hand the box key to the Owner | **Venues** → venue → **Register box** (the key is shown once) | Admin, Installer |
-| See every box's last check-in, version, disk, temperature | **Box health**; a box silent for 5 minutes shows **Missed check-in** | Admin, Installer |
-| Switch a venue's online features off or on, with a reason | **Venues** → venue | Admin |
-| Revoke a box key | **Venues** → venue → **Revoke** | Admin |
-| Add or deactivate fleet users | **Users** | Admin |
-| Send an update to every venue | **Updates** → **Publish update**: one box per venue at a time; a box that takes it back stops it for its venue | Admin |
-
-The fleet console never shows any clip, game video or footage.
-
 ## What changes at the venue
 
 | Before | With Court Highlights |
 |---|---|
 | Players prop a phone against the fence and scroll through a long video afterwards | Tap **Clip that** after the point; the clip is on the phone about 10 seconds later |
-| A player asks the front desk to send them a video | The player adds their email on the court page; the front desk does nothing |
+| A player asks the front desk to send them a video | The player downloads it on court before leaving; the front desk does nothing |
 | Staff search a security recorder for an incident hours later | **Footage** → find → **Hold**; the Owner exports it |
 | The venue asks players to send videos it may post | **Clips** → filter **Venue may post** → **For posting** |
