@@ -15,15 +15,9 @@
   {% else %}
   <p role="status">Saving… open this clip again in a few seconds.</p>
   {% endif %}
-  {% if emails.is_some() || !online %}
-  <section class="panel spaced" id="emails" aria-labelledby="emails-h">
-    <h2 id="emails-h">Email me this</h2>
-    {% include "email_box.html" %}
-  </section>
-  {% endif %}
   <form method="post" action="/c/{{ code }}/clips/{{ token }}/hide" class="spaced">
     <button class="btn" type="submit">Hide from this page</button>
-    <p class="fine">Hidden clips are never sent to anyone.</p>
+    <p class="fine">Hidden clips no longer show on this court's page.</p>
   </form>
 </main>
 {% endblock %}

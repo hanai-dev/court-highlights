@@ -384,7 +384,6 @@ fn do_delete(app: &AppState, id: i64, actor_id: Option<i64>, actor: &str) -> Res
     let it = item(app, id)?;
     {
         let conn = app.db.conn();
-        crate::uplink::queue_withdraw(&conn, id)?;
         conn.execute("DELETE FROM clip WHERE id = ?1", [id])?;
         db::log(&conn, actor_id, actor, "deleted", &it.label(), "")?;
     }

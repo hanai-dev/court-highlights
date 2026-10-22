@@ -34,21 +34,12 @@
   </div>{% if let Some(e) = f.err("before") %}<p class="field-error" id="before-error">{{ e }}</p>{% endif %}
   <label class="check"><input type="checkbox" name="judge_on" value="1"{% if v.judge_on %} checked{% endif %}> Make highlights after each game (shot judge)</label>
   <p class="hint">Off: clips and game videos still work; no highlights are made.</p>
-  <div class="field"><label for="cap">Upload cap for sending videos (Mbit/s)</label><input id="cap" name="cap" type="number" min="1" max="1000" required value="{{ v.cap_mbps }}">{% if let Some(e) = f.err("cap") %}<p class="field-error" id="cap-error">{{ e }}</p>{% endif %}</div>
 
   <h2>Privacy notice</h2>
   <div class="field"><label for="notice">Privacy notice shown to players</label>
     <textarea id="notice" name="notice" rows="12" maxlength="20000" aria-describedby="notice-hint">{{ v.notice }}</textarea>{% if let Some(e) = f.err("notice") %}<p class="field-error" id="notice-error">{{ e }}</p>{% endif %}
     <p class="hint" id="notice-hint">{% if notice_draft %}This is the starting template. Have your reviewer finalise it, then save.{% else %}Players open it from the court page; it works without internet.{% endif %}</p></div>
   <button class="btn btn-primary" type="submit">Save settings</button>
-</form>
-
-<form method="post" action="/console/settings/online" class="panel">
-  <h2>Online service</h2>
-  <p data-cloud-status>{{ cloud_status }}</p>
-  <div class="field"><label for="cloud_key">Box key</label><input id="cloud_key" name="cloud_key" type="password" autocomplete="off" required minlength="64" maxlength="64" aria-describedby="key-hint">
-    <p class="hint" id="key-hint">From your installer's fleet console. Each box has its own key; it is never shown again here.</p></div>
-  <button class="btn" type="submit">Save box key</button>
 </form>
 
 <form method="post" action="/console/settings/backup" enctype="multipart/form-data" class="panel" id="backup">
@@ -69,13 +60,13 @@
 
 <section class="panel" aria-labelledby="update-h">
   <h2 id="update-h">Software update</h2>
-  <p class="muted">Updates come from the fleet when the venue is online, or from a file on a USB stick.</p>
+  <p class="muted">Updates come as a file on a USB stick, signed by the system owner.</p>
   <a class="btn" href="/console/settings/update">Software update…</a>
 </section>
 
 <section class="panel" aria-labelledby="wipe-h">
   <h2 id="wipe-h">Wipe this box</h2>
-  <p class="muted">For a venue that closes or hands the box on: erases all footage, clips, games, accounts and logs, and takes the box off the fleet.</p>
+  <p class="muted">For a venue that closes or hands the box on: erases all footage, clips, games, accounts and logs.</p>
   <a class="btn btn-danger" href="/console/settings/wipe">Wipe this box…</a>
 </section>
 {% endblock %}

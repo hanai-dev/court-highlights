@@ -1,5 +1,5 @@
-//! Wipe box (FR-55, SC-11): the Owner types the venue name; the box leaves the fleet, then erases every clip, game,
-//! footage segment, account, log and setting, and starts again as a new box.
+//! Wipe box (FR-55, SC-11): the Owner types the venue name; the box erases every clip, game, footage segment,
+//! account, log and setting, and starts again as a new box.
 
 use crate::auth::Staff;
 use crate::web::{AppError, AppState, FormErrors, Page, Shell, html, invalid, shell};
@@ -36,9 +36,6 @@ pub async fn wipe(State(app): State<AppState>, staff: Staff, Form(form): Form<Wi
     let mut f = FormErrors::default();
     if form.confirm.trim() != venue {
         f.add("confirm", format!("Type the venue name exactly as shown: {venue}"));
-    } else if let Err(e) = crate::uplink::leave(&app).await {
-        tracing::warn!(error = %e, "wipe: could not leave the fleet");
-        f.add("confirm", "The online service can't be reached, so this box can't leave the fleet. Check the internet line and try again, or ask your installer to revoke this box in the fleet console first.");
     }
     if !f.is_empty() {
         return invalid(WipePage { shell: shell(&app.db, &staff, "settings")?, venue, f });

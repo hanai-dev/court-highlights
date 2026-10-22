@@ -90,10 +90,6 @@ struct CourtPage {
     error: Option<&'static str>,
     panel: crate::games::Panel,
     judge_on: bool,
-    online: bool,
-    emails: Option<crate::games::EmailBox>,
-    email_error: Option<&'static str>,
-    clip_token: String,
     /// Seconds kept after a tap, in ms: the saving ring starts with it the moment the player taps.
     after_ms: u32,
 }
@@ -107,15 +103,6 @@ struct GameFragment {
     panel: crate::games::Panel,
 }
 
-pub fn email_error(code: Option<&str>) -> Option<&'static str> {
-    code.map(|c| match c {
-        "full" => "Up to 8 addresses per game",
-        "invalid" => "Check the email address — it doesn't look complete.",
-        "offline" => "Download your videos here — email isn't available at this venue.",
-        _ => "Start a game first. For a single clip, open it and use Email me this.",
-    })
-}
-
 /// A court as the players' pages see it.
 pub struct PlayerCourt {
     pub id: i64,
@@ -127,25 +114,6 @@ pub fn court_for_players(app: &AppState, code: &str) -> Result<PlayerCourt, AppE
     let court = court_by_code(&app.db, code)?;
     let recording = matches!(court_recording(app, &court), CourtStatus::Recording { .. });
     Ok(PlayerCourt { id: court.id, code: court.code, recording })
-}
-
-/// A tap clip on this court page, made with no game running and not yet emailed: it gets its own email box (FR-21).
-pub fn clip_for_email(app: &AppState, court: i64, token: &str) -> Result<i64, AppError> {
-    let c = court_by_id(&app.db, court)?;
-    let clip = visible_clip(&app.db, &c, token)?;
-    if clip.kind != "tap" || clip.game.is_some() || clip.emailed {
-        return Err(AppError::NotFound);
-    }
-    Ok(clip.id)
-}
-
-fn court_by_id(db: &Db, id: i64) -> Result<Court, AppError> {
-    db.conn()
-        .query_row("SELECT id, name, code, camera_url IS NOT NULL FROM court WHERE id = ?1", [id], |r| {
-            Ok(Court { id: r.get(0)?, name: r.get(1)?, code: r.get(2)?, has_camera: r.get(3)? })
-        })
-        .optional()?
-        .ok_or(AppError::NotFound)
 }
 
 #[derive(Template)]
@@ -171,7 +139,6 @@ fn court_recording(app: &AppState, court: &Court) -> CourtStatus {
 #[derive(Deserialize)]
 pub struct PageQuery {
     error: Option<String>,
-    email: Option<String>,
 }
 
 pub async fn court_page(State(app): State<AppState>, Path(code): Path<String>, Query(q): Query<PageQuery>) -> Page {
@@ -194,10 +161,6 @@ pub async fn court_page(State(app): State<AppState>, Path(code): Path<String>, Q
         error: q.error.is_some().then_some("The camera isn't recording right now, so nothing was started or saved."),
         panel: crate::games::panel(&app, court.id, now)?,
         judge_on,
-        online: crate::games::online(&app.db)?,
-        emails: crate::games::game_email_box(&app, court.id, now)?,
-        email_error: email_error(q.email.as_deref()),
-        clip_token: String::new(),
         after_ms: after_s * 1000,
         court: court.name,
         code: court.code,
@@ -483,8 +446,6 @@ struct ClipRow {
     wide: Option<String>,
     vertical: Option<String>,
     kind: String,
-    game: Option<i64>,
-    emailed: bool,
 }
 
 /// A clip is reachable from a court page only by its court's code, its own token and within 2 h (FR-18).
@@ -495,24 +456,24 @@ fn visible_clip(db: &Db, court: &Court, token: &str) -> Result<ClipRow, AppError
     let row = db
         .conn()
         .query_row(
-            "SELECT id, made_at, state, COALESCE(failure, ''), wide_path, vertical_path, kind, game_id, emails_sent_at IS NOT NULL FROM clip
+            "SELECT id, made_at, state, COALESCE(failure, ''), wide_path, vertical_path, kind FROM clip
              WHERE token = ?1 AND court_id = ?2 AND hidden = 0",
             params![token, court.id],
             |r| {
                 Ok((
                     (r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?, r.get::<_, String>(3)?),
-                    (r.get::<_, Option<String>>(4)?, r.get::<_, Option<String>>(5)?, r.get::<_, String>(6)?, r.get::<_, Option<i64>>(7)?, r.get::<_, bool>(8)?),
+                    (r.get::<_, Option<String>>(4)?, r.get::<_, Option<String>>(5)?, r.get::<_, String>(6)?),
                 ))
             },
         )
         .optional()?
         .ok_or(AppError::NotFound)?;
-    let ((id, made, state, failure), (wide, vertical, kind, game, emailed)) = row;
+    let ((id, made, state, failure), (wide, vertical, kind)) = row;
     let made = clock::parse(&made).ok_or(AppError::NotFound)?;
     if !ch_core::on_court_page(made, clock::now()) {
         return Err(AppError::NotFound);
     }
-    Ok(ClipRow { id, made, state, failure, wide, vertical, kind, game, emailed })
+    Ok(ClipRow { id, made, state, failure, wide, vertical, kind })
 }
 
 #[derive(Template)]
@@ -525,18 +486,9 @@ struct ClipPage {
     ready: bool,
     has_vertical: bool,
     failure: String,
-    online: bool,
-    emails: Option<crate::games::EmailBox>,
-    email_error: Option<&'static str>,
-    clip_token: String,
 }
 
-#[derive(Deserialize)]
-pub struct ClipQuery {
-    email: Option<String>,
-}
-
-pub async fn clip_page(State(app): State<AppState>, Path((code, token)): Path<(String, String)>, Query(q): Query<ClipQuery>) -> Page {
+pub async fn clip_page(State(app): State<AppState>, Path((code, token)): Path<(String, String)>) -> Page {
     let court = court_by_code(&app.db, &code)?;
     let clip = visible_clip(&app.db, &court, &token)?;
     let title = match clip.kind.as_str() {
@@ -545,8 +497,6 @@ pub async fn clip_page(State(app): State<AppState>, Path((code, token)): Path<(S
         "highlight" => format!("Highlight, {}", time_label(clip.made)),
         _ => format!("Clip from {}", time_label(clip.made)),
     };
-    // A clip tapped with no game running has its own email box (FR-21).
-    let emails = if clip.kind == "tap" && clip.game.is_none() && !clip.emailed { Some(crate::games::email_box(&app.db, "clip_id", clip.id)?) } else { None };
     html(ClipPage {
         court: court.name,
         code: court.code,
@@ -554,10 +504,6 @@ pub async fn clip_page(State(app): State<AppState>, Path((code, token)): Path<(S
         ready: clip.state == "ready",
         has_vertical: clip.vertical.is_some(),
         failure: if clip.state == "failed" { clip.failure } else { String::new() },
-        online: crate::games::online(&app.db)?,
-        emails,
-        email_error: email_error(q.email.as_deref()),
-        clip_token: token.clone(),
         token,
     })
 }
@@ -578,7 +524,6 @@ pub async fn clip_file(
     let (path, shape) = match file.as_str() {
         "wide.mp4" => (clip.wide.ok_or(AppError::NotFound)?, "wide"),
         "vertical.mp4" => (clip.vertical.ok_or(AppError::NotFound)?, "vertical"),
-        "email.mp4" => return Err(AppError::NotFound), // the 720p copy only leaves through the online service
         "thumb.jpg" => (app.data.join("clips").join(&token).join("thumb.jpg").to_string_lossy().into_owned(), "thumb"),
         _ => return Err(AppError::NotFound),
     };
@@ -605,14 +550,13 @@ pub fn slug(s: &str) -> String {
     out.split('-').filter(|p| !p.is_empty()).collect::<Vec<_>>().join("-")
 }
 
-/// A player hides a clip from the court page they are on; a hidden clip is never sent (FR-9, FR-26).
+/// A player hides a clip from the court page they are on (FR-9).
 pub async fn hide(State(app): State<AppState>, Path((code, token)): Path<(String, String)>) -> Page {
     let court = court_by_code(&app.db, &code)?;
     let clip = visible_clip(&app.db, &court, &token)?;
     {
         let conn = app.db.conn();
         conn.execute("UPDATE clip SET hidden = 1 WHERE id = ?1", [clip.id])?;
-        crate::uplink::queue_withdraw(&conn, clip.id)?;
     }
     tracing::info!(clip = clip.id, court = court.id, "clip hidden by a player");
     Ok(Redirect::to(&format!("/c/{}", court.code)).into_response())

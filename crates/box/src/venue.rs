@@ -15,7 +15,7 @@ pub const NOTICE_TEMPLATE: &str = "What we record: video (no sound) of each cour
 
 How long we keep it: the last 4 hours of court video; clips, highlights and game videos for 3 days, or 1 year if the venue keeps them. Footage someone asks us to keep for a complaint or incident is held for up to 60 days.
 
-Emails: an address you enter is used only to send that game's videos and is deleted after sending. Every email has a link to never be emailed again.
+Where it stays: everything is kept on the venue's own boxes and never leaves the venue network. You download your videos to your phone here.
 
 Posting: the venue posts highlights on its pages only when the players ticked \"The venue may post our highlights on its pages\".
 
@@ -33,7 +33,6 @@ struct Venue {
     close: String,
     before: u32,
     after: u32,
-    cap_mbps: u32,
     judge_on: bool,
     notice: String,
     contact: String,
@@ -42,7 +41,7 @@ struct Venue {
 fn load(app: &AppState) -> Result<Venue, AppError> {
     Ok(app.db.conn().query_row(
         "SELECT name, logo IS NOT NULL, sponsor IS NOT NULL, logo_corner, open_time, close_time, clip_before_s, clip_after_s,
-                upload_cap_kbps, judge_on, privacy_notice, contact FROM venue WHERE id = 1",
+                judge_on, privacy_notice, contact FROM venue WHERE id = 1",
         [],
         |r| {
             Ok(Venue {
@@ -54,10 +53,9 @@ fn load(app: &AppState) -> Result<Venue, AppError> {
                 close: r.get(5)?,
                 before: r.get(6)?,
                 after: r.get(7)?,
-                cap_mbps: r.get::<_, u32>(8)? / 1000,
-                judge_on: r.get(9)?,
-                notice: r.get(10)?,
-                contact: r.get(11)?,
+                judge_on: r.get(8)?,
+                notice: r.get(9)?,
+                contact: r.get(10)?,
             })
         },
     )?)
@@ -67,7 +65,6 @@ fn load(app: &AppState) -> Result<Venue, AppError> {
 #[template(path = "settings.html")]
 struct SettingsPage {
     shell: Shell,
-    cloud_status: String,
     v: Venue,
     notice_draft: bool,
     now: String,
@@ -88,7 +85,6 @@ fn page(app: &AppState, staff: &Staff, v: Venue, saved: Option<&'static str>, f:
     let failed = !f.is_empty();
     let mut res = html(SettingsPage {
         shell: shell(&app.db, staff, "settings")?,
-        cloud_status: cloud_status(app)?,
         v,
         notice_draft,
         now: now.format("%-d %b %Y, %-I:%M:%S %P").to_string(),
@@ -106,7 +102,6 @@ pub async fn settings(State(app): State<AppState>, staff: Staff, Query(q): Query
     staff.require_owner()?;
     let saved = q.saved.as_deref().map(|s| match s {
         "time" => "Box time corrected.",
-        "online" => "Box key saved. The box connects within a minute.",
         _ => "Settings saved.",
     });
     page(&app, &staff, load(&app)?, saved, FormErrors::default())
@@ -134,7 +129,7 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
     let old = load(&app)?;
     let mut v = Venue { judge_on: false, ..old.clone() };
     let (mut logo, mut sponsor, mut remove_sponsor) = (Vec::new(), Vec::new(), false);
-    let (mut before, mut after, mut cap) = (String::new(), String::new(), String::new());
+    let (mut before, mut after) = (String::new(), String::new());
     while let Some(field) = form.next_field().await.map_err(|_| AppError::BadRequest("The upload was too large. Logos can be up to 2 MB.".into()))? {
         let name = field.name().unwrap_or("").to_string();
         if name == "logo" || name == "sponsor" {
@@ -150,7 +145,6 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
             "close" => v.close = value,
             "before" => before = value,
             "after" => after = value,
-            "cap" => cap = value,
             "judge_on" => v.judge_on = true,
             "remove_sponsor" => remove_sponsor = true,
             "notice" => v.notice = value.replace("\r\n", "\n").trim().to_string(),
@@ -186,9 +180,6 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
     if let Err(e) = &lengths {
         f.add("before", e.clone());
     }
-    if !cap.parse::<u32>().is_ok_and(|c| (1..=1000).contains(&c)) {
-        f.add("cap", "Upload cap must be between 1 and 1000 Mbit/s.");
-    }
     if v.notice.len() > 20_000 {
         f.add("notice", "The privacy notice is too long (up to 20,000 characters).");
     }
@@ -198,7 +189,6 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
     let (Ok(logo), Ok(sponsor), Ok(lengths)) = (checked.0, checked.1, lengths) else { unreachable!("checked above") };
     v.before = lengths.before_s;
     v.after = lengths.after_s;
-    v.cap_mbps = cap.parse().unwrap_or(old.cap_mbps);
 
     let changed: Vec<&str> = [
         ("name", v.name != old.name),
@@ -207,7 +197,6 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
         ("sponsor logo", sponsor.is_some() || (remove_sponsor && old.has_sponsor)),
         ("opening hours", v.open != old.open || v.close != old.close),
         ("clip lengths", v.before != old.before || v.after != old.after),
-        ("upload cap", v.cap_mbps != old.cap_mbps),
         ("shot judge", v.judge_on != old.judge_on),
         ("privacy notice", v.notice != old.notice),
         ("venue contact", v.contact != old.contact),
@@ -219,8 +208,8 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
     let tx = conn.unchecked_transaction()?;
     tx.execute(
         "UPDATE venue SET name = ?1, logo_corner = ?2, open_time = ?3, close_time = ?4, clip_before_s = ?5, clip_after_s = ?6,
-           upload_cap_kbps = ?7, judge_on = ?8, privacy_notice = ?9, contact = ?10 WHERE id = 1",
-        params![v.name, v.corner, v.open, v.close, v.before, v.after, v.cap_mbps * 1000, v.judge_on, v.notice, v.contact],
+           judge_on = ?7, privacy_notice = ?8, contact = ?9 WHERE id = 1",
+        params![v.name, v.corner, v.open, v.close, v.before, v.after, v.judge_on, v.notice, v.contact],
     )?;
     if let Some(l) = logo {
         tx.execute("UPDATE venue SET logo = ?1, logo_type = ?2 WHERE id = 1", params![l.bytes, l.mime])?;
@@ -235,39 +224,6 @@ pub async fn save(State(app): State<AppState>, staff: Staff, mut form: Multipart
     }
     tx.commit()?;
     Ok(Redirect::to("/console/settings?saved=1").into_response())
-}
-
-fn cloud_status(app: &AppState) -> Result<String, AppError> {
-    use crate::uplink::{cloud_url, config, last_checkin};
-    if cloud_url().is_none() {
-        return Ok("This box has no online service address. Your installer sets it.".into());
-    }
-    if config(&app.db, "cloud_key")?.is_none_or(|k| k.is_empty()) {
-        return Ok("Not connected: enter this box's key.".into());
-    }
-    Ok(match (config(&app.db, "cloud_status")?.as_deref(), last_checkin(&app.db)?) {
-        (Some("key refused"), _) => "The online service refused this key. Ask your installer for a new one.".into(),
-        (_, Some(t)) => format!("Connected. Last check-in {}.", t.format("%-d %b, %-I:%M %P")),
-        _ => "Waiting for the first check-in.".into(),
-    })
-}
-
-#[derive(Deserialize)]
-pub struct OnlineForm {
-    cloud_key: String,
-}
-
-/// The installer registers the box in the fleet console and gives the Owner its key (FR-48).
-pub async fn save_online(State(app): State<AppState>, staff: Staff, Form(f): Form<OnlineForm>) -> Page {
-    staff.require_owner()?;
-    let key = f.cloud_key.trim();
-    if key.len() != 64 || !key.bytes().all(|b| b.is_ascii_hexdigit()) {
-        return Err(AppError::BadRequest("A box key is 64 letters and digits. Copy it again from the fleet console.".into()));
-    }
-    crate::uplink::set_config(&app.db, "cloud_key", key)?;
-    crate::uplink::set_config(&app.db, "cloud_status", "saved")?;
-    db::log(&app.db.conn(), Some(staff.id), &staff.username, "set the online service key", "", "")?;
-    Ok(Redirect::to("/console/settings?saved=online").into_response())
 }
 
 #[derive(Deserialize)]
@@ -287,7 +243,7 @@ pub async fn correct_time(State(app): State<AppState>, staff: Staff, Form(f): Fo
     app.recorders.split_all();
     // The correction is this box's own; the venue learns which box leads the time (FR-38, sync.rs).
     // (Config helpers take the database lock themselves: call them before holding it here.)
-    crate::uplink::set_config(&app.db, "clock_correction_ms", &correction.to_string())?;
+    db::set_config(&app.db, "clock_correction_ms", &correction.to_string())?;
     let conn = app.db.conn();
     conn.execute("UPDATE venue SET time_leader = ?1 WHERE id = 1", [&app.box_name])?;
     let detail = format!("from {} to {}", before.format("%-d %b %Y, %-I:%M %P"), wanted.format("%-d %b %Y, %-I:%M %P"));

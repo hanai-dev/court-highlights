@@ -42,10 +42,10 @@ CREATE TABLE venue (
   sponsor BLOB, sponsor_type TEXT,
   open_time TEXT NOT NULL, close_time TEXT NOT NULL,
   clip_before_s INTEGER NOT NULL DEFAULT 25, clip_after_s INTEGER NOT NULL DEFAULT 5,
-  upload_cap_kbps INTEGER NOT NULL DEFAULT 20000,
+  upload_cap_kbps INTEGER NOT NULL DEFAULT 20000, -- local-only: unused since the online service went
   judge_on INTEGER NOT NULL DEFAULT 1,
   privacy_notice TEXT NOT NULL DEFAULT '',
-  online_on INTEGER NOT NULL DEFAULT 1,
+  online_on INTEGER NOT NULL DEFAULT 1, -- local-only: unused since the online service went
   support_phone TEXT NOT NULL DEFAULT '',
   version INTEGER NOT NULL DEFAULT 1
 );
@@ -147,17 +147,17 @@ CREATE INDEX hold_court ON hold (court_id);
 ALTER TABLE game ADD COLUMN stop_reason TEXT;
 ALTER TABLE game ADD COLUMN highlights TEXT NOT NULL DEFAULT 'pending';
 ALTER TABLE game ADD COLUMN highlights_ready_by TEXT;
-ALTER TABLE game ADD COLUMN emails_sent_at TEXT;
+ALTER TABLE game ADD COLUMN emails_sent_at TEXT; -- local-only: unused since player email went
 CREATE UNIQUE INDEX game_running ON game (court_id) WHERE stopped_at IS NULL;
 ALTER TABLE clip ADD COLUMN rank INTEGER NOT NULL DEFAULT 0;
-ALTER TABLE clip ADD COLUMN email_path TEXT;
-ALTER TABLE clip ADD COLUMN emails_sent_at TEXT;
+ALTER TABLE clip ADD COLUMN email_path TEXT; -- local-only: unused since player email went
+ALTER TABLE clip ADD COLUMN emails_sent_at TEXT; -- local-only: unused since player email went
 CREATE INDEX clip_game ON clip (game_id);
 CREATE TABLE recipient (
   id INTEGER PRIMARY KEY,
   game_id INTEGER REFERENCES game(id) ON DELETE CASCADE,
   clip_id INTEGER REFERENCES clip(id) ON DELETE CASCADE,
-  email TEXT NOT NULL,
+  email TEXT NOT NULL, -- local-only: emptied by the venue-network-only migration below
   added_at TEXT NOT NULL,
   CHECK ((game_id IS NULL) <> (clip_id IS NULL))
 );
@@ -166,9 +166,9 @@ CREATE INDEX recipient_clip ON recipient (clip_id);
 "#,
     r#"
 CREATE TABLE box_config (name TEXT PRIMARY KEY, value TEXT NOT NULL);
-ALTER TABLE clip ADD COLUMN cloud_id INTEGER;
+ALTER TABLE clip ADD COLUMN cloud_id INTEGER; -- local-only: unused since the online service went
 ALTER TABLE clip ADD COLUMN uploaded_at TEXT;
-CREATE TABLE withdraw (cloud_id INTEGER PRIMARY KEY);
+CREATE TABLE withdraw (cloud_id INTEGER PRIMARY KEY); -- local-only: emptied by the venue-network-only migration below
 "#,
     r#"
 ALTER TABLE venue ADD COLUMN updated_at TEXT NOT NULL DEFAULT '';
@@ -210,6 +210,13 @@ CREATE TRIGGER court_stamp_new AFTER INSERT ON court WHEN NEW.updated_at = '' BE
     box = CASE WHEN NEW.box = '' THEN COALESCE((SELECT value FROM box_config WHERE name = 'box_name'), '') ELSE NEW.box END WHERE id = NEW.id;
 END;
 "#,
+    // Venue network only (owner decision 2026-10-22): nothing leaves the venue, so nothing waits to. Columns and
+    // tables stay so an update can still roll back to the release before this one.
+    r#"
+DELETE FROM recipient;
+DELETE FROM withdraw; -- local-only: the old send queue
+DELETE FROM box_config WHERE name IN ('cloud_key', 'cloud_status', 'last_checkin', 'update_report'); -- local-only: the old online service's settings
+"#,
 ];
 
 fn migrate(conn: &Connection) -> rusqlite::Result<()> {
@@ -223,12 +230,22 @@ fn migrate(conn: &Connection) -> rusqlite::Result<()> {
     Ok(())
 }
 
-/// Appends to the activity log (FR-35). Never pass player emails or passwords in `detail`.
+/// Appends to the activity log (FR-35). Never pass passwords or other personal data in `detail`.
 pub fn log(conn: &Connection, staff_id: Option<i64>, actor: &str, action: &str, item: &str, detail: &str) -> rusqlite::Result<()> {
     conn.execute(
         "INSERT INTO activity (at, staff_id, actor, action, item, detail) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
         params![crate::clock::now().to_rfc3339(), staff_id, actor, action, item, detail],
     )?;
+    Ok(())
+}
+
+/// This box's own settings — never shared with the venue's other boxes.
+pub fn config(db: &Db, name: &str) -> rusqlite::Result<Option<String>> {
+    db.conn().query_row("SELECT value FROM box_config WHERE name = ?1", [name], |r| r.get(0)).optional()
+}
+
+pub fn set_config(db: &Db, name: &str, value: &str) -> rusqlite::Result<()> {
+    db.conn().execute("INSERT INTO box_config (name, value) VALUES (?1, ?2) ON CONFLICT (name) DO UPDATE SET value = excluded.value", params![name, value])?;
     Ok(())
 }
 
