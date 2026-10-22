@@ -107,9 +107,9 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
+    # No clean-up step: the runner disk is 145 GB with about 100 GB free, and a shard holds only the image, the browsers
+    # and its own specs' footage.
     steps:
-      - name: Make room (recorded footage, three boxes)
-        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h /
       - uses: actions/checkout@v5
       - uses: docker/setup-buildx-action@v4
       - name: Build image (from the checks job's cache)
