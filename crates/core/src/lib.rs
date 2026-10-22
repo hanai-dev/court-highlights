@@ -1,7 +1,7 @@
 //! Court Highlights rules engine. Every function here is pure and pinned by a golden vector
 //! (SRS §7, docs/requirements/golden-vectors.json). Times are Asia/Manila (UTC+8, no DST).
 
-use chrono::{DateTime, Datelike, Duration, FixedOffset, Months, NaiveTime, TimeZone, Timelike};
+use chrono::{DateTime, Duration, FixedOffset, Months, NaiveTime, TimeZone};
 
 pub type Time = DateTime<FixedOffset>;
 
@@ -15,8 +15,6 @@ pub enum RuleError {
     ClipSettings,
     CameraOffline { court: String },
     Closed,
-    TooManyRecipients,
-    Expired,
 }
 
 impl std::fmt::Display for RuleError {
@@ -25,8 +23,6 @@ impl std::fmt::Display for RuleError {
             Self::ClipSettings => f.write_str("Clip length must be before 10–60 s, after 0–15 s"),
             Self::CameraOffline { court } => write!(f, "{court} camera is offline — clips aren't available"),
             Self::Closed => f.write_str("Courts are closed"),
-            Self::TooManyRecipients => f.write_str("Up to 8 addresses per game"),
-            Self::Expired => f.write_str("These videos have expired"),
         }
     }
 }
@@ -170,34 +166,6 @@ pub fn hold_release_at(placed: Time) -> Time {
     placed + HOLD_MAX
 }
 
-/// Email links and online copies stop working at the expiry moment; sending stops then too (GV-24, GV-26).
-pub fn still_available(expiry: Time, now: Time) -> Result<(), RuleError> {
-    if now < expiry { Ok(()) } else { Err(RuleError::Expired) }
-}
-
-/// "available until Fri 23 Oct 2026, 3:00 am" (GV-10).
-pub fn expiry_text(expiry: Time) -> String {
-    let (pm, hour) = expiry.hour12();
-    format!(
-        "available until {} {} {} {}, {}:{:02} {}",
-        expiry.format("%a"),
-        expiry.day(),
-        expiry.format("%b"),
-        expiry.year(),
-        hour,
-        expiry.minute(),
-        if pm { "pm" } else { "am" }
-    )
-}
-
-// ---------------------------------------------------------------- email list (FR-20)
-
-pub const MAX_RECIPIENTS: usize = 8;
-
-pub fn can_add_recipient(current: usize) -> Result<(), RuleError> {
-    if current < MAX_RECIPIENTS { Ok(()) } else { Err(RuleError::TooManyRecipients) }
-}
-
 // ---------------------------------------------------------------- sign-in (FR-28)
 
 pub const LOCKOUT_AFTER: u32 = 5;
@@ -241,27 +209,6 @@ impl Lockout {
 /// Staff sessions end 12 h after sign-in, whatever the activity (GV-17).
 pub fn session_valid(signed_in: Time, now: Time) -> bool {
     now >= signed_in && now - signed_in < SESSION_LIFETIME
-}
-
-// ---------------------------------------------------------------- sending order (FR-22)
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Outgoing {
-    Clip { made: Time },
-    Reel,
-    GameVideo,
-}
-
-/// Everything a stopped game has to send. Clips and highlights of every game go first (oldest game
-/// first, clips by time, then the reel); game videos follow, oldest game first (GV-19).
-pub fn send_order<T: Clone>(items: &[(Time, Outgoing, T)]) -> Vec<T> {
-    let mut v = items.to_vec();
-    v.sort_by_key(|(game_stopped, kind, _)| match kind {
-        Outgoing::Clip { made } => (0, *game_stopped, 0, Some(*made)),
-        Outgoing::Reel => (0, *game_stopped, 1, None),
-        Outgoing::GameVideo => (1, *game_stopped, 0, None),
-    });
-    v.into_iter().map(|(_, _, t)| t).collect()
 }
 
 // ---------------------------------------------------------------- disk pressure (FR-46)

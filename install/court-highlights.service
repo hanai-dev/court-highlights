@@ -12,7 +12,7 @@ User=court-highlights
 Group=court-highlights
 # Intel VA encoder and decoder (/dev/dri)
 SupplementaryGroups=render video
-# CH_DATA_DIR, CH_SLOTS_DIR, CH_SEED_BINARY, CH_RELEASE_KEY, CH_BOX_NAME, CH_PLAYER_URL, CH_CLOUD_URL, and for a
+# CH_DATA_DIR, CH_SLOTS_DIR, CH_SEED_BINARY, CH_RELEASE_KEY, CH_BOX_NAME, CH_PLAYER_URL, and for a
 # venue with several boxes CH_VENUE_KEY and CH_PEERS (RUNBOOK §3). Readable by root and the service only.
 EnvironmentFile=/etc/court-highlights/box.env
 ExecStart=/bin/sh /opt/court-highlights/box-launcher.sh

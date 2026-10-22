@@ -47,44 +47,16 @@ jobs:
         run: >-
           docker compose -p ch-test -f docker/compose.test.yaml --profile build run --rm builder sh -c
           "cargo fmt --all --check
-          && cargo fmt --manifest-path crates/cloud/Cargo.toml --check
           && cargo clippy -p ch-box -p ch-core --features test-hooks -- -D warnings
-          && cargo clippy --manifest-path crates/cloud/Cargo.toml --features test-hooks -- -D warnings
           && cargo test -p ch-box -p ch-core --features test-hooks
           && cargo build -p ch-box
           && cargo build -p ch-box --features test-hooks
-          && cargo build --manifest-path crates/cloud/Cargo.toml --features test-hooks
           && cargo metadata --format-version 1 --locked > target/box-metadata.json
           && sh tools/gst-licence-check.sh target/debug/ch-box"
       - name: Crate licences
         run: |
           docker run --rm -v ch-target:/t alpine:3.22 cat /t/box-metadata.json > box-metadata.json
           node tools/licence-check.cjs box-metadata.json
-      - name: Advisories and leaked credentials
-        run: sh tools/supply-chain-scan.sh .
-      - name: Payload, cost model, support horizon, additive migrations
-        run: node tools/payload-check.cjs && node tools/cost-model.cjs && node tools/horizon-check.cjs && node tools/migration-check.cjs
-
-  # The online service's container, built from this commit (HOST-container-image, -nonroot, -health).
-  image:
-    needs: checks
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
-    steps:
-      - name: Make room (a release Rust build)
-        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h /
-      - uses: actions/checkout@v5
-      - name: Build
-        run: docker build -f docker/cloud.Dockerfile -t ch-cloud:${{ github.sha }} .
-      - name: Test services for the health check
-        run: |
-          docker build -t ch-dev:0 -f docker/dev.Dockerfile docker
-          docker volume create ch-target && docker volume create ch-cargo-registry
-          docker compose -p ch-test -f docker/compose.test.yaml up -d --wait db s3 ses
-      - name: Digest pins, non-root, read-only health, Trivy
-        run: |
-          set -o pipefail
-          sh tools/cloud-image-check.sh ch-cloud:${{ github.sha }} | tee cloud-image-check.txt
       - name: Box system packages (SEC-DEPENDENCIES)
         # The build image is Ubuntu 26.04 plus GStreamer, the box's own base, with build tools on top: a superset of
         # what the install image ships, so a clean scan here is clean there.
@@ -92,14 +64,12 @@ jobs:
           set -o pipefail
           docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.75.0 image --quiet --pkg-types os \
             --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 ch-dev:0 | tee box-os-scan.txt
-      - uses: actions/upload-artifact@v5
-        if: always()
-        with:
-          name: cloud-image-evidence
-          path: |
-            cloud-image-check.txt
-            box-os-scan.txt
-          retention-days: 30
+      - name: Venue-network only (no online service, no player email)
+        run: node --test tests/local-only.test.cjs
+      - name: Advisories and leaked credentials
+        run: sh tools/supply-chain-scan.sh .
+      - name: Payload and support horizon
+        run: node tools/payload-check.cjs && node tools/horizon-check.cjs
 
   e2e:
     needs: checks
@@ -131,8 +101,7 @@ jobs:
         run: >-
           set -o pipefail; node tools/log-pii-scan.cjs tests/e2e/test-results/service-logs.txt
           court-box-owner-pass-1 ken-own-password-2026 ken-second-password-26 sam-own-password-2026
-          fleet-admin-pass-2026 fleet-installer-pass-26 leaver-own-password-26 ux-fleet-admin-pass-26
-          releaser-pass-2026 cam-pass-1 | tee tests/e2e/log-pii-scan.txt
+          cam-pass-1 | tee tests/e2e/log-pii-scan.txt
       - name: Keep the evidence
         if: always()
         uses: actions/upload-artifact@v5

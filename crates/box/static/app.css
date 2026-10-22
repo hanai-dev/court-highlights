@@ -34,7 +34,7 @@ p { margin: 0 0 var(--sm); }
 label { display: block; font: 700 14px/1.25 var(--font); margin: 0 0 var(--xs); }
 .field { margin-bottom: var(--md); }
 .hint { font-size: 14px; color: var(--on-surface-variant); margin-top: var(--xs); }
-input[type=text], input[type=password], input[type=email], input[type=time], input[type=number], input[type=tel], input[type=url], select, textarea {
+input[type=text], input[type=password], input[type=time], input[type=number], input[type=tel], input[type=url], select, textarea {
   width: 100%; min-height: 44px; padding: var(--sm) 10px; font: 16px var(--font); color: var(--on-surface);
   background: var(--surface); border: 2px solid var(--outline); border-radius: var(--radius);
 }
@@ -82,11 +82,6 @@ fieldset.field legend { font: 700 14px/1.25 var(--font); padding: 0 var(--xs); }
 .steps li[aria-current="step"] { color: var(--on-surface); font-weight: 700; border-bottom: 3px solid var(--outline); }
 .btn-block { width: 100%; min-height: 48px; }
 .last-game { border-top: 1px solid var(--outline-variant); margin-top: var(--md); padding-top: var(--sm); }
-.chips { list-style: none; margin: 0 0 var(--sm); padding: 0; display: flex; flex-wrap: wrap; gap: var(--sm); }
-.chip { display: inline-flex; align-items: center; gap: var(--xs); border: 2px solid var(--outline); border-radius: var(--pill); padding: 2px 4px 2px 12px; background: var(--surface); }
-.chip form { margin: 0; }
-.chip-remove { min-height: 44px; min-width: 44px; padding: 0 var(--sm); border: 0; background: transparent; font: 700 14px var(--font); color: var(--on-surface); text-decoration: underline; cursor: pointer; border-radius: var(--pill); }
-.email-add input[type=email] { flex: 1 1 200px; }
 
 /* Staff console shell */
 .console { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100vh; }
@@ -152,11 +147,6 @@ fieldset.field legend { font: 700 14px/1.25 var(--font); padding: 0 var(--xs); }
 .steps li[aria-current="step"] { color: var(--on-surface); font-weight: 700; border-bottom: 3px solid var(--outline); }
 .btn-block { width: 100%; min-height: 48px; }
 .last-game { border-top: 1px solid var(--outline-variant); margin-top: var(--md); padding-top: var(--sm); }
-.chips { list-style: none; margin: 0 0 var(--sm); padding: 0; display: flex; flex-wrap: wrap; gap: var(--sm); }
-.chip { display: inline-flex; align-items: center; gap: var(--xs); border: 2px solid var(--outline); border-radius: var(--pill); padding: 2px 4px 2px 12px; background: var(--surface); }
-.chip form { margin: 0; }
-.chip-remove { min-height: 44px; min-width: 44px; padding: 0 var(--sm); border: 0; background: transparent; font: 700 14px var(--font); color: var(--on-surface); text-decoration: underline; cursor: pointer; border-radius: var(--pill); }
-.email-add input[type=email] { flex: 1 1 200px; }
 
 /* Library, footage, settings, help */
 .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0 var(--md); align-items: end; }

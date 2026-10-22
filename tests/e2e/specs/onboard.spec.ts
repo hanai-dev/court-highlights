@@ -132,8 +132,8 @@ test('courts are renamed and deleted from the console; form problems show under 
 
   // Settings: the problem shows under its field, with the summary focused.
   await page.goto(`${STAFF}/console/settings`);
-  await page.getByLabel(/Upload cap/).fill('0');
+  await page.getByLabel('Seconds before the tap').fill('5');
   await page.getByRole('button', { name: 'Save settings' }).click();
-  await expect(page.locator('#cap-error')).toHaveText('Upload cap must be between 1 and 1000 Mbit/s.');
+  await expect(page.locator('#before-error')).toHaveText('Clip length must be before 10–60 s, after 0–15 s');
   await expect(page.locator('[data-error-summary]')).toBeFocused();
 });

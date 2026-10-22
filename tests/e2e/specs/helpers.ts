@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { createHmac } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { expect, type APIRequestContext, type Page } from '@playwright/test';
@@ -20,7 +19,7 @@ export interface Owner {
 export const OWNER: Owner = { venue: 'Paddle Point Test Club', name: 'Olive Owner', username: 'olive', password: 'court-box-owner-pass-1' };
 
 const LOG_FILE = path.resolve(here, '../test-results/service-logs.txt');
-const LOGGED = ['box-a', 'cloud', 'venue-a', 'venue-b', 'venue-c'];
+const LOGGED = ['box-a', 'venue-a', 'venue-b', 'venue-c'];
 
 /** Containers lose their logs when removed: keep them for the log privacy scan (SEC-LOGS-NO-PII). */
 export function saveServiceLogs(): void {
@@ -62,108 +61,6 @@ export async function freshBox(): Promise<void> {
 }
 
 export const CAMERA = (n: number): string => `rtsp://rtsp:8554/court${n}`;
-
-export const CLOUD = 'http://localhost:18090';
-const SES = 'http://localhost:18025';
-
-/** Online service with its test stand-ins (PostgreSQL, S3-compatible store, fake SES). */
-export async function cloudUp(): Promise<void> {
-  compose('up', '-d', 'db', 's3', 'ses', 'cloud');
-  for (let i = 0; i < 90; i++) {
-    try {
-      if ((await fetch(`${CLOUD}/healthz`)).ok) return;
-    } catch {
-      /* not up yet */
-    }
-    await new Promise((r) => setTimeout(r, 1000));
-  }
-  throw new Error('online service did not start');
-}
-
-/** Registers box-a with the online service (installer step) and returns its key. */
-export function registerBox(venue: string): string {
-  return compose('exec', '-T', 'cloud', './target/debug/ch-cloud', 'add-box', venue, 'box-a').trim();
-}
-
-/** Installer + Owner steps: register box-a, enter its key in Settings, wait for the first check-in. */
-export async function connectBox(page: Page, venue: string = OWNER.venue): Promise<void> {
-  const key = registerBox(venue);
-  await page.goto(`${STAFF}/console/settings`);
-  await page.getByLabel('Box key').fill(key);
-  await page.getByRole('button', { name: 'Save box key' }).click();
-  await expect
-    .poll(async () => {
-      await page.goto(`${STAFF}/console/settings`);
-      return page.locator('[data-cloud-status]').textContent();
-    }, { timeout: 30_000 })
-    .toMatch(/^Connected\./);
-}
-
-/** RFC 6238 code (SHA-1, 6 digits, 30 s) from a base32 authenticator key, as an authenticator app shows it. */
-export function totp(base32: string, at = Date.now()): string {
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-  let bits = '';
-  for (const ch of base32.replace(/=+$/, '')) bits += alphabet.indexOf(ch).toString(2).padStart(5, '0');
-  const key = Buffer.from((bits.match(/.{8}/g) ?? []).map((b) => parseInt(b, 2)));
-  const counter = Buffer.alloc(8);
-  counter.writeBigUInt64BE(BigInt(Math.floor(at / 30_000)));
-  const h = createHmac('sha1', key).update(counter).digest();
-  const offset = h[h.length - 1] & 0xf;
-  return ((h.readUInt32BE(offset) & 0x7fffffff) % 1_000_000).toString().padStart(6, '0');
-}
-
-export interface FleetAccount {
-  username: string;
-  password: string;
-  secret: string;
-}
-
-/** `ch-cloud create-admin`: the first Admin's temporary password and authenticator key. */
-export function createAdmin(username: string): FleetAccount {
-  const out = compose('exec', '-T', 'cloud', './target/debug/ch-cloud', 'create-admin', username);
-  const field = (name: string): string => out.match(new RegExp(`^${name}: (.+)$`, 'm'))![1].trim();
-  return { username: field('username'), password: field('temporary password'), secret: field('authenticator key') };
-}
-
-/** The service accepts each code once (RFC 6238 §5.2): use a step not used before; the next step is within the skew. */
-const lastStep = new Map<string, number>();
-export async function freshCode(a: FleetAccount): Promise<string> {
-  let step = Math.floor(Date.now() / 30_000);
-  const last = lastStep.get(a.username) ?? 0;
-  if (step <= last) step = last + 1;
-  if (step > Math.floor(Date.now() / 30_000) + 1) await new Promise((r) => setTimeout(r, (step - 1) * 30_000 - Date.now() + 500));
-  lastStep.set(a.username, step);
-  return totp(a.secret, step * 30_000);
-}
-
-export async function fleetSignIn(page: Page, a: FleetAccount, password = a.password, code?: string): Promise<void> {
-  code ??= await freshCode(a);
-  await page.goto(`${CLOUD}/fleet/signin`);
-  await page.getByLabel('Username').fill(a.username);
-  await page.getByLabel('Password').fill(password);
-  await page.getByLabel('Code from your authenticator app').fill(code);
-  await page.getByRole('button', { name: 'Sign in' }).click();
-}
-
-export interface Mail {
-  to: string[];
-  subject: string;
-  text: string;
-  html: string;
-}
-
-export async function sentMail(): Promise<Mail[]> {
-  return (await (await fetch(`${SES}/messages`)).json()) as Mail[];
-}
-
-export async function clearMail(): Promise<void> {
-  await fetch(`${SES}/messages`, { method: 'DELETE' });
-}
-
-/** Runs SQL against the online service's database (test inspection only). */
-export function cloudSql(sql: string): string {
-  return compose('exec', '-T', 'db', 'psql', '-U', 'postgres', '-d', 'ch', '-At', '-c', sql).trim();
-}
 
 /** Fake cameras: MediaMTX plus one publisher per court (cam-1 also sends audio). */
 export async function startCameras(...cams: string[]): Promise<void> {

@@ -1,4 +1,4 @@
-//! Box updates (FR-51, FR-54, NFR-12). An update file — from the fleet or a USB stick — must carry the owner's
+//! Box updates (FR-54, NFR-12). An update file from a USB stick must carry the owner's
 //! signature; it is written to the spare slot and started. The launcher (`tools/box-launcher.sh`) takes the box back
 //! to its previous version when the new one doesn't start or isn't healthy within 10 minutes; the old version then
 //! reports "Update rolled back".
@@ -148,14 +148,11 @@ pub fn stage(file: &[u8]) -> Result<String, String> {
     Ok(version)
 }
 
-/// What the box tells the fleet at its next check-in: `{version, outcome}`.
-pub const REPORT: &str = "update_report";
 const STATUS: &str = "update_status";
 
 fn record(app: &AppState, action: &str, version: &str, detail: &str, outcome: &str) -> Result<(), AppError> {
     let status = if outcome == "updated" { format!("Updated to {version}.") } else { format!("Update rolled back: version {version} {detail}.") };
-    crate::uplink::set_config(&app.db, STATUS, &status)?;
-    crate::uplink::set_config(&app.db, REPORT, &serde_json::json!({ "version": version, "outcome": outcome }).to_string())?;
+    db::set_config(&app.db, STATUS, &status)?;
     db::log(&app.db.conn(), None, "box", action, version, detail)?;
     Ok(())
 }
@@ -203,11 +200,10 @@ fn healthy(app: &AppState) -> Result<bool, AppError> {
 }
 
 /// Stages an update and ends the process shortly after, as Wipe box does; the launcher starts the new version.
-async fn install_and_restart(app: &AppState, file: &[u8], actor: Option<&Staff>, source: &str) -> Result<String, String> {
+async fn install_and_restart(app: &AppState, file: &[u8], staff: &Staff) -> Result<String, String> {
     let version = stage(file)?;
-    let (id, who) = actor.map_or((None, "fleet".to_string()), |s| (Some(s.id), s.username.clone()));
-    let _ = db::log(&app.db.conn(), id, &who, "installing update", &version, source);
-    tracing::info!(version, source, "installing update");
+    let _ = db::log(&app.db.conn(), Some(staff.id), &staff.username, "installing update", &version, "USB");
+    tracing::info!(version, "installing update");
     let recorders = app.recorders.clone();
     tokio::spawn(async move {
         tokio::time::sleep(Duration::from_secs(2)).await;
@@ -215,26 +211,6 @@ async fn install_and_restart(app: &AppState, file: &[u8], actor: Option<&Staff>,
         std::process::exit(0);
     });
     Ok(version)
-}
-
-/// An update offered by the fleet at check-in (FR-51): downloaded, checked and installed like a USB file.
-pub async fn from_fleet(app: &AppState, version: &str, url: &str) -> Result<(), String> {
-    if version == current_version() || slots().is_none_or(|d| d.join("pending").exists()) {
-        return Ok(());
-    }
-    let file = reqwest::Client::builder()
-        .timeout(Duration::from_secs(600))
-        .build()
-        .map_err(|e| e.to_string())?
-        .get(url)
-        .send()
-        .await
-        .and_then(|r| r.error_for_status())
-        .map_err(|e| e.to_string())?
-        .bytes()
-        .await
-        .map_err(|e| e.to_string())?;
-    install_and_restart(app, &file, None, "fleet").await.map(|_| ())
 }
 
 #[derive(Template)]
@@ -249,7 +225,7 @@ struct UpdatePage {
 }
 
 fn page(app: &AppState, staff: &Staff, installing: Option<String>, error: Option<String>) -> Page {
-    let status = crate::uplink::config(&app.db, STATUS)?;
+    let status = db::config(&app.db, STATUS)?;
     html(UpdatePage {
         shell: shell(&app.db, staff, "settings")?,
         version: current_version(),
@@ -274,7 +250,7 @@ pub async fn upload(State(app): State<AppState>, staff: Staff, mut form: Multipa
             file = field.bytes().await.map_err(|e| AppError::BadRequest(e.to_string()))?.to_vec();
         }
     }
-    match install_and_restart(&app, &file, Some(&staff), "USB").await {
+    match install_and_restart(&app, &file, &staff).await {
         Ok(version) => page(&app, &staff, Some(version), None),
         Err(e) => {
             let mut res = page(&app, &staff, None, Some(e))?;

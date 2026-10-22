@@ -1,22 +1,16 @@
 import { test, expect, type Browser, type Locator, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  CAMERA, CLOUD, OWNER, PLAYER, STAFF, addCourt, clearMail, cloudSql, cloudUp, completeSetup, connectBox, courtCode, createAdmin, fleetSignIn,
-  freshBox, sentMail, signIn, startCameras, waitCourtStatus,
+  CAMERA, OWNER, PLAYER, STAFF, addCourt, completeSetup, courtCode, freshBox, signIn, startCameras, waitCourtStatus,
 } from './helpers';
 
 test.describe.configure({ mode: 'serial' });
 
 const LOGO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../fixtures/logo-magenta.png');
-const ADMIN_PASSWORD = 'ux-fleet-admin-pass-26';
 let code = '';
 let clipToken = '';
-let videosLink = '';
-let neverLink = '';
-let venueId = '';
 
 async function seriousViolations(page: Page): Promise<string[]> {
   const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
@@ -47,6 +41,12 @@ async function tabTo(page: Page, target: Locator, max = 120): Promise<void> {
     await page.keyboard.press('Tab');
   }
   throw new Error(`not reachable by Tab: ${target}`);
+}
+
+/** Types "HH:MM" into the focused time field segment by segment, as a keyboard user does (en-US: hh, mm, AM/PM). */
+async function typeTime(page: Page, hhmm: string): Promise<void> {
+  const [h, m] = hhmm.split(':').map(Number);
+  await page.keyboard.type(`${String(h % 12 || 12).padStart(2, '0')}${String(m).padStart(2, '0')}${h < 12 ? 'A' : 'P'}`);
 }
 
 /** WCAG contrast ratio between an element's text colour and the first opaque background behind it. */
@@ -80,13 +80,11 @@ async function owner(browser: Browser): Promise<Page> {
   return page;
 }
 
-test('a venue with clips, a game emailed and a fleet admin, for the checks below', async ({ page, browser }) => {
+test('a venue with clips and a game, for the checks below', async ({ page, browser }) => {
   test.setTimeout(420_000);
   await freshBox();
-  await cloudUp();
   await startCameras('cam-3');
   await completeSetup(page, OWNER, ['00:00', '23:59'], LOGO);
-  await connectBox(page);
   await addCourt(page, 'Court 1', CAMERA(3));
   code = await courtCode(page, 'Court 1');
   await waitCourtStatus(page, 'Court 1', /^Recording since/);
@@ -100,30 +98,13 @@ test('a venue with clips, a game emailed and a fleet admin, for the checks below
   await expect(phone.locator('[data-clip-state="ready"]')).toHaveCount(seededReady + 1, { timeout: 60_000 });
   clipToken = (await phone.locator('[data-clip-state="ready"] a.clip-link').first().getAttribute('href'))!.split('/').pop()!;
 
-  await clearMail();
   await phone.getByRole('button', { name: 'Start game' }).click();
-  await phone.getByLabel('Email address').fill('uma@example.com');
-  await phone.getByRole('button', { name: 'Add' }).click();
   await phone.waitForTimeout(8_000);
   await phone.getByRole('button', { name: 'Stop game' }).click();
-  await expect.poll(async () => (await sentMail()).length, { timeout: 240_000, intervals: [3000] }).toBe(1);
-  const [mail] = await sentMail();
-  videosLink = mail.text.match(/http:\/\/localhost:18090\/v\/[0-9a-f]{64}(?=\n)/)![0];
-  neverLink = mail.text.match(/http:\/\/localhost:18090\/never\/[0-9a-f]{64}/)![0];
-  fs.writeFileSync('test-results/email.html', mail.html); // for the design scan
-
-  const admin = createAdmin('uxadmin');
-  await fleetSignIn(page, admin);
-  await page.getByLabel('Temporary password').fill(admin.password);
-  await page.getByLabel('New password').fill(ADMIN_PASSWORD);
-  await page.getByRole('button', { name: 'Change password' }).click();
-  await expect(page).toHaveURL(`${CLOUD}/fleet`);
-  // The Owner's and the fleet admin's sessions together: the fleet pages below and the design scan use them.
-  await page.context().storageState({ path: 'test-results/fleet-admin.json' });
-  venueId = cloudSql(`SELECT id FROM venue WHERE name = '${OWNER.venue}'`);
+  await expect(phone.locator('[data-game-video]')).toBeVisible({ timeout: 240_000 });
 });
 
-test('axe finds nothing serious or critical on any route: player, setup, staff console, fleet console, email pages (UX-A11Y)', async ({ browser }) => {
+test('axe finds nothing serious or critical on any route: player, setup and staff console (UX-A11Y)', async ({ browser }) => {
   test.setTimeout(300_000);
   const player = await (await browser.newContext()).newPage();
   await axeRoutes(player, PLAYER, [`/c/${code}`, `/c/${code}/clips/${clipToken}`, '/privacy']);
@@ -137,16 +118,6 @@ test('axe finds nothing serious or critical on any route: player, setup, staff c
   const anon = await (await browser.newContext({ ignoreHTTPSErrors: true })).newPage();
   await axeRoutes(anon, STAFF, ['/console/signin']);
 
-  const fleet = await (await browser.newContext({ storageState: 'test-results/fleet-admin.json' })).newPage();
-  await axeRoutes(fleet, CLOUD, ['/fleet', '/fleet/venues', `/fleet/venues/${venueId}`, '/fleet/users', '/fleet/log', '/fleet/account']);
-  const visitor = await (await browser.newContext()).newPage();
-  await axeRoutes(visitor, CLOUD, ['/fleet/signin', new URL(videosLink).pathname, new URL(neverLink).pathname]);
-
-  // The take-home email itself, as a mail client shows it: a fresh page, so no site's CSP blocks its inline styles.
-  const [mail] = await sentMail();
-  const client = await (await browser.newContext()).newPage();
-  await client.setContent(mail.html);
-  expect(await seriousViolations(client), 'email').toEqual([]);
 });
 
 test('body text and the Clip that label reach 7:1; every court page action is at least 48 px (UX-A11Y)', async ({ browser }) => {
@@ -225,6 +196,20 @@ test('SC-7 by keyboard alone: find footage, hold it, export it (UX-MOTION-KEYBOA
   await tabTo(page, page.getByRole('link', { name: 'Footage', exact: true }));
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(`${STAFF}/console/footage`);
+  // Court and time window are required, as when a parent asks about a moment (SC-7): enter them from the keyboard.
+  // The arrow key picks the first court after "Choose a court"; the window is the last few minutes of box time.
+  const court = page.getByLabel('Court', { exact: true });
+  await tabTo(page, court);
+  await page.keyboard.press('ArrowDown');
+  await expect(court).not.toHaveValue('');
+  const now = Date.parse(await (await page.request.post(`${STAFF}/__test/clock`, { form: { ms: '0' } })).text());
+  const hm = (ms: number): string => new Date(ms + 8 * 3600_000).toISOString().slice(11, 16); // Manila
+  for (const [label, at] of [['From', now - 3 * 60_000], ['To', now + 60_000]] as const) {
+    const field = page.getByLabel(label, { exact: true });
+    await tabTo(page, field);
+    await typeTime(page, hm(at));
+    await expect(field).toHaveValue(hm(at));
+  }
   await tabTo(page, page.getByRole('button', { name: 'Find footage' }));
   await page.keyboard.press('Enter');
   await tabTo(page, page.getByRole('button', { name: 'Hold footage' }));
@@ -249,7 +234,9 @@ test('the clip library is a real table with a caption and scoped headers, pages 
   const del = page.getByRole('link', { name: /^Delete / }).first();
   const name = (await del.getAttribute('aria-label'))!.replace(/^Delete /, '');
   await del.click();
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(name);
+  // The confirmation names the clip the link named: "Court 1 · 22 Oct, 12:36 pm · Clip is removed …".
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/^Delete this [a-z ]+\?$/);
+  expect((await page.getByRole('main').textContent())!.replace(/ · /g, ' ')).toContain(name);
   await page.getByRole('link', { name: 'Keep it' }).click();
 });
 

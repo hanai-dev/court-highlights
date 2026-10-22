@@ -181,8 +181,6 @@ pub enum Shape {
     Wide,
     /// The middle 9:16 of the frame.
     Vertical,
-    /// The camera's frame, at most 1280×720 — the copy of a game video that is emailed (FR-12).
-    Email,
 }
 
 impl Shape {
@@ -191,10 +189,6 @@ impl Shape {
         match self {
             Self::Wide => wide,
             Self::Vertical => vertical,
-            Self::Email => {
-                let k = (1280.0 / source.w as f64).min(720.0 / source.h as f64).min(1.0);
-                Size { w: even(source.w as f64 * k), h: even(source.h as f64 * k) }
-            }
         }
     }
 }

@@ -1,4 +1,4 @@
-//! Games, game videos and highlights (FR-10…FR-16) and the court page's email list (FR-20, FR-21, FR-27).
+//! Games, game videos and highlights (FR-10…FR-16).
 //! Game videos and highlights are heavy: they run one at a time so taps on every court stay quick (NFR-1).
 
 use crate::clips::{ClipLine, at, closed_segments, ms, plan, render, thumbnail};
@@ -32,16 +32,6 @@ pub struct LastGame {
     pub singles: Vec<ClipLine>,
 }
 
-pub struct Recipient {
-    pub id: i64,
-    pub masked: String,
-}
-
-pub struct EmailBox {
-    pub recipients: Vec<Recipient>,
-    pub full: bool,
-}
-
 pub struct Panel {
     pub running: Option<Running>,
     pub last: Option<LastGame>,
@@ -51,14 +41,6 @@ impl Panel {
     /// The game area still has something saving: the page keeps refreshing it.
     pub fn pending(&self) -> bool {
         self.last.as_ref().is_some_and(|g| g.video.as_ref().is_none_or(|v| v.state == "saving") || matches!(g.highlights.as_str(), "pending" | "running"))
-    }
-}
-
-/// "a••••@example.com": everyone on the court page sees the list, so addresses are never shown in full.
-pub fn mask(email: &str) -> String {
-    match email.split_once('@') {
-        Some((user, domain)) => format!("{}••••@{domain}", user.chars().next().unwrap_or('•')),
-        None => "••••".into(),
     }
 }
 
@@ -86,39 +68,6 @@ fn hours(db: &Db) -> rusqlite::Result<Option<ch_core::OpeningHours>> {
 fn auto_stop(db: &Db, started: Time) -> rusqlite::Result<Time> {
     let closing = hours(db)?.filter(|h| h.is_open(started)).map(|h| h.closing(started));
     Ok(ch_core::game_auto_stop(started, closing))
-}
-
-/// The game whose emails the court page collects: the running one, else the last one stopped within 2 h whose
-/// email has not gone out.
-fn email_game(db: &Db, court: i64, now: Time) -> rusqlite::Result<Option<i64>> {
-    let since = (now - ch_core::COURT_PAGE_WINDOW).to_rfc3339();
-    db.conn()
-        .query_row(
-            "SELECT id FROM game WHERE court_id = ?1 AND emails_sent_at IS NULL AND (stopped_at IS NULL OR stopped_at >= ?2)
-             ORDER BY started_at DESC LIMIT 1",
-            params![court, since],
-            |r| r.get(0),
-        )
-        .optional()
-}
-
-fn recipients(db: &Db, column: &str, id: i64) -> rusqlite::Result<Vec<Recipient>> {
-    let conn = db.conn();
-    let mut st = conn.prepare(&format!("SELECT id, email FROM recipient WHERE {column} = ?1 ORDER BY id"))?;
-    st.query_map([id], |r| Ok(Recipient { id: r.get(0)?, masked: mask(&r.get::<_, String>(1)?) }))?.collect()
-}
-
-/// Email is offered only when this box is registered with the online service and the venue's online features are
-/// on (FR-27). Without internet the addresses wait on the box (store and forward, FR-22).
-pub fn online(db: &Db) -> rusqlite::Result<bool> {
-    // No venue yet (before setup) means nothing to send.
-    let on: Option<bool> = db.conn().query_row("SELECT online_on FROM venue WHERE id = 1", [], |r| r.get(0)).optional()?;
-    Ok(on == Some(true) && crate::uplink::registered(db)?)
-}
-
-pub fn email_box(db: &Db, column: &str, id: i64) -> rusqlite::Result<EmailBox> {
-    let recipients = recipients(db, column, id)?;
-    Ok(EmailBox { full: ch_core::can_add_recipient(recipients.len()).is_err(), recipients })
 }
 
 pub fn panel(app: &AppState, court: i64, now: Time) -> Result<Panel, AppError> {
@@ -171,13 +120,6 @@ pub fn panel(app: &AppState, court: i64, now: Time) -> Result<Panel, AppError> {
         }
     };
     Ok(Panel { running, last })
-}
-
-pub fn game_email_box(app: &AppState, court: i64, now: Time) -> Result<Option<EmailBox>, AppError> {
-    Ok(match email_game(&app.db, court, now)? {
-        Some(game) => Some(email_box(&app.db, "game_id", game)?),
-        None => None,
-    })
 }
 
 // ------------------------------------------------------------------ start and stop (FR-10, FR-11)
@@ -335,12 +277,12 @@ async fn game_video(app: &AppState, game: i64) -> Result<(), AppError> {
     let (actual_start, actual_end) = (p.start, p.end);
     let dir = app.data.join("clips").join(&token);
     std::fs::create_dir_all(&dir).map_err(|e| AppError::Internal(e.to_string()))?;
-    let (wide, email) = (dir.join("wide.mp4"), dir.join("email.mp4"));
-    render(app, p, vec![(Shape::Wide, wide.clone()), (Shape::Email, email.clone())]).await?;
+    let wide = dir.join("wide.mp4");
+    render(app, p, vec![(Shape::Wide, wide.clone())]).await?;
     thumbnail(clip, &wide, &dir).await;
     app.db.conn().execute(
-        "UPDATE clip SET state = 'ready', wide_path = ?1, email_path = ?2, window_start_ms = ?3, window_end_ms = ?4, made_at = ?5 WHERE id = ?6",
-        params![wide.to_string_lossy(), email.to_string_lossy(), actual_start, actual_end, clock::now().to_rfc3339(), clip],
+        "UPDATE clip SET state = 'ready', wide_path = ?1, window_start_ms = ?2, window_end_ms = ?3, made_at = ?4 WHERE id = ?5",
+        params![wide.to_string_lossy(), actual_start, actual_end, clock::now().to_rfc3339(), clip],
     )?;
     tracing::info!(game, clip, seconds = (actual_end - actual_start) / 1000, "game video ready");
     Ok(())
@@ -443,94 +385,4 @@ fn insert_ready(
         params![court, game, kind, token, rank, start, end, clock::now().to_rfc3339(), wide.to_string_lossy(), vertical.to_string_lossy()],
     )?;
     Ok(conn.last_insert_rowid())
-}
-
-// ------------------------------------------------------------------ email list (FR-20, FR-21)
-
-#[derive(Deserialize)]
-pub struct EmailForm {
-    email: String,
-    clip: Option<String>,
-}
-
-/// Plain shape check; delivery problems surface as bounces, handled by the online service (FR-25).
-pub fn valid_email(e: &str) -> bool {
-    let Some((user, domain)) = e.split_once('@') else { return false };
-    e.len() <= 254
-        && !user.is_empty()
-        && domain.contains('.')
-        && !domain.starts_with('.')
-        && !domain.ends_with('.')
-        && !e.chars().any(|c| c.is_whitespace() || c == '<' || c == '>' || c == '"')
-        && !domain.contains('@')
-}
-
-pub async fn add_email(State(app): State<AppState>, Path(code): Path<String>, Form(f): Form<EmailForm>) -> Page {
-    let court = crate::clips::court_for_players(&app, &code)?;
-    let email = f.email.trim().to_lowercase();
-    let (column, id, back) = match f.clip.as_deref().filter(|c| !c.is_empty()) {
-        Some(token) => {
-            let clip = crate::clips::clip_for_email(&app, court.id, token)?;
-            ("clip_id", clip, format!("/c/{}/clips/{token}", court.code))
-        }
-        None => match email_game(&app.db, court.id, clock::now())? {
-            Some(game) => ("game_id", game, format!("/c/{}", court.code)),
-            None => return Ok(Redirect::to(&format!("/c/{}?email=no-game#emails", court.code)).into_response()),
-        },
-    };
-    let problem = if !online(&app.db)? {
-        Some("offline")
-    } else if !valid_email(&email) {
-        Some("invalid")
-    } else {
-        let count: i64 = app.db.conn().query_row(&format!("SELECT COUNT(*) FROM recipient WHERE {column} = ?1"), [id], |r| r.get(0))?;
-        ch_core::can_add_recipient(count as usize).err().map(|_| "full")
-    };
-    if let Some(p) = problem {
-        return Ok(Redirect::to(&format!("{back}?email={p}#emails")).into_response());
-    }
-    app.db.conn().execute(&format!("INSERT INTO recipient ({column}, email, added_at) VALUES (?1, ?2, ?3)"), params![id, email, clock::now().to_rfc3339()])?;
-    Ok(Redirect::to(&format!("{back}#emails")).into_response())
-}
-
-#[derive(Deserialize)]
-pub struct RemoveForm {
-    clip: Option<String>,
-}
-
-/// Anyone on the court page can remove an address until the email is sent (FR-20).
-pub async fn remove_email(State(app): State<AppState>, Path((code, id)): Path<(String, i64)>, Form(f): Form<RemoveForm>) -> Page {
-    let court = crate::clips::court_for_players(&app, &code)?;
-    let removed = match f.clip.as_deref().filter(|c| !c.is_empty()) {
-        Some(token) => {
-            let clip = crate::clips::clip_for_email(&app, court.id, token)?;
-            app.db.conn().execute("DELETE FROM recipient WHERE id = ?1 AND clip_id = ?2", params![id, clip])?
-        }
-        None => match email_game(&app.db, court.id, clock::now())? {
-            Some(game) => app.db.conn().execute("DELETE FROM recipient WHERE id = ?1 AND game_id = ?2", params![id, game])?,
-            None => 0,
-        },
-    };
-    if removed == 0 {
-        return Err(AppError::NotFound);
-    }
-    let back = match f.clip.as_deref().filter(|c| !c.is_empty()) {
-        Some(token) => format!("/c/{}/clips/{token}#emails", court.code),
-        None => format!("/c/{}#emails", court.code),
-    };
-    Ok(Redirect::to(&back).into_response())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn emails_are_checked_and_masked() {
-        assert!(valid_email("pia@example.com"));
-        for bad in ["pia", "pia@", "@example.com", "pia@example", "pia@@example.com", "p ia@example.com", "pia@.com", "<a>@x.com"] {
-            assert!(!valid_email(bad), "{bad}");
-        }
-        assert_eq!(mask("pia@example.com"), "p••••@example.com");
-    }
 }

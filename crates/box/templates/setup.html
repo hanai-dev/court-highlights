@@ -21,7 +21,7 @@
     <div class="field">
       <label for="logo">Venue logo (PNG or JPEG, up to 2 MB)</label>
       <input id="logo" name="logo" type="file" accept="image/png,image/jpeg" aria-describedby="logo-hint{% if f.err("logo").is_some() %} logo-error{% endif %}">
-      <p class="hint" id="logo-hint">Shown on the court page, in emails, on signs and burned into every clip. You can add it later in Settings.</p>
+      <p class="hint" id="logo-hint">Shown on the court page, on signs and burned into every clip. You can add it later in Settings.</p>
       {% if let Some(e) = f.err("logo") %}<p class="field-error" id="logo-error">{{ e }}</p>{% endif %}
     </div>
     <div class="row">

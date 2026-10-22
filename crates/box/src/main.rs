@@ -18,7 +18,6 @@ mod remote;
 mod sync;
 mod tls;
 mod update;
-mod uplink;
 mod venue;
 mod web;
 mod wipe;
@@ -47,8 +46,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     gstreamer::init()?;
     let db = db::Db::open(&data_dir.join("box.db"))?;
     let box_name = env("CH_BOX_NAME", "court-box");
-    uplink::set_config(&db, "box_name", &box_name)?;
-    let correction = uplink::config(&db, "clock_correction_ms")?.and_then(|c| c.parse().ok()).unwrap_or(0);
+    db::set_config(&db, "box_name", &box_name)?;
+    let correction = db::config(&db, "clock_correction_ms")?.and_then(|c| c.parse().ok()).unwrap_or(0);
     clock::load_correction(correction);
     let venue = sync::from_env(&box_name).map_err(|e| e.to_string())?;
     rustls::crypto::ring::default_provider().install_default().map_err(|_| "TLS crypto provider already installed")?;
@@ -65,7 +64,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     games::recover(&state)?;
     games::spawn_watch(state.clone());
     janitor::spawn(state.clone());
-    uplink::spawn(state.clone());
     sync::spawn(state.clone());
     let tls = axum_server::tls_rustls::RustlsConfig::from_pem(cert.into_bytes(), key.into_bytes()).await?;
     if state.venue.is_some() {

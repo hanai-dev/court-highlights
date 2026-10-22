@@ -22,10 +22,6 @@
   <section class="panel" id="game" aria-labelledby="game-h" data-game data-game-url="/c/{{ code }}/game"{% if panel.pending() %} data-game-pending{% endif %}>
     {% include "court_game.html" %}
   </section>
-  <section class="panel" id="emails" aria-labelledby="emails-h">
-    <h2 id="emails-h">Send our videos to</h2>
-    {% include "email_box.html" %}
-  </section>
   <section aria-labelledby="clips-h">
     <h2 id="clips-h">Clips on this court</h2>
     <div data-clips data-clips-url="/c/{{ code }}/clips">{% include "court_clips.html" %}</div>

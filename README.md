@@ -7,7 +7,6 @@
   <img src="https://img.shields.io/badge/version-0.1.0%20pre--release-ffe14d?labelColor=1b1b1b" alt="Version 0.1.0 pre-release">
   <img src="https://img.shields.io/badge/Rust-1.99-1b1b1b?logo=rust&logoColor=white" alt="Rust 1.99">
   <img src="https://img.shields.io/badge/GStreamer-1.28-1b1b1b" alt="GStreamer 1.28">
-  <img src="https://img.shields.io/badge/PostgreSQL-18-1b1b1b?logo=postgresql&logoColor=white" alt="PostgreSQL 18">
   <img src="https://img.shields.io/badge/licence-proprietary-8b877c" alt="Proprietary licence">
 </p>
 
@@ -21,8 +20,7 @@
 
 **Court Highlights** puts one camera on every court of a pickleball venue and a **Clip that** button on each court's
 phone page. A small Intel N150 box records up to four courts and serves everything over the venue Wi-Fi: no app, no
-player account, no internet needed. When the venue is online, an optional service emails players their videos and
-gives the installer a fleet console.
+player account, no internet. Footage, clips and accounts never leave the venue network.
 
 > [!NOTE]
 > Version 0.1.0 is built for the trial at Paddle Point Leisure Hub, Cagayan de Oro. It is not yet tagged or deployed;
@@ -47,8 +45,8 @@ gives the installer a fleet console.
       Court pages and downloads come straight from the box on the venue Wi-Fi. No sound is ever recorded.
     </td>
     <td valign="top">
-      <h3>✉️ Take-home email</h3>
-      When the venue is online: up to 8 addresses per game, one email each, links for about 3 days.
+      <h3>🔒 Stays at the venue</h3>
+      Nothing is uploaded anywhere. Players take their videos home on their phones; staff keep what the venue needs.
     </td>
   </tr>
   <tr>
@@ -82,17 +80,12 @@ flowchart LR
   phone["📱 Player phone"] -->|venue Wi-Fi| box
   staff["🖥️ Staff console"] -->|HTTPS| box
   box <-->|TLS + venue key| peers["Other boxes<br/>at the venue"]
-  box -.->|when online| cloud["Online service<br/>DigitalOcean Singapore"]
-  cloud --> email["✉️ Take-home email<br/>Amazon SES"]
-  cloud --> store[("Cloudflare R2<br/>PostgreSQL 18")]
-  installer["🔧 Installer"] -->|fleet console| cloud
 ```
 
 | Part | Path | Stack | What it does |
 |---|---|---|---|
 | 📦 Court box | [`crates/box`](crates/box) | Rust, axum, GStreamer, SQLite | Recording, clips, games, shot judge, court pages, staff console, venue sync |
-| 📐 Shared rules | [`crates/core`](crates/core) | Rust | Pure logic with golden tests: clip windows, expiry, send order, disk pressure, lockout |
-| ☁️ Online service | [`crates/cloud`](crates/cloud) | Rust, axum, PostgreSQL 18, R2, SES | Box API, take-home email, fleet console |
+| 📐 Shared rules | [`crates/core`](crates/core) | Rust | Pure logic with golden tests: clip windows, expiry, disk pressure, lockout |
 | 🧪 End-to-end tests | [`tests/e2e`](tests/e2e) | Playwright | Runs against the compose stack with replayed footage as RTSP cameras |
 
 ## Quick start
@@ -100,7 +93,7 @@ flowchart LR
 You need [Docker](https://www.docker.com/) and [Node.js 24](https://nodejs.org/). Everything builds inside the
 `ch-dev` image (Ubuntu 26.04, Rust 1.99, GStreamer 1.28).
 
-**1. Build the image and both programs**
+**1. Build the image and the box program**
 
 ```sh
 docker build -t ch-dev:0 -f docker/dev.Dockerfile docker
@@ -108,10 +101,10 @@ docker volume create ch-target && docker volume create ch-cargo-registry
 docker compose -p ch-test -f docker/compose.test.yaml --profile build run --rm builder
 ```
 
-**2. Start one box with replayed cameras and the online service**
+**2. Start one box with replayed cameras**
 
 ```sh
-docker compose -p ch-test -f docker/compose.test.yaml up -d rtsp cam-3 box-a db s3 ses cloud
+docker compose -p ch-test -f docker/compose.test.yaml up -d rtsp cam-3 box-a
 ```
 
 **3. Open it**
@@ -120,7 +113,6 @@ docker compose -p ch-test -f docker/compose.test.yaml up -d rtsp cam-3 box-a db 
 |---|---|
 | Court pages | http://localhost:18080 |
 | Staff console | https://localhost:18443/console |
-| Online service and fleet console | http://localhost:18090 |
 
 > [!TIP]
 > To try a three-box venue, run
@@ -151,7 +143,9 @@ npx playwright test
 | Unit and golden tests | `cargo test` |
 | Licences | `tools/licence-check.cjs`, `tools/gst-licence-check.sh` |
 | Advisories and leaked credentials | `tools/supply-chain-scan.sh` |
-| Asset size budget, online running cost, support dates through 2030 | `tools/payload-check.cjs`, `tools/cost-model.cjs`, `tools/horizon-check.cjs` |
+| Box system packages | Trivy on the build image |
+| Venue network only: nothing leaves the venue | `node --test tests/local-only.test.cjs` |
+| Asset size budget, support dates through 2030 | `tools/payload-check.cjs`, `tools/horizon-check.cjs` |
 
 See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
@@ -161,7 +155,7 @@ See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 | | Document | For |
 |---|---|---|
-| 📖 | [User guide](docs/user-manual.md) | Players, staff, the venue Owner, installers |
+| 📖 | [User guide](docs/user-manual.md) | Players, staff and the venue Owner |
 | 🛠️ | [Runbook](RUNBOOK.md) | Start and stop, health, configuration, backups, common problems |
 | 📝 | [Release notes](RELEASE_NOTES.md) | What 0.1.0 does and what is still open |
 | ⚖️ | [Known debt](DEBT.md) | Accepted findings and advisories, with when to look again |

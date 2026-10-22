@@ -1,6 +1,8 @@
 # Stack decision — Court camera highlights (court-highlights)
 
-Status: owner-mandated
+Status: owner-mandated · amended 2026-10-22: the online service (its datastore, object storage and email
+choices) is withdrawn by the owner's decision, venue network only (change record in docs/requirements/requirements.md).
+The box stack stands.
 Date: 2026-10-21
 Decision-makers: owner (client) · consulted: the owner's stated skills and constraints (A-113–A-121), Forge research (four candidate passes + one cross-cutting pass; ledgers in this directory), Forge build records (S-46, S-47) · informed: build
 Recommendation: O-2

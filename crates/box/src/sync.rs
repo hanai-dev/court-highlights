@@ -124,10 +124,8 @@ pub struct VenueRow {
     pub close_time: String,
     pub clip_before_s: i64,
     pub clip_after_s: i64,
-    pub upload_cap_kbps: i64,
     pub judge_on: bool,
     pub privacy_notice: String,
-    pub online_on: bool,
     pub support_phone: String,
     pub contact: String,
     pub time_leader: String,
@@ -207,7 +205,7 @@ pub fn local_state(app: &AppState) -> Result<State_, Error> {
         let v = conn
             .query_row(
                 "SELECT name, logo, logo_type, logo_corner, sponsor, sponsor_type, open_time, close_time, clip_before_s, clip_after_s,
-                    upload_cap_kbps, judge_on, privacy_notice, online_on, support_phone, contact, time_leader, version, updated_at, updated_box
+                    judge_on, privacy_notice, support_phone, contact, time_leader, version, updated_at, updated_box
              FROM venue WHERE id = 1",
                 [],
                 |r| {
@@ -222,14 +220,12 @@ pub fn local_state(app: &AppState) -> Result<State_, Error> {
                         close_time: r.get(7)?,
                         clip_before_s: r.get(8)?,
                         clip_after_s: r.get(9)?,
-                        upload_cap_kbps: r.get(10)?,
-                        judge_on: r.get(11)?,
-                        privacy_notice: r.get(12)?,
-                        online_on: r.get(13)?,
-                        support_phone: r.get(14)?,
-                        contact: r.get(15)?,
-                        time_leader: r.get(16)?,
-                        stamp: stamp(r, 17)?,
+                        judge_on: r.get(10)?,
+                        privacy_notice: r.get(11)?,
+                        support_phone: r.get(12)?,
+                        contact: r.get(13)?,
+                        time_leader: r.get(14)?,
+                        stamp: stamp(r, 15)?,
                     })
                 },
             )
@@ -303,12 +299,12 @@ pub fn merge(db: &Db, remote: &State_) -> rusqlite::Result<usize> {
         if local.as_ref().is_none_or(|l| v.stamp.newer_than(l)) {
             tx.execute(
                 "INSERT INTO venue (id, name, logo, logo_type, logo_corner, sponsor, sponsor_type, open_time, close_time, clip_before_s, clip_after_s,
-                   upload_cap_kbps, judge_on, privacy_notice, online_on, support_phone, contact, time_leader, version, updated_at, updated_box)
-                 VALUES (1, ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20)
+                   judge_on, privacy_notice, support_phone, contact, time_leader, version, updated_at, updated_box)
+                 VALUES (1, ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18)
                  ON CONFLICT (id) DO UPDATE SET name = excluded.name, logo = excluded.logo, logo_type = excluded.logo_type, logo_corner = excluded.logo_corner,
                    sponsor = excluded.sponsor, sponsor_type = excluded.sponsor_type, open_time = excluded.open_time, close_time = excluded.close_time,
-                   clip_before_s = excluded.clip_before_s, clip_after_s = excluded.clip_after_s, upload_cap_kbps = excluded.upload_cap_kbps,
-                   judge_on = excluded.judge_on, privacy_notice = excluded.privacy_notice, online_on = excluded.online_on,
+                   clip_before_s = excluded.clip_before_s, clip_after_s = excluded.clip_after_s,
+                   judge_on = excluded.judge_on, privacy_notice = excluded.privacy_notice,
                    support_phone = excluded.support_phone, contact = excluded.contact, time_leader = excluded.time_leader,
                    version = excluded.version, updated_at = excluded.updated_at, updated_box = excluded.updated_box",
                 params![
@@ -322,10 +318,8 @@ pub fn merge(db: &Db, remote: &State_) -> rusqlite::Result<usize> {
                     v.close_time,
                     v.clip_before_s,
                     v.clip_after_s,
-                    v.upload_cap_kbps,
                     v.judge_on,
                     v.privacy_notice,
-                    v.online_on,
                     v.support_phone,
                     v.contact,
                     v.time_leader,
@@ -512,7 +506,7 @@ fn align_clock(app: &AppState, venue: &Venue, state: &State_, rtt_ms: i64) -> Re
     if drift.abs() > 2_000 {
         let wanted = chrono::DateTime::from_timestamp_millis(clock::now().timestamp_millis() + drift).unwrap_or_default().with_timezone(&ch_core::manila());
         let correction = clock::correct_to(wanted);
-        crate::uplink::set_config(&app.db, "clock_correction_ms", &correction.to_string())?;
+        crate::db::set_config(&app.db, "clock_correction_ms", &correction.to_string())?;
         app.recorders.split_all();
         tracing::info!(drift_ms = drift, leader = %leader, "box time aligned with the venue");
     }

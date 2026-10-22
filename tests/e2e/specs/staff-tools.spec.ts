@@ -109,7 +109,7 @@ test('settings save, survive a restart and take effect on the next clip: corner 
   await page.getByLabel('Logo corner').selectOption('bottom-left');
   await page.getByLabel('Seconds before the tap').fill('10');
   await page.getByLabel('Seconds after the tap').fill('2');
-  await page.getByLabel(/Upload cap/).fill('25');
+  await page.getByLabel(/Venue contact/).fill('Front desk 0917 555 0125');
   await page.getByLabel(/Make highlights/).uncheck();
   await page.getByLabel('Privacy notice shown to players').fill('Test venue notice.\n\nSecond paragraph.');
   await page.getByRole('button', { name: 'Save settings' }).click();
@@ -120,7 +120,7 @@ test('settings save, survive a restart and take effect on the next clip: corner 
   await expect(page.getByLabel('Logo corner')).toHaveValue('bottom-left');
   await expect(page.getByLabel('Seconds before the tap')).toHaveValue('10');
   await expect(page.getByLabel('Seconds after the tap')).toHaveValue('2');
-  await expect(page.getByLabel(/Upload cap/)).toHaveValue('25');
+  await expect(page.getByLabel(/Venue contact/)).toHaveValue('Front desk 0917 555 0125');
   await expect(page.getByLabel(/Make highlights/)).not.toBeChecked();
 
   const player = await page.context().browser()!.newPage();
@@ -187,12 +187,16 @@ test('footage: find, hold against the 4-hour overwrite, export, record missing f
   await advanceClock(page.request, 4 * 3600_000 + 5 * 60_000);
   await page.waitForTimeout(70_000); // the overwrite runs every minute
   const left = boxExec('ls /data/footage/court-1/').trim().split('\n');
-  // The form takes whole minutes, so the hold starts at the minute boundary at or before now − 3 min.
+  // The form takes whole minutes, so the hold starts at the minute boundary at or before now − 3 min. A segment runs
+  // until the next one starts (taps split segments, so they are not all 10 s); the hold keeps every segment it
+  // overlaps. Segments ending within a second of the hold's start are left out of both checks.
   const heldStart = Math.floor((now.getTime() - 3 * 60_000) / 60_000) * 60_000;
-  const protectedFiles = held.filter((f) => Number(f.replace('.mp4', '')) >= heldStart - 10_000);
+  const starts = held.map((f) => Number(f.replace('.mp4', ''))).sort((a, b) => a - b);
+  const endOf = (i: number): number => starts[i + 1] ?? Number.MAX_SAFE_INTEGER;
+  const protectedFiles = starts.filter((_, i) => endOf(i) > heldStart + 1_000).map((s) => `${s}.mp4`);
   expect(protectedFiles.length).toBeGreaterThan(0);
   for (const f of protectedFiles) expect(left, `${f} is held`).toContain(f);
-  const unprotected = held.filter((f) => Number(f.replace('.mp4', '')) < heldStart - 15_000);
+  const unprotected = starts.filter((_, i) => endOf(i) < heldStart - 1_000).map((s) => `${s}.mp4`);
   for (const f of unprotected) expect(left, `${f} is not held`).not.toContain(f);
 
   await page.goto(`${STAFF}/console/footage`);
@@ -293,7 +297,7 @@ test('library: 50 per page, filters with Clear, no-results state, keep, posting 
   expect(log).toContain(OWNER.username);
 });
 
-test('the activity log exports to CSV with formulas defused and no email addresses (FR-35)', async ({ page }) => {
+test('the activity log exports to CSV with formulas defused and no personal addresses (FR-35)', async ({ page }) => {
   await owner(page);
   await settingsForm(page);
   await page.getByLabel('Venue name').fill('=HYPERLINK("http://evil.example")');

@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  CAMERA, OWNER, PLAYER, STAFF, addCourt, advanceClock, boxExec, cloudUp, colourAt, completeSetup, connectBox, courtCode, freshBox, isMagenta, powerCycle,
+  CAMERA, OWNER, PLAYER, STAFF, addCourt, advanceClock, boxExec, colourAt, completeSetup, courtCode, freshBox, isMagenta, powerCycle,
   probe, signIn, startCameras, waitCourtStatus,
 } from './helpers';
 
@@ -12,10 +12,9 @@ const LOGO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../f
 let code = '';
 
 const tokenOf = async (page: Page, selector: string): Promise<string> => (await page.locator(selector).first().getAttribute('href'))!.split('/').pop()!;
-const files = (token: string): { wide: string; vertical: string; email: string } => ({
+const files = (token: string): { wide: string; vertical: string } => ({
   wide: `/data/clips/${token}/wide.mp4`,
   vertical: `/data/clips/${token}/vertical.mp4`,
-  email: `/data/clips/${token}/email.mp4`,
 });
 
 async function owner(page: Page): Promise<void> {
@@ -34,12 +33,10 @@ async function setJudge(page: Page, on: boolean): Promise<void> {
 }
 
 test('the court page shows its parts in order; Start offers posting permission unticked (FR-17, FR-11)', async ({ page, browser }) => {
-  test.setTimeout(240_000); // a fresh box and a fresh online service from nothing
+  test.setTimeout(240_000); // a fresh box from nothing
   await freshBox();
-  await cloudUp(); // email needs a box registered with the online service (FR-27, FR-48)
   await startCameras('cam-4');
   await completeSetup(page, OWNER, ['00:00', '23:59'], LOGO);
-  await connectBox(page);
   await page.goto(`${STAFF}/console/settings`);
   await page.getByLabel('Logo corner').selectOption('bottom-right');
   await page.getByRole('button', { name: 'Save settings' }).click();
@@ -49,15 +46,17 @@ test('the court page shows its parts in order; Start offers posting permission u
 
   const phone = await (await browser.newContext()).newPage();
   await phone.goto(`${PLAYER}/c/${code}`);
-  const order = await phone.locator('img.venue-logo, h1, [data-court-status], .btn-clip-that, #game-h, #emails-h, #clips-h').evaluateAll((els) => els.map((e) => e.id || e.className || e.tagName.toLowerCase()));
-  expect(order).toEqual(['venue-logo', 'court', 'status status-ok', 'btn-clip-that', 'game-h', 'emails-h', 'clips-h']);
+  const order = await phone.locator('img.venue-logo, h1, [data-court-status], .btn-clip-that, #game-h, #clips-h').evaluateAll((els) => els.map((e) => e.id || e.className || e.tagName.toLowerCase()));
+  expect(order).toEqual(['venue-logo', 'court', 'status status-ok', 'btn-clip-that', 'game-h', 'clips-h']);
   const permission = phone.getByLabel('The venue may post our highlights on its pages');
   await expect(permission).toBeVisible();
   await expect(permission).not.toBeChecked();
-  await expect(phone.getByText('Start a game to send its videos by email.')).toBeVisible();
+  // Venue network only: players are never asked for an address; their videos download here. local-only:
+  await expect(phone.locator('input[type=email], [name=email], form[action$="/emails"]')).toHaveCount(0); // local-only: no address field
+  expect((await phone.request.post(`${PLAYER}/c/${code}/emails`, { form: { email: 'pia@example.com' }, headers: { Origin: PLAYER } })).status()).toBe(404); // local-only: no route
 });
 
-test('a game runs on every phone, takes up to 8 addresses, and Stop yields the game video and highlights (FR-10, FR-12, FR-14, FR-20)', async ({ browser }) => {
+test('a game runs on every phone, and Stop yields the game video and highlights (FR-10, FR-12, FR-14)', async ({ browser }) => {
   test.setTimeout(400_000);
   const phoneA = await (await browser.newContext()).newPage();
   const phoneB = await (await browser.newContext()).newPage();
@@ -68,26 +67,6 @@ test('a game runs on every phone, takes up to 8 addresses, and Stop yields the g
   await expect(phoneB.locator('[data-game-running]')).toHaveText(/^Recording since/);
   await expect(phoneB.getByRole('button', { name: 'Stop game' })).toBeVisible();
   await expect(phoneB.getByRole('button', { name: 'Start game' })).toHaveCount(0);
-
-  // Email list: masked chips, 8 at most (GV-15), invalid refused, removable until sent.
-  await phoneA.getByLabel('Email address').fill('pia@example'); // browsers accept it; the box does not
-  await phoneA.getByRole('button', { name: 'Add' }).click();
-  await expect(phoneA.getByRole('alert')).toHaveText("Check the email address — it doesn't look complete.");
-  for (let i = 1; i <= 8; i++) {
-    await phoneA.getByLabel('Email address').fill(`player${i}@example.com`);
-    await phoneA.getByRole('button', { name: 'Add' }).click();
-  }
-  await expect(phoneA.locator('.chip')).toHaveCount(8);
-  await expect(phoneA.getByText('Up to 8 addresses per game')).toBeVisible();
-  await expect(phoneA.getByLabel('Email address')).toHaveCount(0);
-  expect(await phoneA.content()).not.toContain('player1@example.com');
-  await expect(phoneA.locator('.chip').first()).toContainText('p••••@example.com');
-  const ninth = await phoneA.request.post(`${PLAYER}/c/${code}/emails`, { form: { email: 'player9@example.com' }, maxRedirects: 0, headers: { Origin: PLAYER } });
-  expect(ninth.headers().location).toContain('email=full');
-  await phoneB.goto(`${PLAYER}/c/${code}`);
-  await phoneB.getByRole('button', { name: /^Remove / }).first().click();
-  await expect(phoneB.locator('.chip')).toHaveCount(7);
-  await expect(phoneB.getByLabel('Email address')).toBeVisible();
 
   // A tap during the game belongs to the game.
   await phoneA.goto(`${PLAYER}/c/${code}`);
@@ -106,13 +85,13 @@ test('a game runs on every phone, takes up to 8 addresses, and Stop yields the g
   await expect(phoneB.locator('[data-highlights-coming]')).toHaveCount(0);
   await expect(phoneB.getByRole('heading', { name: 'Highlights' })).toBeVisible();
 
-  const game = files(await tokenOf(phoneB, '[data-game-video]'));
+  const gameToken = await tokenOf(phoneB, '[data-game-video]');
+  const game = files(gameToken);
   const g = probe(game.wide);
   expect(g.seconds).toBeGreaterThan(50);
   expect([g.width, g.height]).toEqual([640, 360]);
-  const e = probe(game.email);
-  expect(e.height).toBeLessThanOrEqual(720);
-  expect(Math.abs(e.seconds - g.seconds)).toBeLessThan(1);
+  // One copy of the game video, the one players download. local-only: no smaller copy to send anywhere
+  expect(boxExec(`ls /data/clips/${gameToken}`).trim().split('\n').filter((f) => f.endsWith('.mp4'))).toEqual(['wide.mp4']);
 
   const reel = files(await tokenOf(phoneB, '[data-reel]'));
   const singles = await phoneB.locator('[data-highlight]').evaluateAll((as) => as.map((a) => a.getAttribute('href')!.split('/').pop()!));
@@ -144,7 +123,7 @@ test('the logo sits in the chosen corner of a clip, a highlight and a game video
     ['clip wide', clip.wide, wideSpot], ['clip vertical', clip.vertical, verticalSpot],
     ['highlight wide', highlight.wide, wideSpot], ['highlight vertical', highlight.vertical, verticalSpot],
     ['reel wide', reel.wide, wideSpot], ['reel vertical', reel.vertical, verticalSpot],
-    ['game video', game.wide, wideSpot], ['game email copy', game.email, wideSpot],
+    ['game video', game.wide, wideSpot],
   ] as const) {
     expect(isMagenta(colourAt(file, ...spot)), `${label}: logo bottom-right`).toBe(true);
     expect(isMagenta(colourAt(file, 40, 20, 24, 24)), `${label}: top-left clear`).toBe(false);
@@ -230,7 +209,7 @@ test('after a power cut everything made through the UI is still there, recording
   await page.getByRole('button', { name: /Add staff/ }).click();
   const temp = (await page.locator('[data-temp-password]').textContent())!.trim();
   await page.goto(`${STAFF}/console/settings`);
-  await page.getByLabel('Upload cap for sending videos (Mbit/s)').fill('33');
+  await page.getByLabel(/Venue contact/).fill('Front desk 0917 555 0133');
   await page.getByRole('button', { name: 'Save settings' }).click();
   const manila = new Date(Date.parse((await (await page.request.post(`${STAFF}/__test/clock`, { form: { ms: '0' } })).text())) + 8 * 3600_000);
   const hm = (d: Date): string => d.toISOString().slice(11, 16);
@@ -254,7 +233,7 @@ test('after a power cut everything made through the UI is still there, recording
   await page.goto(`${STAFF}/console/clips`);
   expect(Number(await page.locator('[data-total]').textContent())).toBeGreaterThanOrEqual(clipsBefore);
   await page.goto(`${STAFF}/console/settings`);
-  await expect(page.getByLabel('Upload cap for sending videos (Mbit/s)')).toHaveValue('33');
+  await expect(page.getByLabel(/Venue contact/)).toHaveValue('Front desk 0917 555 0133');
   await page.goto(`${STAFF}/console/footage`);
   await expect(page.locator('tr[data-hold]').first()).toContainText('Court 6');
   const ken = await (await browser.newContext({ ignoreHTTPSErrors: true })).newPage();

@@ -6,7 +6,7 @@ Each entry says what was accepted, why, and when to look again.
 
 | Advisory | Crate | Where | Decision | Recheck |
 |---|---|---|---|---|
-| RUSTSEC-2026-0374 (unmaintained, informational, no CVSS) | basic-toml 0.1.10 | `askama_derive`, a compile-time proc macro that reads `askama.toml` | Accepted: nothing from it is linked into `ch-box` or `ch-cloud`. | When askama drops it, or before each release (`tools/supply-chain-scan.sh`) |
+| RUSTSEC-2026-0374 (unmaintained, informational, no CVSS) | basic-toml 0.1.10 | `askama_derive`, a compile-time proc macro that reads `askama.toml` | Accepted: nothing from it is linked into `ch-box`. | When askama drops it, or before each release (`tools/supply-chain-scan.sh`) |
 
 ## Deliberate simplifications
 
