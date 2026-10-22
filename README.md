@@ -129,7 +129,8 @@ npx playwright test
 ```
 
 > [!IMPORTANT]
-> The full end-to-end suite takes about an hour. CI runs it on pull requests and on demand.
+> The full end-to-end suite takes about 20 minutes on one machine. CI runs it on pull requests and on demand, split
+> over four runners.
 
 <details>
 <summary><b>Fast checks</b>, run on every push to <code>main</code> and every pull request</summary>
